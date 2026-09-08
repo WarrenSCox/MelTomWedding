@@ -22,7 +22,17 @@
   </script>
   <style>
     html.installed-app .bottom-nav [data-view-target="save"]{display:none!important}
-    html.installed-app .bottom-nav .nav-item{flex:1}
+    html.installed-app .bottom-nav{
+      display:grid!important;
+      grid-template-columns:repeat(2,minmax(0,1fr))!important;
+      align-items:stretch!important;
+    }
+    html.installed-app .bottom-nav .nav-item{
+      width:100%!important;
+      min-width:0!important;
+      margin:0!important;
+      justify-self:stretch!important;
+    }
   </style>
 </head>
 <body>
@@ -187,6 +197,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
   <script src="config.js?v=6.8"></script>
-  <script src="app-v4.js?v=7.5"></script>
+  <script src="app-v4.js?v=7.6"></script>
 </body>
 </html>
