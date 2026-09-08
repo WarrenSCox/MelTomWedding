@@ -54,7 +54,10 @@ function showView(name) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 
   if (name === 'favourites') void loadFavourites();
-  if (name === 'surprise') void openRandomPhoto();
+  if (name === 'surprise') {
+    playSurpriseConfetti();
+    void openRandomPhoto();
+  }
 }
 
 document.querySelectorAll('[data-view-target]').forEach((button) => {
@@ -843,6 +846,40 @@ document.addEventListener('keydown', event => {
   if (event.key === 'ArrowRight') void navigateLightbox(1);
   if (event.key === 'ArrowLeft') void navigateLightbox(-1);
 });
+
+
+let surpriseConfettiTimer = null;
+
+function playSurpriseConfetti() {
+  const layer = $('#surpriseConfetti');
+  if (!layer) return;
+
+  clearTimeout(surpriseConfettiTimer);
+  layer.innerHTML = '';
+
+  const pieces = 34;
+  const shapes = ['confetti-piece', 'confetti-piece confetti-piece--round', 'confetti-piece confetti-piece--streamer'];
+
+  for (let i = 0; i < pieces; i++) {
+    const piece = document.createElement('span');
+    piece.className = shapes[i % shapes.length];
+    piece.style.setProperty('--x', `${Math.random() * 100}%`);
+    piece.style.setProperty('--drift', `${(Math.random() * 90 - 45).toFixed(1)}px`);
+    piece.style.setProperty('--delay', `${(Math.random() * 0.45).toFixed(2)}s`);
+    piece.style.setProperty('--duration', `${(1.6 + Math.random() * 1.1).toFixed(2)}s`);
+    piece.style.setProperty('--spin', `${Math.floor(Math.random() * 420 + 180)}deg`);
+    layer.appendChild(piece);
+  }
+
+  layer.classList.remove('is-playing');
+  void layer.offsetWidth;
+  layer.classList.add('is-playing');
+
+  surpriseConfettiTimer = setTimeout(() => {
+    layer.classList.remove('is-playing');
+    layer.innerHTML = '';
+  }, 3300);
+}
 
 async function openRandomPhoto() {
   const status = $('#surpriseStatus');

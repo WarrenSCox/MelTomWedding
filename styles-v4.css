@@ -1140,3 +1140,112 @@ body{padding-bottom:70px!important}
 .bottom-nav .nav-item.is-active:after{
   margin-top:54px!important;
 }
+
+
+/* v7.29: spacing/icon polish + centred controls + muted favourite red + one-shot surprise confetti */
+
+/* Reduce excess blank space below upload CTA */
+.upload-panel{
+  padding-bottom:28px!important;
+}
+@media(max-width:600px){
+  .upload-panel{padding-bottom:22px!important}
+}
+
+/* Bring Info icon up to the same visual footprint as the other nav icons */
+.bottom-nav .nav-item > .nav-info-icon{
+  font-size:1.62rem!important;
+  line-height:27px!important;
+}
+
+/* Centre the arrow glyphs vertically inside their grey tap areas */
+.lightbox__nav{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  padding:0!important;
+  line-height:1!important;
+}
+.lightbox__nav--previous,
+.lightbox__nav--next{
+  text-indent:0!important;
+}
+.lightbox__nav--previous{
+  padding-bottom:5px!important;
+}
+.lightbox__nav--next{
+  padding-bottom:5px!important;
+}
+
+/* Heart sits visually centred; favourited state uses a muted dusty red */
+.photo-favourite-btn,
+.lightbox__favourite{
+  line-height:1!important;
+}
+.photo-favourite-btn{
+  padding-top:3px!important;
+}
+.lightbox__favourite{
+  padding-top:4px!important;
+}
+.photo-favourite-btn.is-favourite,
+.lightbox__favourite.is-favourite{
+  background:#8f6767!important;
+  border-color:#b89a9a!important;
+  color:#fff!important;
+}
+
+/* One-shot confetti / party-popper effect when entering Surprise */
+.surprise-view{
+  position:relative;
+  overflow:hidden;
+}
+.surprise-confetti{
+  position:absolute;
+  inset:0;
+  z-index:4;
+  pointer-events:none;
+  overflow:hidden;
+}
+.surprise-confetti .confetti-piece{
+  position:absolute;
+  top:-18px;
+  left:var(--x);
+  width:8px;
+  height:14px;
+  border-radius:2px;
+  opacity:0;
+  background:#9a8f75;
+  transform:translate3d(0,-20px,0) rotate(0deg);
+}
+.surprise-confetti .confetti-piece:nth-child(4n+1){background:#8f6767}
+.surprise-confetti .confetti-piece:nth-child(4n+2){background:#7f8b76}
+.surprise-confetti .confetti-piece:nth-child(4n+3){background:#c2aa88}
+.surprise-confetti .confetti-piece:nth-child(4n){background:#9c91a5}
+.surprise-confetti .confetti-piece--round{
+  width:9px;
+  height:9px;
+  border-radius:50%;
+}
+.surprise-confetti .confetti-piece--streamer{
+  width:4px;
+  height:20px;
+  border-radius:3px;
+}
+.surprise-confetti.is-playing .confetti-piece{
+  animation:surpriseConfettiFall var(--duration) cubic-bezier(.2,.75,.3,1) var(--delay) 1 both;
+}
+@keyframes surpriseConfettiFall{
+  0%{
+    opacity:0;
+    transform:translate3d(0,-20px,0) rotate(0deg);
+  }
+  10%{opacity:.95}
+  100%{
+    opacity:0;
+    transform:translate3d(var(--drift),calc(100vh - 130px),0) rotate(var(--spin));
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  .surprise-confetti{display:none!important}
+}
