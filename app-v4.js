@@ -557,17 +557,54 @@ async function getAlbumPhotos(force = false) {
   return albumPhotosCache;
 }
 
+
+function positionLightboxTopControls() {
+  const image = $('#lightboxImage');
+  const heart = $('#lightboxFavouriteBtn');
+  const close = $('#closeLightbox');
+  const dialog = $('#lightbox');
+  if (!image || !heart || !close || !dialog?.open) return;
+
+  const rect = image.getBoundingClientRect();
+  if (!rect.width || !rect.height) return;
+
+  const inset = 10;
+  const gap = 8;
+  const closeSize = close.getBoundingClientRect().width || 38;
+  const heartSize = heart.getBoundingClientRect().width || 43;
+
+  const top = Math.max(8, rect.top + inset);
+  const closeLeft = Math.min(window.innerWidth - closeSize - 8, rect.right - closeSize - inset);
+  const heartLeft = Math.max(8, closeLeft - heartSize - gap);
+
+  close.style.top = `${top}px`;
+  close.style.left = `${closeLeft}px`;
+  close.style.right = 'auto';
+
+  heart.style.top = `${top}px`;
+  heart.style.left = `${heartLeft}px`;
+  heart.style.right = 'auto';
+}
+
 function setLightboxPhoto(photo) {
   activeLightboxPhoto = photo;
-  $('#lightboxImage').src = photo.image_url;
+  const image = $('#lightboxImage');
+  image.src = photo.image_url;
   $('#lightboxName').textContent = `Uploaded by ${photo.guest_name}`;
   $('#lightboxDate').textContent = formatPhotoDate(photo.created_at);
   syncFavouriteButtons();
+
+  if (image.complete && image.naturalWidth) {
+    requestAnimationFrame(positionLightboxTopControls);
+  } else {
+    image.addEventListener('load', () => requestAnimationFrame(positionLightboxTopControls), { once: true });
+  }
 }
 
 function openLightbox(photo) {
   setLightboxPhoto(photo);
   $('#lightbox').showModal();
+  requestAnimationFrame(positionLightboxTopControls);
   void getAlbumPhotos().catch(console.error);
 }
 
@@ -1041,3 +1078,5 @@ if ('serviceWorker' in navigator) {
 }
 
 loadPhotos();
+
+window.addEventListener('resize', () => { if ($('#lightbox')?.open) requestAnimationFrame(positionLightboxTopControls); });

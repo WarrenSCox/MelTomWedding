@@ -1671,3 +1671,87 @@ body{padding-bottom:70px!important}
   }
   .lightbox__nav{top:51%!important}
 }
+
+
+/* v7.36: clean wedding banner + photo-anchored heart/close controls */
+
+/* Keep the branded heading, remove the competing artwork backdrop */
+.lightbox__wedding-brand{
+  height:118px!important;
+  background:var(--paper-light)!important;
+  border-bottom:1px solid var(--line)!important;
+}
+.lightbox__wedding-brand img{
+  display:none!important;
+}
+.lightbox__wedding-brand::after{
+  display:none!important;
+}
+.lightbox__wedding-brand-copy{
+  top:14px!important;
+}
+.lightbox__wedding-brand-copy span{
+  font-size:1.72rem!important;
+}
+.lightbox__wedding-brand-copy em{
+  font-size:2.25rem!important;
+}
+.lightbox__wedding-brand-copy small{
+  margin-top:8px!important;
+}
+
+/* Heart + close now sit together at the rendered photo's own top-right corner.
+   JS supplies top/left from the actual image bounding box. */
+.lightbox__close,
+.lightbox__favourite{
+  position:fixed!important;
+  z-index:40!important;
+  margin:0!important;
+  transform:none!important;
+}
+.lightbox__close{
+  width:38px!important;
+  height:38px!important;
+  display:grid!important;
+  place-items:center!important;
+  border:0!important;
+  border-radius:50%!important;
+  background:rgba(251,250,246,.92)!important;
+  color:var(--olive-dark)!important;
+  font-size:1.8rem!important;
+  line-height:1!important;
+  box-shadow:0 1px 5px rgba(0,0,0,.12)!important;
+}
+.lightbox__favourite{
+  width:43px!important;
+  height:43px!important;
+  background:rgba(251,250,246,.92)!important;
+  border:1px solid rgba(72,84,65,.62)!important;
+  box-shadow:0 1px 5px rgba(0,0,0,.12)!important;
+}
+.lightbox__favourite.is-favourite{
+  background:rgba(251,250,246,.96)!important;
+  border-color:#d84f5f!important;
+}
+
+/* With a shorter banner, give the photo a little more breathing room */
+.lightbox #lightboxImage{
+  top:51%!important;
+  max-height:calc(100vh - 290px)!important;
+}
+.lightbox__nav{
+  top:51%!important;
+}
+
+@media(max-width:600px){
+  .lightbox__wedding-brand{height:108px!important}
+  .lightbox__wedding-brand-copy{top:11px!important}
+  .lightbox__wedding-brand-copy span{font-size:1.5rem!important}
+  .lightbox__wedding-brand-copy em{font-size:2rem!important}
+  .lightbox__wedding-brand-copy small{font-size:.52rem!important;margin-top:7px!important}
+  .lightbox #lightboxImage{
+    top:50.5%!important;
+    max-height:calc(100vh - 278px)!important;
+  }
+  .lightbox__nav{top:50.5%!important}
+}
