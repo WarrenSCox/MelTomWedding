@@ -18,10 +18,10 @@
 
   const selectedPhotos = new Map();
   let selectionMode = false;
-  let selectionDownloading = false;
+  let selectionDeleting = false;
   const selectionToolbar = $('#selectionToolbar');
   const selectionCount = $('#selectionCount');
-  const downloadSelectedBtn = $('#downloadSelectedBtn');
+  const deleteSelectedBtn = $('#deleteSelectedBtn');
 
   function photoKey(photo) {
     return String(photo.id);
@@ -31,8 +31,8 @@
     const count = selectedPhotos.size;
     selectionToolbar.hidden = !selectionMode;
     selectionCount.textContent = `${count} selected`;
-    downloadSelectedBtn.textContent = `Download selected (${count}) ↓`;
-    downloadSelectedBtn.disabled = !count || selectionDownloading;
+    deleteSelectedBtn.textContent = `Delete selected (${count})`;
+    deleteSelectedBtn.disabled = !count || selectionDeleting;
     adminGrid.classList.toggle('is-selecting', selectionMode);
 
     adminGrid.querySelectorAll('.photo-card[data-photo-id]').forEach((card) => {
@@ -58,75 +58,54 @@
     updateSelectionUI();
   }
 
-  function safeDownloadName(photo, index = 0) {
-    const pathName = (photo.storage_path || '').split('/').pop() || `wedding-photo-${index + 1}.jpg`;
-    const cleaned = pathName
-      .replace(/^\d+-[0-9a-f-]+-/i, '')
-      .replace(/[^a-zA-Z0-9._-]/g, '_');
-    return cleaned || `wedding-photo-${index + 1}.jpg`;
-  }
-
-  async function fetchPhotoBlob(url) {
-    const response = await fetch(url);
-    if (!response.ok) throw new Error(`Photo download failed (${response.status})`);
-    return response.blob();
-  }
-
-  function triggerBlobDownload(blob, filename) {
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = filename;
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 1500);
-  }
-
-  async function downloadSelectedPhotos() {
-    if (!selectedPhotos.size || selectionDownloading) return;
+  async function deleteSelectedPhotos() {
+    if (!selectedPhotos.size || selectionDeleting) return;
 
     const photos = [...selectedPhotos.values()];
-    selectionDownloading = true;
+    const count = photos.length;
+    const confirmed = window.confirm(
+      `Delete ${count} selected photo${count === 1 ? '' : 's'}? This cannot be undone.`
+    );
+    if (!confirmed) return;
+
+    selectionDeleting = true;
     updateSelectionUI();
+    setAdminStatus(`Deleting ${count} selected photo${count === 1 ? '' : 's'}…`);
 
     try {
-      if (!window.JSZip) throw new Error('ZIP library did not load');
+      const paths = photos
+        .map(photo => photo.storage_path)
+        .filter(Boolean);
 
-      const zip = new JSZip();
-      const usedNames = new Set();
+      if (paths.length) {
+        const { error: storageError } = await supabase.storage
+          .from(storageBucket)
+          .remove(paths);
 
-      for (let i = 0; i < photos.length; i++) {
-        downloadSelectedBtn.textContent = `Zipping ${i + 1}/${photos.length}…`;
-        const photo = photos[i];
-        const blob = await fetchPhotoBlob(photo.image_url);
-
-        let name = safeDownloadName(photo, i);
-        if (usedNames.has(name)) {
-          const dot = name.lastIndexOf('.');
-          name = dot > 0
-            ? `${name.slice(0, dot)}-${i + 1}${name.slice(dot)}`
-            : `${name}-${i + 1}`;
-        }
-        usedNames.add(name);
-        zip.file(name, blob);
+        if (storageError) throw storageError;
       }
 
-      downloadSelectedBtn.textContent = 'Creating ZIP…';
-      const zipBlob = await zip.generateAsync({ type: 'blob' });
-      triggerBlobDownload(zipBlob, 'Mel-and-Tom-Admin-Selected-Photos.zip');
-      downloadSelectedBtn.textContent = 'Downloaded ✓';
+      const ids = photos.map(photo => photo.id);
+      const { error: rowError } = await supabase
+        .from('photos')
+        .delete()
+        .in('id', ids);
 
-      setTimeout(cancelSelection, 900);
+      if (rowError) throw rowError;
+
+      cancelSelection();
+      setAdminStatus(
+        `${count} photo${count === 1 ? '' : 's'} deleted.`
+      );
+      await loadPhotos();
     } catch (error) {
       console.error(error);
-      setAdminStatus('Selected photo download failed.', true);
+      setAdminStatus('Delete selected failed. Check the admin DELETE policies.', true);
     } finally {
-      selectionDownloading = false;
-      setTimeout(updateSelectionUI, 1000);
+      selectionDeleting = false;
+      updateSelectionUI();
     }
   }
-
 
   if (!configured) {
     loginStatus.textContent = 'Supabase is not configured.';
@@ -367,7 +346,7 @@
   $('#refreshBtn').addEventListener('click', loadPhotos);
 
   $('#cancelSelectionBtn').addEventListener('click', cancelSelection);
-  downloadSelectedBtn.addEventListener('click', downloadSelectedPhotos);
+  deleteSelectedBtn.addEventListener('click', deleteSelectedPhotos);
 
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape' && selectionMode) cancelSelection();

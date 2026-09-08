@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:wght@500;600&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="admin.css?v=1.1" />
+  <link rel="stylesheet" href="admin.css?v=1.2" />
 </head>
 <body>
   <main class="admin-shell">
@@ -49,7 +49,7 @@
         <span id="selectionCount" aria-live="polite">0 selected</span>
         <div class="selection-actions">
           <button id="cancelSelectionBtn" class="secondary" type="button">Cancel</button>
-          <button id="downloadSelectedBtn" class="secondary" type="button">Download selected (0) ↓</button>
+          <button id="deleteSelectedBtn" class="secondary" type="button">Delete selected (0)</button>
         </div>
       </div>
 
@@ -59,8 +59,7 @@
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
   <script src="config.js"></script>
-  <script src="admin.js?v=1.1"></script>
+  <script src="admin.js?v=1.2"></script>
 </body>
 </html>

@@ -82,7 +82,7 @@ input:focus{border-color:var(--olive)}
 }
 
 
-/* v1.1: admin photo selection + selected ZIP download */
+/* v1.2: admin photo selection + bulk delete */
 .selection-toolbar{
   display:flex;
   align-items:center;
@@ -100,8 +100,8 @@ input:focus{border-color:var(--olive)}
 .selection-toolbar[hidden]{display:none!important}
 .selection-actions{display:flex;align-items:center;gap:8px;justify-content:flex-end;flex-wrap:wrap}
 .selection-actions .secondary{padding:8px 11px}
-#downloadSelectedBtn{border-color:var(--olive);color:var(--olive-dark)}
-#downloadSelectedBtn:disabled{opacity:.5;cursor:default}
+#deleteSelectedBtn{border-color:var(--danger);color:var(--danger);font-weight:600}
+#deleteSelectedBtn:disabled{opacity:.5;cursor:default}
 
 .photo-card{position:relative;-webkit-tap-highlight-color:transparent}
 .photo-card img{-webkit-user-drag:none}
