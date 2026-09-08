@@ -322,3 +322,32 @@ h1,h2,h3{font-family:"Cormorant Garamond",Georgia,serif;font-weight:500;margin:0
   font-style:normal!important;
   font-weight:400!important;
 }
+
+
+/* v7.9: tidy gallery heading/actions */
+.gallery-heading{
+  display:block!important;
+  align-items:initial!important;
+  justify-content:initial!important;
+}
+.gallery-heading__copy{
+  width:100%;
+}
+.gallery-actions{
+  display:flex!important;
+  flex-direction:row!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  gap:22px!important;
+  margin-top:12px;
+}
+.gallery-actions .text-button{
+  padding:0!important;
+  font-size:.82rem!important;
+  line-height:1.2;
+}
+@media(max-width:600px){
+  .gallery-actions{
+    gap:20px!important;
+  }
+}
