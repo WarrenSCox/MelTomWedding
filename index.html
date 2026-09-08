@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#f7f1eb" />
+  <title>Our Wedding Photos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main id="app">
+    <section class="hero">
+      <div class="hero__veil"></div>
+      <div class="hero__content">
+        <span class="eyebrow">WELCOME TO OUR WEDDING</span>
+        <h1 id="coupleName">Mel & Tom</h1>
+        <p class="date" id="weddingDate">Share the day through your eyes.</p>
+      </div>
+    </section>
+
+    <section class="shell">
+      <div id="loginView" class="card login-card">
+        <div class="icon-badge">♥</div>
+        <h2>Join the gallery</h2>
+        <p>Enter your name and the wedding code to see and share photos.</p>
+        <form id="loginForm" class="stack">
+          <label>
+            Your name
+            <input id="guestName" type="text" maxlength="40" placeholder="e.g. Warren" required />
+          </label>
+          <label>
+            Wedding code
+            <input id="weddingCode" type="password" maxlength="40" placeholder="Enter code" required />
+          </label>
+          <button type="submit" class="primary">Enter wedding gallery</button>
+          <p id="loginError" class="error" hidden>That wedding code isn’t correct.</p>
+        </form>
+      </div>
+
+      <div id="galleryView" hidden>
+        <section class="welcome-row">
+          <div>
+            <span class="eyebrow dark">OUR SHARED ALBUM</span>
+            <h2>Photos from everyone</h2>
+            <p id="photoCount">No photos yet — be the first to add one.</p>
+          </div>
+          <button id="logoutBtn" class="ghost">Leave</button>
+        </section>
+
+        <section class="upload-card card">
+          <div>
+            <h3>Add your photos</h3>
+            <p>Choose pictures from your phone. You can upload several at once.</p>
+          </div>
+          <label class="upload-button" for="photoInput">＋ Choose photos</label>
+          <input id="photoInput" type="file" accept="image/*" multiple hidden />
+          <div id="uploadStatus" class="upload-status"></div>
+        </section>
+
+        <section class="toolbar">
+          <button id="refreshBtn" class="ghost">↻ Refresh</button>
+          <span id="guestGreeting"></span>
+        </section>
+
+        <section id="emptyState" class="empty-state">
+          <div class="empty-heart">♡</div>
+          <h3>Your wedding story starts here</h3>
+          <p>Photos uploaded by guests will appear in this gallery.</p>
+        </section>
+
+        <section id="galleryGrid" class="gallery-grid" aria-live="polite"></section>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="lightbox" class="lightbox">
+    <button id="closeLightbox" class="lightbox__close" aria-label="Close">×</button>
+    <img id="lightboxImage" alt="Wedding photo" />
+    <div class="lightbox__meta">
+      <strong id="lightboxName"></strong>
+      <span id="lightboxDate"></span>
+    </div>
+  </dialog>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
