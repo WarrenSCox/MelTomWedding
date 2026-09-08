@@ -45,3 +45,9 @@ The original wedding invitation artwork is now included directly as `wedding-art
 - Lowered “Share the moments” and the upload subtitle further into the ivory fade.
 - Removed the visible “Your name (optional)” label and changed the placeholder to “type your name here (optional)”.
 - Replaced the PWA/app icons with an ivory M&T monogram and subtle green botanical detail.
+
+
+## v6.5 hotfix
+- Removed duplicate couple names and date from Wedding Information.
+- Replaced timeline symbols with relevant line icons.
+- Added Google search links for all four accommodation options.

@@ -129,3 +129,10 @@ h1,h2,h3{font-family:"Cormorant Garamond",Georgia,serif;font-weight:500;margin:0
     bottom:-5px!important;
   }
 }
+
+/* v6.5 wedding information hotfix */
+.timeline-icon{width:30px;height:30px;display:block;color:var(--olive-dark)}
+.timeline i{font-size:0}
+.hotel-link{color:var(--olive-dark);text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px}
+.hotel-link:hover,.hotel-link:focus-visible{text-decoration-color:currentColor}
+.info-cover__copy>p:last-child{margin-top:0}
