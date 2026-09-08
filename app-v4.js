@@ -12,8 +12,32 @@ const launchedStandalone =
 
 if (weddingSplash && launchedStandalone) {
   const started = performance.now();
+  const splashNames = weddingSplash.querySelector('.wedding-splash__title span');
+  const splashWedding = weddingSplash.querySelector('.wedding-splash__title em');
+
+  // v7.44: deterministic title reveal — names first, then "Wedding".
+  // Inline styles deliberately override any older cached CSS animation rules.
+  if (splashNames && splashWedding) {
+    [splashNames, splashWedding].forEach(el => {
+      el.style.setProperty('opacity', '0', 'important');
+      el.style.setProperty('transform', 'translateY(8px)', 'important');
+      el.style.setProperty('animation', 'none', 'important');
+      el.style.setProperty('transition', 'opacity .38s ease, transform .38s ease', 'important');
+    });
+
+    setTimeout(() => {
+      splashNames.style.setProperty('opacity', '1', 'important');
+      splashNames.style.setProperty('transform', 'translateY(0)', 'important');
+
+      setTimeout(() => {
+        splashWedding.style.setProperty('opacity', '1', 'important');
+        splashWedding.style.setProperty('transform', 'translateY(0)', 'important');
+      }, 430);
+    }, 1040);
+  }
+
   const closeSplash = () => {
-    const wait = Math.max(0, 2300 - (performance.now() - started));
+    const wait = Math.max(0, 2500 - (performance.now() - started));
     setTimeout(() => {
       weddingSplash.classList.add('is-leaving');
       document.documentElement.classList.add('app-revealing');
@@ -26,7 +50,7 @@ if (weddingSplash && launchedStandalone) {
   if (document.readyState === 'complete') closeSplash();
   else {
     window.addEventListener('load', closeSplash, { once: true });
-    setTimeout(closeSplash, 3600);
+    setTimeout(closeSplash, 3800);
   }
 } else if (weddingSplash) {
   weddingSplash.remove();
