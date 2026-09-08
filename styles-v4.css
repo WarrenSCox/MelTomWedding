@@ -2082,3 +2082,25 @@ body{padding-bottom:70px!important}
   cursor:pointer;text-decoration:underline;text-underline-offset:3px;
 }
 .upload-confirm-dialog button:focus-visible{outline:2px solid var(--olive-dark);outline-offset:3px}
+
+
+/* v7.46: centre both favourites heading lines */
+.favourites-heading .eyebrow{
+  width:100%!important;
+  text-align:center!important;
+}
+.favourites-heading .favourites-actions{
+  width:100%!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  text-align:center!important;
+}
+.favourites-heading .favourites-actions .text-button{
+  text-align:center!important;
+}
+
+/* v7.47: Info outline matches the approved Surprise circle */
+.bottom-nav .nav-item > .nav-info-icon{font-size:0!important;line-height:0!important;transform:none!important}
+.bottom-nav .nav-item .nav-info-svg{display:block!important;width:27px!important;height:27px!important;overflow:visible!important}
