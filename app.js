@@ -1,15 +1,29 @@
 const cfg = window.WEDDING_APP_CONFIG;
 const configured = cfg.supabaseUrl && !cfg.supabaseUrl.includes('YOUR_SUPABASE');
 const supabaseClient = configured ? window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey) : null;
-
 const $ = (s) => document.querySelector(s);
+
 const galleryGrid = $('#galleryGrid');
 const emptyState = $('#emptyState');
 const uploadStatus = $('#uploadStatus');
 const guestNameInput = $('#guestName');
 
-$('#coupleName').textContent = cfg.coupleName;
-$('#weddingDate').textContent = cfg.weddingDateText;
+// Simple app-style navigation
+function showView(name) {
+  document.querySelectorAll('[data-view]').forEach((view) => {
+    const active = view.dataset.view === name;
+    view.hidden = !active;
+    view.classList.toggle('is-active', active);
+  });
+  document.querySelectorAll('[data-view-target]').forEach((button) => {
+    button.classList.toggle('is-active', button.dataset.viewTarget === name && button.classList.contains('nav-item'));
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+document.querySelectorAll('[data-view-target]').forEach((button) => {
+  button.addEventListener('click', () => showView(button.dataset.viewTarget));
+});
 
 guestNameInput.value = localStorage.getItem('weddingGuestName') || '';
 guestNameInput.addEventListener('input', () => {
@@ -37,10 +51,7 @@ $('#photoInput').addEventListener('change', async (e) => {
       .from('wedding-photos')
       .upload(path, file, { cacheControl: '3600', upsert: false });
 
-    if (uploadError) {
-      console.error(uploadError);
-      continue;
-    }
+    if (uploadError) { console.error(uploadError); continue; }
 
     const { data: publicData } = supabaseClient.storage.from('wedding-photos').getPublicUrl(path);
     const { error: rowError } = await supabaseClient
@@ -51,7 +62,7 @@ $('#photoInput').addEventListener('change', async (e) => {
     else console.error(rowError);
   }
 
-  uploadStatus.textContent = `${done} photo${done === 1 ? '' : 's'} added to the wedding gallery ♥`;
+  uploadStatus.textContent = `${done} photo${done === 1 ? '' : 's'} added to Tom & Mel's gallery ♡`;
   e.target.value = '';
   await loadPhotos();
 });
@@ -122,21 +133,19 @@ window.addEventListener('beforeinstallprompt', (event) => {
 
 installBtn.addEventListener('click', async () => {
   if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
-    $('#installHelpText').textContent = 'This wedding app is already saved to your Home Screen ♥';
+    $('#installHelpText').textContent = 'This wedding app is already saved to your Home Screen ♡';
     installHelp.showModal();
     return;
   }
-
   if (deferredInstallPrompt) {
     deferredInstallPrompt.prompt();
     await deferredInstallPrompt.userChoice;
     deferredInstallPrompt = null;
     return;
   }
-
   const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
   $('#installHelpText').innerHTML = isIOS
-    ? 'On iPhone: tap the <strong>Share</strong> button in Safari, then choose <strong>Add to Home Screen</strong>.'
+    ? 'On iPhone, open this page in <strong>Safari</strong>, tap <strong>Share</strong>, then choose <strong>Add to Home Screen</strong>.'
     : 'Open your browser menu and choose <strong>Add to Home screen</strong> or <strong>Install app</strong>.';
   installHelp.showModal();
 });
@@ -148,9 +157,7 @@ installHelp.addEventListener('click', (e) => {
 });
 
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./service-worker.js').catch(console.error);
-  });
+  window.addEventListener('load', () => navigator.serviceWorker.register('./service-worker.js').catch(console.error));
 }
 
 loadPhotos();
