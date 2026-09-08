@@ -271,7 +271,7 @@ function syncFavouriteButtons() {
   document.querySelectorAll('[data-favourite-id]').forEach(button => {
     const active = favouriteIds.has(button.dataset.favouriteId);
     button.classList.toggle('is-favourite', active);
-    button.textContent = active ? '♥' : '♡';
+    button.textContent = '♡';
     button.setAttribute('aria-pressed', String(active));
     button.setAttribute('aria-label', active ? 'Remove from favourites' : 'Add to favourites');
   });
@@ -281,7 +281,7 @@ function syncFavouriteButtons() {
   if (lightboxFavouriteBtn && activeLightboxPhoto) {
     const active = isFavourite(activeLightboxPhoto);
     lightboxFavouriteBtn.classList.toggle('is-favourite', active);
-    lightboxFavouriteBtn.textContent = active ? '♥' : '♡';
+    lightboxFavouriteBtn.textContent = '♡';
     lightboxFavouriteBtn.setAttribute('aria-pressed', String(active));
     lightboxFavouriteBtn.setAttribute('aria-label', active ? 'Remove from favourites' : 'Add to favourites');
   }
@@ -873,7 +873,7 @@ function syncSurprisePolaroidFavourite() {
   if (!surprisePolaroidPhoto) return;
   const active = isFavourite(surprisePolaroidPhoto);
   button.classList.toggle('is-favourite', active);
-  button.textContent = active ? '♥' : '♡';
+  button.textContent = '♡';
   button.setAttribute('aria-pressed', String(active));
   button.setAttribute('aria-label', active ? 'Remove from favourites' : 'Add to favourites');
 }

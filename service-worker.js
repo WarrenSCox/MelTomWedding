@@ -1,10 +1,10 @@
-const CACHE = 'mel-tom-wedding-v7.34';
+const CACHE = 'mel-tom-wedding-v7.35';
 
 const APP_SHELL = [
   './',
   './index.html',
-  './styles-v4.css?v=7.33',
-  './app-v4.js?v=7.33',
+  './styles-v4.css?v=7.35',
+  './app-v4.js?v=7.35',
   './config.js?v=6.8',
   './manifest.webmanifest',
   './icon-192.png',

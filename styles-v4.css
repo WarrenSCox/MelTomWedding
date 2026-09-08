@@ -1465,3 +1465,209 @@ body{padding-bottom:70px!important}
   }
   .surprise-polaroid__confetti{display:none!important}
 }
+
+
+/* v7.35: consistent hearts, wedding-branded lightbox, vertically balanced upload CTA */
+
+/* Balance the upload CTA vertically between the name field and gallery divider */
+.upload-panel{
+  padding-bottom:20px!important;
+}
+.guest-name-field{
+  margin-bottom:20px!important;
+}
+#photoUploadButton{
+  margin-top:0!important;
+  margin-bottom:0!important;
+  align-items:center!important;
+  justify-content:center!important;
+}
+.upload-status:empty{display:none!important}
+
+/* One heart shape everywhere: selection changes colour only, never glyph geometry */
+.photo-favourite-btn,
+.lightbox__favourite,
+#surprisePolaroidFavourite{
+  font-size:0!important;
+  line-height:0!important;
+}
+.photo-favourite-btn::before,
+.lightbox__favourite::before,
+#surprisePolaroidFavourite::before{
+  content:"♡"!important;
+  display:block!important;
+  font:400 24px/1 Georgia,serif!important;
+  line-height:1!important;
+  transform:translateY(2px)!important;
+}
+.lightbox__favourite::before{
+  font-size:31px!important;
+  transform:translateY(2px)!important;
+}
+#surprisePolaroidFavourite::before{
+  font-size:30px!important;
+  transform:none!important;
+}
+.photo-favourite-btn:not(.is-favourite)::before,
+.lightbox__favourite:not(.is-favourite)::before{
+  color:#fff!important;
+}
+#surprisePolaroidFavourite:not(.is-favourite)::before{
+  color:var(--olive-dark)!important;
+}
+.photo-favourite-btn.is-favourite::before,
+.lightbox__favourite.is-favourite::before,
+#surprisePolaroidFavourite.is-favourite::before{
+  content:"♡"!important;
+  color:#d84f5f!important;
+  text-shadow:none!important;
+}
+.photo-favourite-btn.is-favourite{
+  background:rgba(35,35,32,.60)!important;
+  border-color:#e6a4ad!important;
+}
+.lightbox__favourite.is-favourite{
+  background:#fff!important;
+  border-color:#d84f5f!important;
+}
+#surprisePolaroidFavourite.is-favourite{
+  background:transparent!important;
+  color:#d84f5f!important;
+}
+
+/* Full-screen photo viewer now uses the same wedding visual language as the homepage */
+.lightbox{
+  background:var(--paper-light)!important;
+  color:var(--ink)!important;
+}
+.lightbox::backdrop{
+  background:rgba(244,241,232,.97)!important;
+}
+.lightbox__wedding-brand{
+  position:fixed;
+  z-index:1;
+  left:0;
+  right:0;
+  top:0;
+  height:142px;
+  overflow:hidden;
+  background:var(--paper-light);
+  border-bottom:1px solid var(--line);
+}
+.lightbox__wedding-brand img{
+  position:absolute!important;
+  left:0!important;
+  right:0!important;
+  bottom:-18px!important;
+  top:auto!important;
+  width:100%!important;
+  height:82px!important;
+  max-width:none!important;
+  max-height:none!important;
+  object-fit:cover!important;
+  object-position:center 48%!important;
+  opacity:.36!important;
+  filter:saturate(.82) brightness(1.08)!important;
+  transform:none!important;
+}
+.lightbox__wedding-brand::after{
+  content:"";
+  position:absolute;
+  inset:45px 0 0;
+  background:linear-gradient(to bottom,var(--paper-light) 0%,rgba(251,250,246,.72) 34%,rgba(251,250,246,.08) 100%);
+  pointer-events:none;
+}
+.lightbox__wedding-brand-copy{
+  position:absolute;
+  z-index:2;
+  top:10px;
+  left:50%;
+  transform:translateX(-50%);
+  min-width:220px;
+  text-align:center;
+  color:var(--ink);
+}
+.lightbox__wedding-brand-copy span{
+  display:block;
+  font:500 1.72rem/1 "Cormorant Garamond",Georgia,serif;
+  letter-spacing:.05em;
+}
+.lightbox__wedding-brand-copy em{
+  display:block;
+  margin-top:-2px;
+  font:400 2.25rem/.82 "Allura",cursive;
+}
+.lightbox__wedding-brand-copy small{
+  display:block;
+  margin-top:8px;
+  font:500 .58rem/1 "Montserrat",sans-serif;
+  letter-spacing:.38em;
+}
+
+/* Keep controls above branding and use homepage colours */
+.lightbox__close{
+  z-index:30!important;
+  color:var(--olive-dark)!important;
+  top:15px!important;
+  right:18px!important;
+  font-size:1.9rem!important;
+}
+.lightbox__favourite{
+  z-index:30!important;
+  top:16px!important;
+  left:18px!important;
+  width:43px!important;
+  height:43px!important;
+  background:#fff!important;
+  border:1px solid var(--olive)!important;
+  color:var(--olive-dark)!important;
+}
+
+/* Photo gets a clean white mount beneath the branded header */
+.lightbox #lightboxImage{
+  top:52%!important;
+  max-width:calc(100vw - 34px)!important;
+  max-height:calc(100vh - 330px)!important;
+  padding:7px!important;
+  box-sizing:border-box!important;
+  background:#fff!important;
+  border:1px solid #ddd8cc!important;
+  box-shadow:0 8px 28px rgba(52,54,48,.12)!important;
+}
+
+/* Navigation arrows retain their centred geometry but use the olive wedding palette */
+.lightbox__nav{
+  top:52%!important;
+  background:rgba(72,84,65,.74)!important;
+}
+.lightbox__download{
+  bottom:68px!important;
+  background:var(--olive)!important;
+  border:1px solid var(--olive-dark)!important;
+  color:#fff!important;
+  border-radius:2px!important;
+}
+.lightbox__meta{
+  bottom:28px!important;
+  color:var(--ink)!important;
+}
+.lightbox__meta-dot{color:var(--muted)!important}
+
+@media(max-width:600px){
+  .upload-panel{padding-bottom:18px!important}
+  .guest-name-field{margin-bottom:18px!important}
+
+  .lightbox__wedding-brand{height:126px}
+  .lightbox__wedding-brand img{height:72px!important}
+  .lightbox__wedding-brand-copy{top:8px}
+  .lightbox__wedding-brand-copy span{font-size:1.52rem}
+  .lightbox__wedding-brand-copy em{font-size:2rem}
+  .lightbox__wedding-brand-copy small{margin-top:7px;font-size:.53rem}
+  .lightbox #lightboxImage{
+    top:51%!important;
+    max-width:calc(100vw - 28px)!important;
+    max-height:calc(100vh - 305px)!important;
+    padding:6px!important;
+  }
+  .lightbox__nav{top:51%!important}
+}
