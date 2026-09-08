@@ -93,7 +93,7 @@ guestNameInput.addEventListener('input', () => {
 
 updateUploadAvailability();
 
-$('#refreshBtn').addEventListener('click', loadPhotos);
+$('#refreshBtn').addEventListener('click', () => loadPhotos(true));
 
 const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -223,38 +223,63 @@ photoInput.addEventListener('change', async (e) => {
   await loadPhotos();
 });
 
+const PAGE_SIZE = 40;
 let currentPhotos = [];
+let totalPhotoCount = 0;
 let activeLightboxPhoto = null;
 
-async function loadPhotos() {
+async function loadPhotos(reset = true) {
   if (!configured) {
     galleryGrid.innerHTML = '';
     emptyState.hidden = false;
-    $('#photoCount').textContent = 'Gallery ready — connect Supabase to start accepting photos.';
+    $('#photoCount').textContent = '0';
+    $('#loadMoreBtn').hidden = true;
     return;
   }
 
-  const { data, error } = await supabaseClient.from('photos').select('*').order('created_at', { ascending: false });
+  const from = reset ? 0 : currentPhotos.length;
+  const to = from + PAGE_SIZE - 1;
+
+  const { data, error, count } = await supabaseClient
+    .from('photos')
+    .select('*', { count: 'exact' })
+    .order('created_at', { ascending: false })
+    .range(from, to);
+
   if (error) {
     console.error(error);
-    $('#photoCount').textContent = 'Could not load photos.';
+    if (reset) $('#photoCount').textContent = String(totalPhotoCount);
     return;
   }
-  renderPhotos(data || []);
-}
 
-function renderPhotos(photos) {
-  currentPhotos = photos;
-  galleryGrid.innerHTML = '';
+  totalPhotoCount = count ?? totalPhotoCount;
+
+  if (reset) {
+    currentPhotos = [];
+    galleryGrid.innerHTML = '';
+  }
+
+  const newPhotos = data || [];
+  currentPhotos.push(...newPhotos);
+  renderPhotoCards(newPhotos);
+
   const downloadAllBtn = $('#downloadAllBtn');
-  if (downloadAllBtn) downloadAllBtn.disabled = photos.length === 0;
-  emptyState.hidden = photos.length > 0;
-  $('#photoCount').textContent = String(photos.length);
+  if (downloadAllBtn) downloadAllBtn.disabled = totalPhotoCount === 0;
+
+  emptyState.hidden = totalPhotoCount > 0;
+  $('#photoCount').textContent = String(totalPhotoCount);
   $('#photoCount').setAttribute(
     'aria-label',
-    `${photos.length} photo${photos.length === 1 ? '' : 's'} shared`
+    `${totalPhotoCount} photo${totalPhotoCount === 1 ? '' : 's'} shared`
   );
 
+  const loadMoreBtn = $('#loadMoreBtn');
+  loadMoreBtn.hidden = currentPhotos.length >= totalPhotoCount;
+  loadMoreBtn.disabled = false;
+  loadMoreBtn.textContent = 'Load more memories';
+}
+
+function renderPhotoCards(photos) {
   for (const photo of photos) {
     const card = document.createElement('article');
     card.className = 'photo-card';
@@ -265,6 +290,33 @@ function renderPhotos(photos) {
     card.addEventListener('click', () => openLightbox(photo, date));
     galleryGrid.appendChild(card);
   }
+}
+
+$('#loadMoreBtn').addEventListener('click', async () => {
+  const btn = $('#loadMoreBtn');
+  btn.disabled = true;
+  btn.textContent = 'Loading…';
+  await loadPhotos(false);
+});
+
+async function fetchAllPhotoRecords() {
+  const all = [];
+  const batchSize = 200;
+
+  for (let from = 0; ; from += batchSize) {
+    const { data, error } = await supabaseClient
+      .from('photos')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .range(from, from + batchSize - 1);
+
+    if (error) throw error;
+    const batch = data || [];
+    all.push(...batch);
+    if (batch.length < batchSize) break;
+  }
+
+  return all;
 }
 
 function openLightbox(photo, date) {
@@ -321,19 +373,21 @@ $('#downloadPhotoBtn').addEventListener('click', async () => {
 });
 
 $('#downloadAllBtn').addEventListener('click', async () => {
-  if (!currentPhotos.length) return;
+  if (!totalPhotoCount) return;
   const btn = $('#downloadAllBtn');
   const original = btn.textContent;
   btn.disabled = true;
 
   try {
     if (!window.JSZip) throw new Error('ZIP library did not load');
+    btn.textContent = 'Preparing album…';
+    const allPhotos = await fetchAllPhotoRecords();
     const zip = new JSZip();
     const usedNames = new Set();
 
-    for (let i = 0; i < currentPhotos.length; i++) {
-      btn.textContent = `Zipping ${i + 1}/${currentPhotos.length}…`;
-      const photo = currentPhotos[i];
+    for (let i = 0; i < allPhotos.length; i++) {
+      btn.textContent = `Zipping ${i + 1}/${allPhotos.length}…`;
+      const photo = allPhotos[i];
       const blob = await fetchPhotoBlob(photo.image_url);
       let name = safeDownloadName(photo, i);
       if (usedNames.has(name)) {
@@ -355,7 +409,7 @@ $('#downloadAllBtn').addEventListener('click', async () => {
     btn.textContent = 'Download failed';
   } finally {
     setTimeout(() => {
-      btn.disabled = currentPhotos.length === 0;
+      btn.disabled = totalPhotoCount === 0;
       btn.textContent = original;
     }, 1500);
   }

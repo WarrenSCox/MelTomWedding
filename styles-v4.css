@@ -543,3 +543,31 @@ h1,h2,h3{font-family:"Cormorant Garamond",Georgia,serif;font-weight:500;margin:0
   font-weight:400!important;
   line-height:inherit!important;
 }
+
+
+/* v7.15: scalable gallery loading */
+.gallery-more-wrap{
+  display:flex;
+  justify-content:center;
+  padding:10px 20px 34px;
+}
+.load-more-button{
+  border:0;
+  border-bottom:1px solid var(--olive-dark);
+  background:transparent;
+  padding:8px 2px 6px;
+  color:var(--olive-dark);
+  font:500 .78rem/1.2 "Montserrat",sans-serif;
+  letter-spacing:.02em;
+  cursor:pointer;
+}
+.load-more-button:hover{
+  opacity:.75;
+}
+.load-more-button:disabled{
+  opacity:.5;
+  cursor:default;
+}
+.load-more-button[hidden]{
+  display:none!important;
+}
