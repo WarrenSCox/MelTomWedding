@@ -75,6 +75,67 @@ guestNameInput.addEventListener('input', () => {
 updateUploadAvailability();
 
 $('#refreshBtn').addEventListener('click', loadPhotos);
+
+const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+async function withRetry(task, attempts = 3) {
+  let lastError;
+  for (let attempt = 1; attempt <= attempts; attempt++) {
+    try {
+      return await task(attempt);
+    } catch (error) {
+      lastError = error;
+      if (attempt < attempts) await wait(700 * attempt);
+    }
+  }
+  throw lastError;
+}
+
+async function preparePhotoForUpload(file) {
+  const supported = ['image/jpeg', 'image/png', 'image/webp'];
+  if (!supported.includes(file.type)) return file;
+
+  // Leave already-manageable photos untouched.
+  if (file.size <= 4 * 1024 * 1024) return file;
+
+  try {
+    const bitmap = await createImageBitmap(file);
+    const maxEdge = 3000;
+    const scale = Math.min(1, maxEdge / Math.max(bitmap.width, bitmap.height));
+    const width = Math.max(1, Math.round(bitmap.width * scale));
+    const height = Math.max(1, Math.round(bitmap.height * scale));
+
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext('2d', { alpha: false });
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, width, height);
+    ctx.drawImage(bitmap, 0, 0, width, height);
+    bitmap.close?.();
+
+    const blob = await new Promise((resolve, reject) => {
+      canvas.toBlob(
+        result => result ? resolve(result) : reject(new Error('Could not prepare image')),
+        'image/jpeg',
+        0.88
+      );
+    });
+
+    // Only use the compressed version if it is actually smaller.
+    if (blob.size >= file.size) return file;
+
+    const baseName = file.name.replace(/\.[^.]+$/, '') || 'wedding-photo';
+    return new File([blob], `${baseName}.jpg`, {
+      type: 'image/jpeg',
+      lastModified: file.lastModified
+    });
+  } catch (error) {
+    console.warn('Photo optimisation skipped:', error);
+    return file;
+  }
+}
+
 photoInput.addEventListener('change', async (e) => {
   const guestName = guestNameInput.value.trim();
   if (!guestName) {
@@ -96,25 +157,49 @@ photoInput.addEventListener('change', async (e) => {
   uploadStatus.textContent = `Uploading ${files.length} photo${files.length > 1 ? 's' : ''}…`;
 
   let done = 0;
-  for (const file of files) {
-    const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
-    const path = `${Date.now()}-${crypto.randomUUID()}-${safeName}`;
-    const { error: uploadError } = await supabaseClient.storage
-      .from(storageBucket)
-      .upload(path, file, { cacheControl: '3600', upsert: false });
+  let failed = 0;
 
-    if (uploadError) { console.error(uploadError); continue; }
+  for (let i = 0; i < files.length; i++) {
+    const originalFile = files[i];
+    uploadStatus.textContent = `Preparing photo ${i + 1} of ${files.length}…`;
 
-    const { data: publicData } = supabaseClient.storage.from(storageBucket).getPublicUrl(path);
-    const { error: rowError } = await supabaseClient
-      .from('photos')
-      .insert({ image_url: publicData.publicUrl, storage_path: path, guest_name: guestName });
+    try {
+      const file = await preparePhotoForUpload(originalFile);
+      const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+      const path = `${Date.now()}-${crypto.randomUUID()}-${safeName}`;
 
-    if (!rowError) done++;
-    else console.error(rowError);
+      uploadStatus.textContent = `Uploading photo ${i + 1} of ${files.length}…`;
+
+      await withRetry(async () => {
+        const { error } = await supabaseClient.storage
+          .from(storageBucket)
+          .upload(path, file, { cacheControl: '3600', upsert: false });
+        if (error) throw error;
+      }, 3);
+
+      const { data: publicData } = supabaseClient.storage.from(storageBucket).getPublicUrl(path);
+
+      await withRetry(async () => {
+        const { error } = await supabaseClient
+          .from('photos')
+          .insert({
+            image_url: publicData.publicUrl,
+            storage_path: path,
+            guest_name: guestName
+          });
+        if (error) throw error;
+      }, 3);
+
+      done++;
+    } catch (error) {
+      failed++;
+      console.error('Photo upload failed after retries:', error);
+    }
   }
 
-  uploadStatus.textContent = `${done} photo${done === 1 ? '' : 's'} added to Tom & Mel's gallery ♡`;
+  uploadStatus.textContent = failed
+    ? `${done} uploaded, ${failed} failed. Please try the failed photo${failed === 1 ? '' : 's'} again.`
+    : `${done} photo${done === 1 ? '' : 's'} added to Tom & Mel's gallery ♡`;
   e.target.value = '';
   await loadPhotos();
 });
@@ -155,7 +240,7 @@ function renderPhotos(photos) {
     const date = new Date(photo.created_at).toLocaleString([], {
       day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
     });
-    card.innerHTML = `<img loading="lazy" src="${escapeHtml(photo.image_url)}" alt="Wedding photo shared by ${escapeHtml(photo.guest_name)}"><div class="photo-meta"><strong>Uploaded by ${escapeHtml(photo.guest_name)}</strong><span>${date}</span></div>`;
+    card.innerHTML = `<img loading="lazy" decoding="async" fetchpriority="low" src="${escapeHtml(photo.image_url)}" alt="Wedding photo shared by ${escapeHtml(photo.guest_name)}"><div class="photo-meta"><strong>Uploaded by ${escapeHtml(photo.guest_name)}</strong><span>${date}</span></div>`;
     card.addEventListener('click', () => openLightbox(photo, date));
     galleryGrid.appendChild(card);
   }
