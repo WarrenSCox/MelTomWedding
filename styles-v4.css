@@ -532,3 +532,14 @@ h1,h2,h3{font-family:"Cormorant Garamond",Georgia,serif;font-weight:500;margin:0
   font:inherit!important;
   color:inherit!important;
 }
+
+
+/* v7.14: refine gallery control typography/alignment */
+.gallery-actions{
+  transform:translateY(2px);
+}
+.gallery-actions .gallery-count{
+  font-size:.88em!important;
+  font-weight:400!important;
+  line-height:inherit!important;
+}
