@@ -572,16 +572,18 @@ h1,h2,h3{font-family:"Cormorant Garamond",Georgia,serif;font-weight:500;margin:0
   display:none!important;
 }
 
-/* v7.16: approved ornate gallery frame */
-.bottom-nav .nav-gallery-icon{
-  display:inline-flex;
+
+/* v7.17: shared navigation icon geometry */
+.bottom-nav .nav-item > span{
+  display:flex;
   align-items:center;
   justify-content:center;
   width:30px;
   height:30px;
   line-height:1;
+  box-sizing:border-box;
 }
-.bottom-nav .nav-gallery-icon img{
+.bottom-nav .nav-item > .nav-gallery-icon img{
   display:block;
   width:30px;
   height:30px;
