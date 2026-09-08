@@ -1925,3 +1925,21 @@ body{padding-bottom:70px!important}
   width:40px!important;
   height:40px!important;
 }
+
+
+/* v7.39: keep the lightbox favourite heart on the photo itself */
+.lightbox__favourite{
+  width:42px!important;
+  height:42px!important;
+  z-index:50!important;
+  pointer-events:auto!important;
+}
+.lightbox__favourite .favourite-heart-svg{
+  width:31px!important;
+  height:28px!important;
+}
+
+/* Prevent legacy header positioning from visually winning before JS anchors it */
+.lightbox[open] .lightbox__favourite{
+  right:auto!important;
+}

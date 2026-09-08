@@ -580,9 +580,9 @@ function positionLightboxTopControls() {
   const top = Math.max(8, rect.top + inset);
   const left = Math.max(8, Math.min(window.innerWidth - heartSize - 8, rect.right - heartSize - inset));
 
-  heart.style.top = `${top}px`;
-  heart.style.left = `${left}px`;
-  heart.style.right = 'auto';
+  heart.style.setProperty('top', `${top}px`, 'important');
+  heart.style.setProperty('left', `${left}px`, 'important');
+  heart.style.setProperty('right', 'auto', 'important');
 }
 function setLightboxPhoto(photo) {
   activeLightboxPhoto = photo;
@@ -602,7 +602,10 @@ function setLightboxPhoto(photo) {
 function openLightbox(photo) {
   setLightboxPhoto(photo);
   $('#lightbox').showModal();
-  requestAnimationFrame(positionLightboxTopControls);
+  requestAnimationFrame(() => {
+    positionLightboxTopControls();
+    requestAnimationFrame(positionLightboxTopControls);
+  });
   void getAlbumPhotos().catch(console.error);
 }
 
