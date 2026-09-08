@@ -1,6 +1,7 @@
 const cfg = window.WEDDING_APP_CONFIG;
 const configured = cfg.supabaseUrl && !cfg.supabaseUrl.includes('YOUR_SUPABASE');
 const supabaseClient = configured ? window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey) : null;
+const storageBucket = cfg.storageBucket || 'wedding-photos';
 const $ = (s) => document.querySelector(s);
 
 const galleryGrid = $('#galleryGrid');
@@ -48,12 +49,12 @@ $('#photoInput').addEventListener('change', async (e) => {
     const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
     const path = `${Date.now()}-${crypto.randomUUID()}-${safeName}`;
     const { error: uploadError } = await supabaseClient.storage
-      .from('wedding-photos')
+      .from(storageBucket)
       .upload(path, file, { cacheControl: '3600', upsert: false });
 
     if (uploadError) { console.error(uploadError); continue; }
 
-    const { data: publicData } = supabaseClient.storage.from('wedding-photos').getPublicUrl(path);
+    const { data: publicData } = supabaseClient.storage.from(storageBucket).getPublicUrl(path);
     const { error: rowError } = await supabaseClient
       .from('photos')
       .insert({ image_url: publicData.publicUrl, storage_path: path, guest_name: guestName });

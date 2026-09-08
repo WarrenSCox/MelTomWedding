@@ -1,8 +1,7 @@
-// 1) Create a Supabase project.
-// 2) Paste your project URL and anon key below.
 window.WEDDING_APP_CONFIG = {
-  supabaseUrl: "YOUR_SUPABASE_URL",
-  supabaseAnonKey: "YOUR_SUPABASE_ANON_KEY",
+  supabaseUrl: "https://hlcekgrlvaddorifgwzk.supabase.co",
+  supabaseAnonKey: "sb_publishable_c2Q_VrTQPMacfwJnZuiD7g_bmy5xn6y",
+  storageBucket: "Wedding photos",
   coupleName: "Tom & Mel",
   weddingDateText: "10 September 2026"
 };
