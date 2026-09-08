@@ -68,6 +68,9 @@ $('#photoInput').addEventListener('change', async (e) => {
   await loadPhotos();
 });
 
+let currentPhotos = [];
+let activeLightboxPhoto = null;
+
 async function loadPhotos() {
   if (!configured) {
     galleryGrid.innerHTML = '';
@@ -86,7 +89,10 @@ async function loadPhotos() {
 }
 
 function renderPhotos(photos) {
+  currentPhotos = photos;
   galleryGrid.innerHTML = '';
+  const downloadAllBtn = $('#downloadAllBtn');
+  if (downloadAllBtn) downloadAllBtn.disabled = photos.length === 0;
   emptyState.hidden = photos.length > 0;
   $('#photoCount').textContent = photos.length
     ? `${photos.length} shared photo${photos.length === 1 ? '' : 's'} so far.`
@@ -105,11 +111,98 @@ function renderPhotos(photos) {
 }
 
 function openLightbox(photo, date) {
+  activeLightboxPhoto = photo;
   $('#lightboxImage').src = photo.image_url;
   $('#lightboxName').textContent = photo.guest_name;
   $('#lightboxDate').textContent = date;
   $('#lightbox').showModal();
 }
+
+
+function safeDownloadName(photo, index = 0) {
+  const pathName = (photo.storage_path || '').split('/').pop() || `wedding-photo-${index + 1}.jpg`;
+  const cleaned = pathName.replace(/^\d+-[0-9a-f-]+-/i, '').replace(/[^a-zA-Z0-9._-]/g, '_');
+  return cleaned || `wedding-photo-${index + 1}.jpg`;
+}
+
+async function fetchPhotoBlob(url) {
+  const response = await fetch(url);
+  if (!response.ok) throw new Error(`Photo download failed (${response.status})`);
+  return response.blob();
+}
+
+function triggerBlobDownload(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1500);
+}
+
+$('#downloadPhotoBtn').addEventListener('click', async () => {
+  if (!activeLightboxPhoto) return;
+  const btn = $('#downloadPhotoBtn');
+  const original = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Preparing…';
+  try {
+    const blob = await fetchPhotoBlob(activeLightboxPhoto.image_url);
+    triggerBlobDownload(blob, safeDownloadName(activeLightboxPhoto));
+    btn.textContent = 'Downloaded ✓';
+  } catch (error) {
+    console.error(error);
+    btn.textContent = 'Could not download';
+  } finally {
+    setTimeout(() => {
+      btn.disabled = false;
+      btn.textContent = original;
+    }, 1200);
+  }
+});
+
+$('#downloadAllBtn').addEventListener('click', async () => {
+  if (!currentPhotos.length) return;
+  const btn = $('#downloadAllBtn');
+  const original = btn.textContent;
+  btn.disabled = true;
+
+  try {
+    if (!window.JSZip) throw new Error('ZIP library did not load');
+    const zip = new JSZip();
+    const usedNames = new Set();
+
+    for (let i = 0; i < currentPhotos.length; i++) {
+      btn.textContent = `Zipping ${i + 1}/${currentPhotos.length}…`;
+      const photo = currentPhotos[i];
+      const blob = await fetchPhotoBlob(photo.image_url);
+      let name = safeDownloadName(photo, i);
+      if (usedNames.has(name)) {
+        const dot = name.lastIndexOf('.');
+        name = dot > 0
+          ? `${name.slice(0, dot)}-${i + 1}${name.slice(dot)}`
+          : `${name}-${i + 1}`;
+      }
+      usedNames.add(name);
+      zip.file(name, blob);
+    }
+
+    btn.textContent = 'Creating ZIP…';
+    const zipBlob = await zip.generateAsync({ type: 'blob' });
+    triggerBlobDownload(zipBlob, 'Mel-and-Tom-Wedding-Photos.zip');
+    btn.textContent = 'Downloaded ✓';
+  } catch (error) {
+    console.error(error);
+    btn.textContent = 'Download failed';
+  } finally {
+    setTimeout(() => {
+      btn.disabled = currentPhotos.length === 0;
+      btn.textContent = original;
+    }, 1500);
+  }
+});
 
 $('#closeLightbox').addEventListener('click', () => $('#lightbox').close());
 $('#lightbox').addEventListener('click', (e) => {

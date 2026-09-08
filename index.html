@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles-v4.css?v=6.7" />
+  <link rel="stylesheet" href="styles-v4.css?v=6.9" />
 </head>
 <body>
   <header class="site-header">
@@ -52,7 +52,10 @@
           <h2>Everyone's photos</h2>
           <p id="photoCount">No photos yet — be the first to add one.</p>
         </div>
-        <button id="refreshBtn" class="text-button" type="button">Refresh ↻</button>
+        <div class="gallery-actions">
+          <button id="downloadAllBtn" class="text-button" type="button">Download all ↓</button>
+          <button id="refreshBtn" class="text-button" type="button">Refresh ↻</button>
+        </div>
       </section>
 
       <section id="emptyState" class="empty-state">
@@ -145,6 +148,7 @@
     <button id="closeLightbox" class="lightbox__close" aria-label="Close">×</button>
     <img id="lightboxImage" alt="Wedding photo" />
     <div class="lightbox__meta"><strong id="lightboxName"></strong><span id="lightboxDate"></span></div>
+    <button id="downloadPhotoBtn" class="lightbox__download" type="button">Download photo ↓</button>
   </dialog>
 
   <dialog id="installHelp" class="install-help">
@@ -156,7 +160,8 @@
   </dialog>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
   <script src="config.js?v=6.8"></script>
-  <script src="app-v4.js?v=6.8"></script>
+  <script src="app-v4.js?v=6.9"></script>
 </body>
 </html>
