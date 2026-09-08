@@ -8,6 +8,8 @@ const galleryGrid = $('#galleryGrid');
 const emptyState = $('#emptyState');
 const uploadStatus = $('#uploadStatus');
 const guestNameInput = $('#guestName');
+const photoInput = $('#photoInput');
+const photoUploadButton = $('#photoUploadButton');
 
 // Simple app-style navigation
 function showView(name) {
@@ -27,12 +29,32 @@ document.querySelectorAll('[data-view-target]').forEach((button) => {
 });
 
 guestNameInput.value = localStorage.getItem('weddingGuestName') || '';
+
+function updateUploadAvailability() {
+  const hasName = guestNameInput.value.trim().length > 0;
+  photoInput.disabled = !hasName;
+  photoUploadButton.classList.toggle('is-disabled', !hasName);
+  photoUploadButton.setAttribute('aria-disabled', hasName ? 'false' : 'true');
+}
+
 guestNameInput.addEventListener('input', () => {
   localStorage.setItem('weddingGuestName', guestNameInput.value.trim());
+  updateUploadAvailability();
 });
 
+updateUploadAvailability();
+
 $('#refreshBtn').addEventListener('click', loadPhotos);
-$('#photoInput').addEventListener('change', async (e) => {
+photoInput.addEventListener('change', async (e) => {
+  const guestName = guestNameInput.value.trim();
+  if (!guestName) {
+    e.target.value = '';
+    updateUploadAvailability();
+    uploadStatus.textContent = 'Please enter your name before uploading a photo.';
+    guestNameInput.focus();
+    return;
+  }
+
   const files = [...e.target.files];
   if (!files.length) return;
   if (!configured) {
@@ -40,8 +62,7 @@ $('#photoInput').addEventListener('change', async (e) => {
     return;
   }
 
-  const guestName = guestNameInput.value.trim() || 'Guest';
-  localStorage.setItem('weddingGuestName', guestNameInput.value.trim());
+  localStorage.setItem('weddingGuestName', guestName);
   uploadStatus.textContent = `Uploading ${files.length} photo${files.length > 1 ? 's' : ''}…`;
 
   let done = 0;

@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles-v4.css?v=6.9" />
+  <link rel="stylesheet" href="styles-v4.css?v=7.1" />
 </head>
 <body>
   <header class="site-header">
@@ -35,14 +35,14 @@
       </section>
 
       <section class="upload-panel">
-        
-        
-        
-        <label class="primary-button" for="photoInput"><span aria-hidden="true">＋</span> Click to share a memory</label>
-        <input id="photoInput" type="file" accept="image/*" multiple hidden />
-        <label class="guest-name-field">
-          <input id="guestName" type="text" maxlength="40" placeholder="type your name here (optional)" aria-label="Your name (optional)" autocomplete="name" />
+        <label class="guest-name-field" for="guestName">
+          <span class="guest-name-field__label">Your name</span>
+          <input id="guestName" type="text" maxlength="40" required
+            placeholder="type your name here"
+            aria-label="Your name" autocomplete="name" />
         </label>
+        <label id="photoUploadButton" class="primary-button is-disabled" for="photoInput" aria-disabled="true"><span aria-hidden="true">＋</span> Click to share a memory</label>
+        <input id="photoInput" type="file" accept="image/*" multiple hidden disabled />
         <div id="uploadStatus" class="upload-status" aria-live="polite"></div>
       </section>
 
@@ -162,6 +162,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
   <script src="config.js?v=6.8"></script>
-  <script src="app-v4.js?v=6.9"></script>
+  <script src="app-v4.js?v=7.1"></script>
 </body>
 </html>

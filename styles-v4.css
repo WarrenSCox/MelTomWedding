@@ -169,3 +169,23 @@ h1,h2,h3{font-family:"Cormorant Garamond",Georgia,serif;font-weight:500;margin:0
   .gallery-actions{gap:6px}
   .gallery-actions .text-button{font-size:.9rem}
 }
+
+
+/* v7.1: name first + mandatory before upload */
+.guest-name-field{display:block;margin:0 0 24px}
+.guest-name-field__label{
+  display:block;
+  margin:0 0 8px;
+  color:var(--olive-dark);
+  font-family:"Montserrat",sans-serif;
+  font-size:.72rem;
+  font-weight:600;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+}
+.guest-name-field input::placeholder{color:#999b92!important;opacity:1;font-weight:400!important}
+.primary-button.is-disabled{
+  opacity:.48;
+  cursor:not-allowed;
+  pointer-events:none;
+}
