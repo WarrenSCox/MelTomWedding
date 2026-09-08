@@ -1370,3 +1370,94 @@ body{padding-bottom:70px!important}
   .bottom-nav .nav-item > .nav-info-icon{font-size:1.75rem!important}
   .lightbox__nav::before{font-size:2.95rem}
 }
+
+
+/* v7.31: exact-centred arrows, round Surprise icon, confetti over opened Surprise photo */
+
+/* Draw chevrons geometrically so they are truly centred, not font-baseline centred */
+.lightbox__nav::before{
+  content:""!important;
+  width:18px!important;
+  height:18px!important;
+  border-top:4px solid #fff!important;
+  border-right:4px solid #fff!important;
+  box-sizing:border-box!important;
+  position:absolute!important;
+  left:50%!important;
+  top:50%!important;
+  margin:0!important;
+}
+.lightbox__nav--previous::before{
+  transform:translate(-42%,-50%) rotate(-135deg)!important;
+}
+.lightbox__nav--next::before{
+  transform:translate(-58%,-50%) rotate(45deg)!important;
+}
+.lightbox__nav{
+  position:fixed!important;
+  display:block!important;
+  padding:0!important;
+  line-height:0!important;
+}
+
+/* Surprise nav icon must be a true circle with the same footprint as neighbouring icons */
+.bottom-nav .nav-item > .nav-surprise-icon{
+  width:27px!important;
+  height:27px!important;
+  min-width:27px!important;
+  min-height:27px!important;
+  max-width:27px!important;
+  max-height:27px!important;
+  flex:0 0 27px!important;
+  aspect-ratio:1 / 1!important;
+  box-sizing:border-box!important;
+  border:1.6px solid currentColor!important;
+  border-radius:50%!important;
+  display:grid!important;
+  place-items:center!important;
+  padding:0!important;
+  line-height:1!important;
+  font-size:.95rem!important;
+  transform:none!important;
+}
+
+/* Surprise confetti now sits above the full-screen photo */
+.lightbox-confetti{
+  position:fixed;
+  inset:0;
+  z-index:20;
+  pointer-events:none;
+  overflow:hidden;
+}
+.lightbox-confetti-piece{
+  position:absolute;
+  left:var(--x);
+  top:-18px;
+  width:8px;
+  height:14px;
+  border-radius:2px;
+  opacity:0;
+  background:#c2aa88;
+  transform:translate3d(0,-20px,0) rotate(0deg);
+}
+.lightbox-confetti-piece:nth-child(4n+1){background:#8f6767}
+.lightbox-confetti-piece:nth-child(4n+2){background:#7f8b76}
+.lightbox-confetti-piece:nth-child(4n+3){background:#c2aa88}
+.lightbox-confetti-piece:nth-child(4n){background:#9c91a5}
+.lightbox-confetti.is-playing .lightbox-confetti-piece{
+  animation:lightboxConfettiFall var(--duration) cubic-bezier(.2,.75,.3,1) var(--delay) 1 both;
+}
+@keyframes lightboxConfettiFall{
+  0%{
+    opacity:0;
+    transform:translate3d(0,-20px,0) rotate(0deg);
+  }
+  10%{opacity:.95}
+  100%{
+    opacity:0;
+    transform:translate3d(var(--drift),100vh,0) rotate(var(--spin));
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  .lightbox-confetti{display:none!important}
+}

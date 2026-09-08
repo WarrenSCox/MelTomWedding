@@ -54,12 +54,7 @@ function showView(name) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 
   if (name === 'favourites') void loadFavourites();
-  if (name === 'surprise') {
-    playSurpriseConfetti();
-    setTimeout(() => {
-      if (!$('#view-surprise').hidden) void openRandomPhoto();
-    }, 950);
-  }
+  if (name === 'surprise') void openRandomPhoto(true);
 }
 
 document.querySelectorAll('[data-view-target]').forEach((button) => {
@@ -883,7 +878,39 @@ function playSurpriseConfetti() {
   }, 3300);
 }
 
-async function openRandomPhoto() {
+
+let lightboxConfettiTimer = null;
+
+function playLightboxConfetti() {
+  const layer = $('#lightboxConfetti');
+  if (!layer) return;
+
+  clearTimeout(lightboxConfettiTimer);
+  layer.innerHTML = '';
+
+  const pieces = 42;
+  for (let i = 0; i < pieces; i++) {
+    const piece = document.createElement('span');
+    piece.className = 'lightbox-confetti-piece';
+    piece.style.setProperty('--x', `${Math.random() * 100}%`);
+    piece.style.setProperty('--drift', `${(Math.random() * 110 - 55).toFixed(1)}px`);
+    piece.style.setProperty('--delay', `${(Math.random() * 0.35).toFixed(2)}s`);
+    piece.style.setProperty('--duration', `${(1.5 + Math.random() * 1.0).toFixed(2)}s`);
+    piece.style.setProperty('--spin', `${Math.floor(Math.random() * 540 + 180)}deg`);
+    layer.appendChild(piece);
+  }
+
+  layer.classList.remove('is-playing');
+  void layer.offsetWidth;
+  layer.classList.add('is-playing');
+
+  lightboxConfettiTimer = setTimeout(() => {
+    layer.classList.remove('is-playing');
+    layer.innerHTML = '';
+  }, 3000);
+}
+
+async function openRandomPhoto(withConfetti = false) {
   const status = $('#surpriseStatus');
   if (!configured) {
     status.textContent = 'The wedding album is not connected yet.';
@@ -906,13 +933,16 @@ async function openRandomPhoto() {
     const photo = pool[Math.floor(Math.random() * pool.length)];
     status.textContent = '';
     openLightbox(photo);
+    if (withConfetti) {
+      setTimeout(playLightboxConfetti, 120);
+    }
   } catch (error) {
     console.error(error);
     status.textContent = 'Could not pick a surprise just now.';
   }
 }
 
-$('#surpriseAgainBtn').addEventListener('click', () => void openRandomPhoto());
+$('#surpriseAgainBtn').addEventListener('click', () => void openRandomPhoto(true));
 
 $('#closeLightbox').addEventListener('click', () => $('#lightbox').close());
 $('#lightbox').addEventListener('click', (e) => {
