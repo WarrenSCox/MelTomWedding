@@ -602,3 +602,13 @@ h1,h2,h3{font-family:"Cormorant Garamond",Georgia,serif;font-weight:500;margin:0
   object-fit:contain!important;
   transform:none!important;
 }
+
+
+/* v7.19: visually balance Gallery and Info icons */
+.bottom-nav .nav-item > .nav-gallery-icon img{
+  width:27px!important;
+  height:27px!important;
+}
+.bottom-nav .nav-item > .nav-info-icon{
+  font-size:1.28rem!important;
+}
