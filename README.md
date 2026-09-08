@@ -38,3 +38,10 @@ The original wedding invitation artwork is now included directly as `wedding-art
 - Removed redundant upload heading and description.
 - Changed upload button to “+ Click to share a memory”.
 - Preserved the hero subtitle and existing gallery functionality.
+
+
+## v6.4 hotfix
+- Brought MEL closer to the handwritten “and” while keeping the full name lockup centred.
+- Lowered “Share the moments” and the upload subtitle further into the ivory fade.
+- Removed the visible “Your name (optional)” label and changed the placeholder to “type your name here (optional)”.
+- Replaced the PWA/app icons with an ivory M&T monogram and subtle green botanical detail.
