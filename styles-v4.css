@@ -2104,3 +2104,37 @@ body{padding-bottom:70px!important}
 /* v7.47: Info outline matches the approved Surprise circle */
 .bottom-nav .nav-item > .nav-info-icon{font-size:0!important;line-height:0!important;transform:none!important}
 .bottom-nav .nav-item .nav-info-svg{display:block!important;width:27px!important;height:27px!important;overflow:visible!important}
+
+
+/* v7.48: prominent Save App nav icon only */
+.bottom-nav .nav-item > .nav-save-icon{
+  width:27px!important;
+  height:27px!important;
+  min-width:27px!important;
+  min-height:27px!important;
+  max-width:27px!important;
+  max-height:27px!important;
+  flex:0 0 27px!important;
+  display:grid!important;
+  place-items:center!important;
+  padding:0!important;
+  font-size:0!important;
+  line-height:0!important;
+}
+.bottom-nav .nav-item .nav-save-svg{
+  display:block!important;
+  width:27px!important;
+  height:27px!important;
+  overflow:visible!important;
+}
+@media(max-width:420px){
+  .bottom-nav .nav-item > .nav-save-icon,
+  .bottom-nav .nav-item .nav-save-svg{
+    width:24px!important;
+    height:24px!important;
+    min-width:24px!important;
+    min-height:24px!important;
+    max-width:24px!important;
+    max-height:24px!important;
+  }
+}

@@ -130,6 +130,106 @@ applyInstalledAppNavigation();
 window.matchMedia('(display-mode: standalone)').addEventListener?.('change', applyInstalledAppNavigation);
 
 
+// v7.48: edge-swipe page navigation.
+// Swipe inward from the left/right edge to change page.
+// Surprise is intentionally excluded because it opens a transient Polaroid, not a page.
+(() => {
+  const EDGE_ZONE = 34;
+  const MIN_SWIPE = 54;
+  const MAX_VERTICAL_DRIFT = 70;
+  let gesture = null;
+
+  function swipeViews() {
+    return ['gallery', 'favourites', 'info', 'save'].filter(name => {
+      const view = document.querySelector(`[data-view="${name}"]`);
+      const nav = document.querySelector(`.bottom-nav [data-view-target="${name}"]`);
+      return view && nav && !nav.hidden && getComputedStyle(nav).display !== 'none';
+    });
+  }
+
+  function activeSwipeView() {
+    return swipeViews().find(name => {
+      const view = document.querySelector(`[data-view="${name}"]`);
+      return view && !view.hidden;
+    }) || 'gallery';
+  }
+
+  function pageHasOpenOverlay() {
+    return Boolean(
+      document.querySelector('dialog[open]') ||
+      document.querySelector('.surprise-polaroid[open]')
+    );
+  }
+
+  document.addEventListener('touchstart', event => {
+    if (event.touches.length !== 1 || pageHasOpenOverlay()) {
+      gesture = null;
+      return;
+    }
+
+    const touch = event.touches[0];
+    const width = window.innerWidth;
+    const fromLeft = touch.clientX <= EDGE_ZONE;
+    const fromRight = touch.clientX >= width - EDGE_ZONE;
+
+    if (!fromLeft && !fromRight) {
+      gesture = null;
+      return;
+    }
+
+    gesture = {
+      side: fromLeft ? 'left' : 'right',
+      startX: touch.clientX,
+      startY: touch.clientY,
+      lastX: touch.clientX,
+      lastY: touch.clientY
+    };
+  }, { passive: true });
+
+  document.addEventListener('touchmove', event => {
+    if (!gesture || event.touches.length !== 1) return;
+    const touch = event.touches[0];
+    gesture.lastX = touch.clientX;
+    gesture.lastY = touch.clientY;
+  }, { passive: true });
+
+  document.addEventListener('touchend', () => {
+    if (!gesture || pageHasOpenOverlay()) {
+      gesture = null;
+      return;
+    }
+
+    const { side, startX, startY, lastX, lastY } = gesture;
+    gesture = null;
+
+    const dx = lastX - startX;
+    const dy = lastY - startY;
+    if (Math.abs(dy) > MAX_VERTICAL_DRIFT) return;
+
+    const isValid =
+      (side === 'left' && dx >= MIN_SWIPE) ||
+      (side === 'right' && dx <= -MIN_SWIPE);
+    if (!isValid) return;
+
+    const views = swipeViews();
+    const current = activeSwipeView();
+    const index = views.indexOf(current);
+    if (index < 0) return;
+
+    // Left-edge inward swipe = previous page.
+    // Right-edge inward swipe = next page.
+    const targetIndex = side === 'left' ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= views.length) return;
+
+    showView(views[targetIndex]);
+  }, { passive: true });
+
+  document.addEventListener('touchcancel', () => {
+    gesture = null;
+  }, { passive: true });
+})();
+
+
 guestNameInput.value = localStorage.getItem('weddingGuestName') || '';
 
 function updateUploadAvailability() {
