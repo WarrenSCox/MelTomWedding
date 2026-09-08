@@ -249,9 +249,11 @@ function renderPhotos(photos) {
   const downloadAllBtn = $('#downloadAllBtn');
   if (downloadAllBtn) downloadAllBtn.disabled = photos.length === 0;
   emptyState.hidden = photos.length > 0;
-  $('#photoCount').textContent = photos.length
-    ? `${photos.length} shared photo${photos.length === 1 ? '' : 's'} so far.`
-    : 'No photos yet — be the first to add one.';
+  $('#photoCount').textContent = String(photos.length);
+  $('#photoCount').setAttribute(
+    'aria-label',
+    `${photos.length} photo${photos.length === 1 ? '' : 's'} shared`
+  );
 
   for (const photo of photos) {
     const card = document.createElement('article');

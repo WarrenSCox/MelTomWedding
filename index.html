@@ -81,13 +81,11 @@
       </section>
 
       <section class="gallery-heading">
-        <div class="gallery-heading__copy">
-          <h2>Everyone's photos</h2>
-          <p id="photoCount">No photos yet — be the first to add one.</p>
-          <div class="gallery-actions">
-            <button id="refreshBtn" class="text-button" type="button">Refresh ↻</button>
-            <button id="downloadAllBtn" class="text-button" type="button">Download all ↓</button>
-          </div>
+        <h2>Everyone's photos</h2>
+        <div class="gallery-actions">
+          <button id="refreshBtn" class="text-button" type="button">Refresh ↻</button>
+          <button id="downloadAllBtn" class="text-button" type="button">Download ↓</button>
+          <span id="photoCount" class="gallery-count" aria-label="Photos shared">0</span>
         </div>
       </section>
 
@@ -193,6 +191,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
   <script src="config.js?v=6.8"></script>
-  <script src="app-v4.js?v=7.9"></script>
+  <script src="app-v4.js?v=7.10"></script>
 </body>
 </html>
