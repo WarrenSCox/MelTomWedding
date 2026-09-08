@@ -51,3 +51,10 @@ The original wedding invitation artwork is now included directly as `wedding-art
 - Removed duplicate couple names and date from Wedding Information.
 - Replaced timeline symbols with relevant line icons.
 - Added Google search links for all four accommodation options.
+
+
+## v6.6 hotfix
+- Refined the arrival icon into a more recognisable tipi.
+- Ceremony icon now has one diamond ring and one plain band.
+- Removed the duplicate venue heading from the ceremony section.
+- Lightened the optional-name placeholder.

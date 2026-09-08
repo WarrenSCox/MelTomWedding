@@ -136,3 +136,6 @@ h1,h2,h3{font-family:"Cormorant Garamond",Georgia,serif;font-weight:500;margin:0
 .hotel-link{color:var(--olive-dark);text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px}
 .hotel-link:hover,.hotel-link:focus-visible{text-decoration-color:currentColor}
 .info-cover__copy>p:last-child{margin-top:0}
+
+/* v6.6: softer optional-name placeholder */
+.guest-name-field input::placeholder{color:#999b92!important;opacity:1;font-weight:400!important}
