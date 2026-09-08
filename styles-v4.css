@@ -2008,3 +2008,58 @@ body{padding-bottom:70px!important}
 
 /* v7.42: thinner heart outline; preserve size and selected fill. */
 .favourite-heart-svg path{stroke-width:1.5!important;}
+
+
+/* v7.43: one-line favourites heading + launch-title order */
+
+/* Keep the favourites strapline on one line, scaling gently on smaller phones */
+.favourites-heading .eyebrow{
+  white-space:nowrap!important;
+  font-size:.66rem!important;
+  letter-spacing:.24em!important;
+}
+@media(max-width:600px){
+  .favourites-heading .eyebrow{
+    font-size:.56rem!important;
+    letter-spacing:.18em!important;
+  }
+}
+@media(max-width:380px){
+  .favourites-heading .eyebrow{
+    font-size:.50rem!important;
+    letter-spacing:.13em!important;
+  }
+}
+
+/* Launch animation: Mel & Tom's appears first, then Wedding */
+.wedding-splash__title{
+  opacity:1!important;
+  transform:none!important;
+  animation:none!important;
+}
+.wedding-splash__title span,
+.wedding-splash__title em{
+  opacity:0;
+}
+.wedding-splash__title span{
+  transform:translateY(8px);
+  animation:splashMelTomIn .42s 1.08s ease forwards!important;
+}
+.wedding-splash__title em{
+  transform:translateY(8px);
+  animation:splashWeddingIn .52s 1.42s ease forwards!important;
+}
+@keyframes splashMelTomIn{
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes splashWeddingIn{
+  to{opacity:1;transform:translateY(0)}
+}
+@media(prefers-reduced-motion:reduce){
+  .wedding-splash__title span,
+  .wedding-splash__title em{
+    opacity:1!important;
+    transform:none!important;
+    animation:none!important;
+  }
+}
