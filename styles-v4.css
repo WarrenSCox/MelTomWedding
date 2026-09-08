@@ -1195,62 +1195,6 @@ body{padding-bottom:70px!important}
   color:#fff!important;
 }
 
-/* One-shot confetti / party-popper effect when entering Surprise */
-.surprise-view{
-  position:relative;
-  overflow:hidden;
-}
-.surprise-confetti{
-  position:absolute;
-  inset:0;
-  z-index:4;
-  pointer-events:none;
-  overflow:hidden;
-}
-.surprise-confetti .confetti-piece{
-  position:absolute;
-  top:-18px;
-  left:var(--x);
-  width:8px;
-  height:14px;
-  border-radius:2px;
-  opacity:0;
-  background:#9a8f75;
-  transform:translate3d(0,-20px,0) rotate(0deg);
-}
-.surprise-confetti .confetti-piece:nth-child(4n+1){background:#8f6767}
-.surprise-confetti .confetti-piece:nth-child(4n+2){background:#7f8b76}
-.surprise-confetti .confetti-piece:nth-child(4n+3){background:#c2aa88}
-.surprise-confetti .confetti-piece:nth-child(4n){background:#9c91a5}
-.surprise-confetti .confetti-piece--round{
-  width:9px;
-  height:9px;
-  border-radius:50%;
-}
-.surprise-confetti .confetti-piece--streamer{
-  width:4px;
-  height:20px;
-  border-radius:3px;
-}
-.surprise-confetti.is-playing .confetti-piece{
-  animation:surpriseConfettiFall var(--duration) cubic-bezier(.2,.75,.3,1) var(--delay) 1 both;
-}
-@keyframes surpriseConfettiFall{
-  0%{
-    opacity:0;
-    transform:translate3d(0,-20px,0) rotate(0deg);
-  }
-  10%{opacity:.95}
-  100%{
-    opacity:0;
-    transform:translate3d(var(--drift),calc(100vh - 130px),0) rotate(var(--spin));
-  }
-}
-@media(prefers-reduced-motion:reduce){
-  .surprise-confetti{display:none!important}
-}
-
-
 /* v7.30: enforce the intended v7.29 polish */
 
 /* Really tighten the gap below the upload CTA */
@@ -1334,44 +1278,6 @@ body{padding-bottom:70px!important}
   text-shadow:0 0 1px rgba(255,255,255,.18);
 }
 
-/* Confetti sits above the Surprise page and gets a clear one-shot burst */
-.surprise-confetti{
-  position:fixed!important;
-  inset:0!important;
-  z-index:999!important;
-}
-.surprise-confetti.is-playing::before,
-.surprise-confetti.is-playing::after{
-  content:"";
-  position:absolute;
-  bottom:12%;
-  width:22px;
-  height:38px;
-  border:2px solid rgba(102,115,93,.55);
-  border-radius:4px 4px 10px 10px;
-  background:rgba(194,170,136,.42);
-  animation:partyPopperKick .7s ease-out 1 both;
-}
-.surprise-confetti.is-playing::before{
-  left:8%;
-  transform:rotate(-24deg);
-}
-.surprise-confetti.is-playing::after{
-  right:8%;
-  transform:rotate(24deg);
-}
-@keyframes partyPopperKick{
-  0%{opacity:0;scale:.8}
-  30%{opacity:1;scale:1.08}
-  100%{opacity:.75;scale:1}
-}
-@media(max-width:600px){
-  .upload-panel{padding-bottom:6px!important}
-  .bottom-nav .nav-item > .nav-info-icon{font-size:1.75rem!important}
-  .lightbox__nav::before{font-size:2.95rem}
-}
-
-
 /* v7.31: exact-centred arrows, round Surprise icon, confetti over opened Surprise photo */
 
 /* Draw chevrons geometrically so they are truly centred, not font-baseline centred */
@@ -1421,43 +1327,141 @@ body{padding-bottom:70px!important}
   transform:none!important;
 }
 
-/* Surprise confetti now sits above the full-screen photo */
-.lightbox-confetti{
-  position:fixed;
-  inset:0;
-  z-index:20;
-  pointer-events:none;
+/* v7.32 — Surprise is a transient Polaroid reveal, never a navigation destination. */
+.surprise-polaroid{
+  position:fixed!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  max-width:none!important;
+  max-height:none!important;
+  margin:0!important;
+  padding:24px 16px!important;
+  border:0!important;
+  background:rgba(26,28,25,.72)!important;
+  color:#1e201d!important;
+  overflow:hidden!important;
+  box-sizing:border-box!important;
+}
+.surprise-polaroid:not([open]){display:none!important}
+.surprise-polaroid[open]{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+}
+.surprise-polaroid::backdrop{background:transparent}
+.surprise-polaroid__card{
+  position:relative;
+  z-index:2;
+  width:min(100%,390px);
+  max-height:calc(100% - 24px);
+  padding:12px 12px 0;
+  box-sizing:border-box;
+  background:#fbfaf6;
+  box-shadow:0 18px 55px rgba(0,0,0,.3);
+  display:flex;
+  flex-direction:column;
+  opacity:0;
+  transform:translateY(-100px) rotate(-12deg) scale(.65);
+  overflow:auto;
+}
+.surprise-polaroid.is-revealed .surprise-polaroid__card{
+  animation:surprisePolaroidPop .85s cubic-bezier(.2,.8,.2,1.15) both;
+}
+@keyframes surprisePolaroidPop{
+  0%{opacity:0;transform:translateY(-100px) rotate(-12deg) scale(.65)}
+  65%{opacity:1;transform:translateY(12px) rotate(4deg) scale(1.035)}
+  85%{transform:translateY(-4px) rotate(-2deg) scale(.99)}
+  100%{opacity:1;transform:translateY(0) rotate(-1.5deg) scale(1)}
+}
+.surprise-polaroid__photo{
+  width:100%;
+  min-height:0;
+  flex:1 1 auto;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#e8e5dd;
   overflow:hidden;
 }
-.lightbox-confetti-piece{
-  position:absolute;
-  left:var(--x);
-  top:-18px;
-  width:8px;
-  height:14px;
-  border-radius:2px;
-  opacity:0;
-  background:#c2aa88;
-  transform:translate3d(0,-20px,0) rotate(0deg);
+.surprise-polaroid__photo img{
+  display:block;
+  width:100%;
+  height:auto;
+  max-height:calc(100vh - 250px);
+  object-fit:contain;
 }
-.lightbox-confetti-piece:nth-child(4n+1){background:#8f6767}
-.lightbox-confetti-piece:nth-child(4n+2){background:#7f8b76}
-.lightbox-confetti-piece:nth-child(4n+3){background:#c2aa88}
-.lightbox-confetti-piece:nth-child(4n){background:#9c91a5}
-.lightbox-confetti.is-playing .lightbox-confetti-piece{
-  animation:lightboxConfettiFall var(--duration) cubic-bezier(.2,.75,.3,1) var(--delay) 1 both;
+.surprise-polaroid__caption{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  min-height:55px;
+  padding:6px 5px;
+  font-family:"Allura",cursive;
+  font-size:1.55rem;
+  color:#485441;
 }
-@keyframes lightboxConfettiFall{
-  0%{
-    opacity:0;
-    transform:translate3d(0,-20px,0) rotate(0deg);
-  }
-  10%{opacity:.95}
-  100%{
-    opacity:0;
-    transform:translate3d(var(--drift),100vh,0) rotate(var(--spin));
-  }
+.surprise-polaroid__caption button{
+  width:40px;height:40px;flex:0 0 40px;
+  border:0;background:transparent;color:#66735d;
+  font:400 2rem/1 Georgia,serif;
+  display:grid;place-items:center;
+}
+.surprise-polaroid__caption button.is-favourite{color:#a45f63}
+.surprise-polaroid__actions{
+  display:flex;gap:8px;align-items:center;justify-content:space-between;
+  border-top:1px solid #e0dcd2;padding:10px 2px 14px;
+}
+.surprise-polaroid__actions button{
+  border:0;background:transparent;color:#485441;
+  font:500 .65rem/1.3 "Montserrat",sans-serif;
+  letter-spacing:.02em;padding:8px 2px;
+}
+.surprise-polaroid__actions button:disabled{opacity:.45}
+.surprise-polaroid__close{
+  position:absolute;top:15px;right:15px;z-index:4;
+  width:34px;height:34px;border:0;border-radius:50%;
+  background:rgba(30,32,29,.6);color:#fff;
+  font:400 1.7rem/1 Arial,sans-serif;
+  display:grid;place-items:center;
+}
+.surprise-polaroid__status{
+  position:absolute;left:20px;right:20px;top:50%;
+  transform:translateY(-50%);text-align:center;color:#fff;
+  font:400 .85rem/1.5 "Montserrat",sans-serif;
+  margin:0;pointer-events:none;
+}
+.surprise-polaroid.is-revealed .surprise-polaroid__status:empty{display:none}
+.surprise-polaroid__confetti{
+  position:absolute;inset:0;z-index:3;pointer-events:none;overflow:hidden;
+}
+.surprise-polaroid__piece{
+  position:absolute;left:var(--start-x);top:var(--start-y);
+  width:8px;height:13px;border-radius:2px;
+  opacity:0;background:#c2aa88;
+}
+.surprise-polaroid__piece:nth-child(4n+1){background:#8f6767}
+.surprise-polaroid__piece:nth-child(4n+2){background:#7f8b76}
+.surprise-polaroid__piece:nth-child(4n+3){background:#9c91a5}
+.surprise-polaroid__piece:nth-child(5n){width:5px;height:19px;border-radius:4px}
+.surprise-polaroid__confetti.is-playing .surprise-polaroid__piece{
+  animation:surprisePolaroidBurst var(--duration) ease-out var(--delay) 1 both;
+}
+@keyframes surprisePolaroidBurst{
+  0%{opacity:0;transform:translate(0,0) rotate(0)}
+  10%{opacity:1}
+  55%{opacity:1;transform:translate(var(--dx),var(--dy)) rotate(var(--turn))}
+  100%{opacity:0;transform:translate(var(--dx),var(--fall)) rotate(var(--turn))}
+}
+@media(max-width:600px){
+  .surprise-polaroid__card{width:min(100%,350px)}
+  .surprise-polaroid__photo img{max-height:calc(100vh - 225px)}
 }
 @media(prefers-reduced-motion:reduce){
-  .lightbox-confetti{display:none!important}
+  .surprise-polaroid.is-revealed .surprise-polaroid__card{
+    animation:none!important;opacity:1!important;transform:none!important;
+  }
+  .surprise-polaroid__confetti{display:none!important}
 }

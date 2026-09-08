@@ -43,6 +43,11 @@ const photoUploadButton = $('#photoUploadButton');
 
 // Simple app-style navigation
 function showView(name) {
+  if (name === 'surprise') {
+    void openRandomPhoto();
+    return;
+  }
+  closeSurprisePolaroid();
   document.querySelectorAll('[data-view]').forEach((view) => {
     const active = view.dataset.view === name;
     view.hidden = !active;
@@ -54,7 +59,6 @@ function showView(name) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 
   if (name === 'favourites') void loadFavourites();
-  if (name === 'surprise') void openRandomPhoto(true);
 }
 
 document.querySelectorAll('[data-view-target]').forEach((button) => {
@@ -272,6 +276,7 @@ function syncFavouriteButtons() {
     button.setAttribute('aria-label', active ? 'Remove from favourites' : 'Add to favourites');
   });
 
+  if (typeof syncSurprisePolaroidFavourite === 'function') syncSurprisePolaroidFavourite();
   const lightboxFavouriteBtn = $('#lightboxFavouriteBtn');
   if (lightboxFavouriteBtn && activeLightboxPhoto) {
     const active = isFavourite(activeLightboxPhoto);
@@ -845,104 +850,145 @@ document.addEventListener('keydown', event => {
 });
 
 
-let surpriseConfettiTimer = null;
 
-function playSurpriseConfetti() {
-  const layer = $('#surpriseConfetti');
-  if (!layer) return;
+let surprisePolaroidPhoto = null;
+let surprisePolaroidBusy = false;
+let surprisePolaroidSequence = 0;
+let surprisePolaroidTimer = null;
+let surprisePolaroidLastId = null;
 
-  clearTimeout(surpriseConfettiTimer);
-  layer.innerHTML = '';
+function closeSurprisePolaroid() {
+  surprisePolaroidSequence++;
+  clearTimeout(surprisePolaroidTimer);
+  const dialog = $('#surprisePolaroid');
+  if (dialog.open) dialog.close();
+  dialog.classList.remove('is-revealed');
+  const layer = dialog.querySelector('.surprise-polaroid__confetti');
+  layer.replaceChildren();
+  surprisePolaroidBusy = false;
+}
 
-  const pieces = 34;
-  const shapes = ['confetti-piece', 'confetti-piece confetti-piece--round', 'confetti-piece confetti-piece--streamer'];
+function syncSurprisePolaroidFavourite() {
+  const button = $('#surprisePolaroidFavourite');
+  if (!surprisePolaroidPhoto) return;
+  const active = isFavourite(surprisePolaroidPhoto);
+  button.classList.toggle('is-favourite', active);
+  button.textContent = active ? '♥' : '♡';
+  button.setAttribute('aria-pressed', String(active));
+  button.setAttribute('aria-label', active ? 'Remove from favourites' : 'Add to favourites');
+}
 
-  for (let i = 0; i < pieces; i++) {
+function playSurprisePolaroidConfetti() {
+  const layer = $('#surprisePolaroid').querySelector('.surprise-polaroid__confetti');
+  layer.replaceChildren();
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const fragment = document.createDocumentFragment();
+  for (let i = 0; i < 48; i++) {
     const piece = document.createElement('span');
-    piece.className = shapes[i % shapes.length];
-    piece.style.setProperty('--x', `${Math.random() * 100}%`);
-    piece.style.setProperty('--drift', `${(Math.random() * 90 - 45).toFixed(1)}px`);
-    piece.style.setProperty('--delay', `${(Math.random() * 0.45).toFixed(2)}s`);
-    piece.style.setProperty('--duration', `${(1.6 + Math.random() * 1.1).toFixed(2)}s`);
-    piece.style.setProperty('--spin', `${Math.floor(Math.random() * 420 + 180)}deg`);
-    layer.appendChild(piece);
+    piece.className = 'surprise-polaroid__piece';
+    const side = i % 2 === 0 ? 0 : 100;
+    piece.style.setProperty('--start-x', `${side}%`);
+    piece.style.setProperty('--start-y', `${68 + Math.random() * 20}%`);
+    piece.style.setProperty('--dx', `${(side === 0 ? 1 : -1) * (35 + Math.random() * 260)}px`);
+    piece.style.setProperty('--dy', `${-110 - Math.random() * 300}px`);
+    piece.style.setProperty('--fall', `${80 + Math.random() * 180}px`);
+    piece.style.setProperty('--turn', `${Math.random() * 900 - 450}deg`);
+    piece.style.setProperty('--delay', `${Math.random() * .18}s`);
+    piece.style.setProperty('--duration', `${1.8 + Math.random() * 1.1}s`);
+    fragment.appendChild(piece);
   }
-
+  layer.appendChild(fragment);
   layer.classList.remove('is-playing');
   void layer.offsetWidth;
   layer.classList.add('is-playing');
-
-  surpriseConfettiTimer = setTimeout(() => {
+  surprisePolaroidTimer = setTimeout(() => {
     layer.classList.remove('is-playing');
-    layer.innerHTML = '';
+    layer.replaceChildren();
   }, 3300);
 }
 
-
-let lightboxConfettiTimer = null;
-
-function playLightboxConfetti() {
-  const layer = $('#lightboxConfetti');
-  if (!layer) return;
-
-  clearTimeout(lightboxConfettiTimer);
-  layer.innerHTML = '';
-
-  const pieces = 42;
-  for (let i = 0; i < pieces; i++) {
-    const piece = document.createElement('span');
-    piece.className = 'lightbox-confetti-piece';
-    piece.style.setProperty('--x', `${Math.random() * 100}%`);
-    piece.style.setProperty('--drift', `${(Math.random() * 110 - 55).toFixed(1)}px`);
-    piece.style.setProperty('--delay', `${(Math.random() * 0.35).toFixed(2)}s`);
-    piece.style.setProperty('--duration', `${(1.5 + Math.random() * 1.0).toFixed(2)}s`);
-    piece.style.setProperty('--spin', `${Math.floor(Math.random() * 540 + 180)}deg`);
-    layer.appendChild(piece);
-  }
-
-  layer.classList.remove('is-playing');
-  void layer.offsetWidth;
-  layer.classList.add('is-playing');
-
-  lightboxConfettiTimer = setTimeout(() => {
-    layer.classList.remove('is-playing');
-    layer.innerHTML = '';
-  }, 3000);
-}
-
-async function openRandomPhoto(withConfetti = false) {
-  const status = $('#surpriseStatus');
+async function openRandomPhoto() {
+  if (surprisePolaroidBusy) return;
+  const dialog = $('#surprisePolaroid');
+  const status = $('#surprisePolaroidStatus');
   if (!configured) {
     status.textContent = 'The wedding album is not connected yet.';
+    if (!dialog.open) dialog.showModal();
     return;
   }
-
-  status.textContent = 'Finding a memory…';
+  surprisePolaroidBusy = true;
+  const sequence = ++surprisePolaroidSequence;
+  clearTimeout(surprisePolaroidTimer);
+  dialog.querySelector('.surprise-polaroid__confetti').replaceChildren();
+  dialog.classList.remove('is-revealed');
+  status.textContent = 'Finding a little memory…';
+  if (!dialog.open) dialog.showModal();
   try {
-    const photos = await getAlbumPhotos();
+    const photos = await getAlbumPhotos(true);
+    if (sequence !== surprisePolaroidSequence || !dialog.open) return;
     if (!photos.length) {
       status.textContent = 'No photos have been shared yet.';
       return;
     }
-
-    let pool = photos;
-    if (activeLightboxPhoto && photos.length > 1) {
-      pool = photos.filter(photo => String(photo.id) !== String(activeLightboxPhoto.id));
-    }
-
+    const pool = photos.length > 1
+      ? photos.filter(photo => String(photo.id) !== surprisePolaroidLastId)
+      : photos;
     const photo = pool[Math.floor(Math.random() * pool.length)];
+    const image = $('#surprisePolaroidImage');
+    image.src = photo.image_url;
+    image.alt = `Wedding memory uploaded by ${photo.guest_name || 'a guest'}`;
+    await new Promise(resolve => {
+      if (image.complete && image.naturalWidth) return resolve();
+      const done = () => resolve();
+      image.addEventListener('load', done, {once:true});
+      image.addEventListener('error', done, {once:true});
+    });
+    if (sequence !== surprisePolaroidSequence || !dialog.open) return;
+    surprisePolaroidPhoto = photo;
+    surprisePolaroidLastId = String(photo.id);
+    syncSurprisePolaroidFavourite();
     status.textContent = '';
-    openLightbox(photo);
-    if (withConfetti) {
-      setTimeout(playLightboxConfetti, 120);
-    }
+    dialog.classList.add('is-revealed');
+    playSurprisePolaroidConfetti();
   } catch (error) {
-    console.error(error);
-    status.textContent = 'Could not pick a surprise just now.';
+    console.error('Surprise photo failed:', error);
+    if (sequence === surprisePolaroidSequence) status.textContent = 'Could not pick a surprise just now. Please try again.';
+  } finally {
+    if (sequence === surprisePolaroidSequence) surprisePolaroidBusy = false;
   }
 }
 
-$('#surpriseAgainBtn').addEventListener('click', () => void openRandomPhoto(true));
+$('#closeSurprisePolaroid').addEventListener('click', closeSurprisePolaroid);
+$('#surprisePolaroid').addEventListener('cancel', event => {
+  event.preventDefault();
+  closeSurprisePolaroid();
+});
+$('#surprisePolaroid').addEventListener('click', event => {
+  if (event.target === $('#surprisePolaroid')) closeSurprisePolaroid();
+});
+$('#surprisePolaroidAgain').addEventListener('click', () => void openRandomPhoto());
+$('#surprisePolaroidFavourite').addEventListener('click', () => {
+  if (!surprisePolaroidPhoto) return;
+  toggleFavourite(surprisePolaroidPhoto);
+  syncSurprisePolaroidFavourite();
+});
+$('#surprisePolaroidDownload').addEventListener('click', async () => {
+  if (!surprisePolaroidPhoto) return;
+  const photo = surprisePolaroidPhoto;
+  const button = $('#surprisePolaroidDownload');
+  button.disabled = true;
+  button.textContent = 'Preparing…';
+  try {
+    const blob = await fetchPhotoBlob(photo.image_url);
+    triggerBlobDownload(blob, safeDownloadName(photo));
+  } catch (error) {
+    console.error(error);
+    $('#surprisePolaroidStatus').textContent = 'Could not download this photo. Please try again.';
+  } finally {
+    button.disabled = false;
+    button.textContent = 'Download ↓';
+  }
+});
 
 $('#closeLightbox').addEventListener('click', () => $('#lightbox').close());
 $('#lightbox').addEventListener('click', (e) => {

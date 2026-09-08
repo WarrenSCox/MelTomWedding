@@ -135,18 +135,6 @@
       <section id="favouritesGrid" class="gallery-grid favourites-grid" aria-live="polite"></section>
     </section>
 
-    <section id="view-surprise" class="view surprise-view" data-view="surprise" hidden>
-      <div id="surpriseConfetti" class="surprise-confetti" aria-hidden="true"></div>
-      <section class="surprise-panel">
-        <div class="surprise-mark" aria-hidden="true">?</div>
-        <p class="eyebrow">A RANDOM MEMORY</p>
-        <h1>Surprise me</h1>
-        <p>Tap below and we'll pick a photo from the whole wedding album.</p>
-        <button id="surpriseAgainBtn" class="primary-button surprise-button" type="button">Surprise me ♡</button>
-        <p id="surpriseStatus" class="upload-status" aria-live="polite"></p>
-      </section>
-    </section>
-
     <section id="view-info" class="view" data-view="info" hidden>
       <section class="info-cover">
         <div class="info-cover__copy">
@@ -226,8 +214,24 @@
     <button class="nav-item" type="button" data-view-target="save" style="flex:1 1 0!important;min-width:0!important;width:auto!important;height:100%!important;"><span>⇩</span><strong>Save App</strong></button>
   </nav>
 
+  <dialog id="surprisePolaroid" class="surprise-polaroid" aria-label="A surprise wedding memory">
+    <div class="surprise-polaroid__confetti" aria-hidden="true"></div>
+    <div class="surprise-polaroid__card">
+      <button id="closeSurprisePolaroid" class="surprise-polaroid__close" type="button" aria-label="Close surprise">×</button>
+      <div class="surprise-polaroid__photo"><img id="surprisePolaroidImage" alt="A surprise wedding memory" /></div>
+      <div class="surprise-polaroid__caption">
+        <span>A little wedding memory</span>
+        <button id="surprisePolaroidFavourite" type="button" aria-label="Add to favourites" aria-pressed="false">♡</button>
+      </div>
+      <div class="surprise-polaroid__actions">
+        <button id="surprisePolaroidAgain" type="button">Surprise me again ↻</button>
+        <button id="surprisePolaroidDownload" type="button">Download ↓</button>
+      </div>
+    </div>
+    <p id="surprisePolaroidStatus" class="surprise-polaroid__status" role="status" aria-live="polite"></p>
+  </dialog>
+
   <dialog id="lightbox" class="lightbox">
-    <div id="lightboxConfetti" class="lightbox-confetti" aria-hidden="true"></div>
     <button id="closeLightbox" class="lightbox__close" aria-label="Close">×</button>
     <button id="lightboxFavouriteBtn" class="lightbox__favourite" type="button" aria-label="Add to favourites" aria-pressed="false">♡</button>
     <button id="previousPhotoBtn" class="lightbox__nav lightbox__nav--previous" type="button" aria-label="Previous photo">‹</button>
@@ -248,6 +252,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
   <script src="config.js?v=6.8"></script>
-  <script src="app-v4.js?v=7.31"></script>
+  <script src="app-v4.js?v=7.32"></script>
 </body>
 </html>
