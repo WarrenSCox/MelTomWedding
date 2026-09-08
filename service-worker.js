@@ -1,8 +1,8 @@
-const CACHE = 'mel-tom-wedding-v7.15';
+const CACHE = 'mel-tom-wedding-v7.16';
 const APP_SHELL = [
   './', './index.html', './styles-v4.css', './app-v4.js', './config.js',
   './manifest.webmanifest', './icon-192.png', './icon-512.png',
-  './wedding-artwork.jpg'
+  './wedding-artwork.jpg', './gallery-frame.png'
 ];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(APP_SHELL)));

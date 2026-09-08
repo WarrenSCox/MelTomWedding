@@ -571,3 +571,19 @@ h1,h2,h3{font-family:"Cormorant Garamond",Georgia,serif;font-weight:500;margin:0
 .load-more-button[hidden]{
   display:none!important;
 }
+
+/* v7.16: approved ornate gallery frame */
+.bottom-nav .nav-gallery-icon{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:30px;
+  height:30px;
+  line-height:1;
+}
+.bottom-nav .nav-gallery-icon img{
+  display:block;
+  width:30px;
+  height:30px;
+  object-fit:contain;
+}
