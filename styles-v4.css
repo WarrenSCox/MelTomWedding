@@ -519,3 +519,16 @@ h1,h2,h3{font-family:"Cormorant Garamond",Georgia,serif;font-weight:500;margin:0
     font-size:.64rem!important;
   }
 }
+
+
+/* v7.13: compact refresh + download count treatment */
+.gallery-actions .gallery-count{
+  display:inline!important;
+  min-width:0!important;
+  height:auto!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  font:inherit!important;
+  color:inherit!important;
+}
