@@ -503,9 +503,9 @@ function buildPhotoCard(photo, options = {}) {
   meta.className = 'photo-meta';
   const name = document.createElement('strong');
   name.textContent = `Uploaded by ${photo.guest_name}`;
-  meta.append(name);
+  meta.append(name, heart);
 
-  card.append(mark, heart, img, meta);
+  card.append(mark, img, meta);
 
   const toggle = options.toggleSelection || togglePhotoSelection;
   const selecting = options.isSelecting || (() => selectionMode);

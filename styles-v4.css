@@ -1943,3 +1943,65 @@ body{padding-bottom:70px!important}
 .lightbox[open] .lightbox__favourite{
   right:auto!important;
 }
+
+
+/* v7.40: cleaner favourites heading + heart in card caption row */
+
+/* Remove the old large favourites title; the eyebrow now carries the whole heading */
+.favourites-heading{
+  padding-top:38px!important;
+  padding-bottom:22px!important;
+}
+.favourites-heading .eyebrow{
+  margin:0 0 22px!important;
+}
+.favourites-heading .favourites-actions{
+  margin-top:0!important;
+}
+.favourites-heading h1{
+  display:none!important;
+}
+
+/* Gallery/favourites cards: heart now sits beside "Uploaded by", not over the image */
+.gallery-grid .photo-card .photo-meta{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:10px!important;
+  padding:8px 9px!important;
+}
+
+.gallery-grid .photo-card .photo-meta strong{
+  flex:1 1 auto!important;
+  min-width:0!important;
+  margin:0!important;
+}
+
+.gallery-grid .photo-card .photo-favourite-btn{
+  position:static!important;
+  inset:auto!important;
+  flex:0 0 30px!important;
+  width:30px!important;
+  height:30px!important;
+  margin:0!important;
+  padding:0!important;
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+
+.gallery-grid .photo-card .photo-favourite-btn .favourite-heart-svg{
+  width:25px!important;
+  height:23px!important;
+}
+
+/* On the ivory caption row the empty heart uses the wedding olive rather than white.
+   Selected remains the exact same shape filled vibrant red. */
+.gallery-grid .photo-card .photo-favourite-btn:not(.is-favourite) .favourite-heart-svg path{
+  fill:transparent!important;
+  stroke:var(--olive-dark)!important;
+}
+.gallery-grid .photo-card .photo-favourite-btn.is-favourite .favourite-heart-svg path{
+  fill:#ef3340!important;
+  stroke:#ef3340!important;
+}
