@@ -1,22 +1,20 @@
-# Our Wedding Photos
+# Wedding Photo App
 
-Included in this MVP:
-- Shared wedding-code entrance
-- Guest display names
-- Multiple image upload
-- Live communal gallery
-- Responsive masonry-style layout
-- Full-screen photo viewer
-- Supabase database + storage backend
-- Mobile-first wedding styling
+A simple mobile-first shared wedding gallery.
 
-Recommended next features:
-- QR-code invitation screen
-- Private authentication / magic wedding link
-- Couple-only admin moderation
-- Download original image
-- Likes / hearts
-- Guest comments
-- Albums such as Ceremony, Reception and Dancefloor
-- Slideshow mode for a TV/projector at the venue
-- PWA install icon so guests can add it to their home screen
+## Guest experience
+
+- Opens straight into the shared gallery — no login page.
+- Upload one or several photos from a phone.
+- Guest name is optional and remembered on that device.
+- Everyone with the link can view the shared gallery.
+- Full-screen photo viewer.
+- **Save to mobile** installs/adds the site to the phone Home Screen where supported.
+
+## Hosting
+
+GitHub Pages works well for the front end. Supabase provides the shared database and photo storage. See `SETUP.md` for backend setup.
+
+## Privacy note
+
+This version prioritises frictionless access. There is no login or wedding-code gate, so anyone who has the public GitHub Pages link can access the gallery. Treat the URL as shareable and do not use it for photos you need to keep strictly private.
