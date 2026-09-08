@@ -74,3 +74,14 @@ h1,h2,h3{font-family:"Cormorant Garamond",Georgia,serif;font-weight:500;margin:0
 .brand__names em{margin:0;transform:translateY(2px)}
 .mini-brand{gap:12px}
 .mini-brand em{margin:0 4px}
+
+/* v6.3: balanced name spacing and compact upload section */
+.brand__names{gap:0!important}
+.brand__names em{display:inline-block;margin:0 12px!important;transform:translateY(2px);letter-spacing:0}
+.mini-brand{gap:0!important}
+.mini-brand em{display:inline-block;margin:0 10px!important}
+.upload-panel{padding-top:12px}
+.upload-panel>.primary-button{font-size:1.2rem}
+@media(max-width:600px){
+  .brand__names em{margin-left:9px!important;margin-right:9px!important}
+}

@@ -31,3 +31,10 @@ The original wedding invitation artwork is now included directly as `wedding-art
 ## v6.2 hotfix
 - Changed couple-name branding to Mel and Tom.
 - Increased spacing around the handwritten “and”.
+
+
+## v6.3 hotfix
+- Balanced spacing around “and”.
+- Removed redundant upload heading and description.
+- Changed upload button to “+ Click to share a memory”.
+- Preserved the hero subtitle and existing gallery functionality.
