@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#f4f1e8" />
+  <title>Mel & Tom's Wedding — Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:wght@500;600&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="admin.css?v=1.0" />
+</head>
+<body>
+  <main class="admin-shell">
+    <header class="admin-header">
+      <div class="admin-logo">
+        <span>Mel &amp; Tom’s</span>
+        <em>Wedding</em>
+      </div>
+      <p>Photo Admin</p>
+    </header>
+
+    <section id="loginPanel" class="panel">
+      <h1>Admin access</h1>
+      <p class="muted">Enter the admin password to manage the wedding gallery.</p>
+      <form id="loginForm">
+        <label for="password">Password</label>
+        <input id="password" type="password" autocomplete="current-password" required />
+        <button class="primary" type="submit">Open admin</button>
+      </form>
+      <p id="loginStatus" class="status" aria-live="polite"></p>
+    </section>
+
+    <section id="adminPanel" class="panel" hidden>
+      <div class="admin-toolbar">
+        <div>
+          <p class="eyebrow">THE SHARED ALBUM</p>
+          <h1>Manage photos</h1>
+          <p id="photoCount" class="muted"></p>
+        </div>
+        <div class="toolbar-actions">
+          <button id="refreshBtn" class="secondary" type="button">Refresh ↻</button>
+          <button id="logoutBtn" class="secondary" type="button">Log out</button>
+        </div>
+      </div>
+
+      <p id="adminStatus" class="status" aria-live="polite"></p>
+      <div id="adminGrid" class="admin-grid"></div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="admin.js?v=1.0"></script>
+</body>
+</html>
