@@ -612,3 +612,6 @@ h1,h2,h3{font-family:"Cormorant Garamond",Georgia,serif;font-weight:500;margin:0
 .bottom-nav .nav-item > .nav-info-icon{
   font-size:1.28rem!important;
 }
+
+/* v7.20: balance Info icon */
+.bottom-nav .nav-item > .nav-info-icon{font-size:1.46rem!important;}
