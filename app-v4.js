@@ -271,7 +271,7 @@ function syncFavouriteButtons() {
   document.querySelectorAll('[data-favourite-id]').forEach(button => {
     const active = favouriteIds.has(button.dataset.favouriteId);
     button.classList.toggle('is-favourite', active);
-    button.textContent = '♡';
+    button.textContent = '';
     button.setAttribute('aria-pressed', String(active));
     button.setAttribute('aria-label', active ? 'Remove from favourites' : 'Add to favourites');
   });
@@ -281,7 +281,7 @@ function syncFavouriteButtons() {
   if (lightboxFavouriteBtn && activeLightboxPhoto) {
     const active = isFavourite(activeLightboxPhoto);
     lightboxFavouriteBtn.classList.toggle('is-favourite', active);
-    lightboxFavouriteBtn.textContent = '♡';
+    lightboxFavouriteBtn.textContent = '';
     lightboxFavouriteBtn.setAttribute('aria-pressed', String(active));
     lightboxFavouriteBtn.setAttribute('aria-label', active ? 'Remove from favourites' : 'Add to favourites');
   }
@@ -561,31 +561,22 @@ async function getAlbumPhotos(force = false) {
 function positionLightboxTopControls() {
   const image = $('#lightboxImage');
   const heart = $('#lightboxFavouriteBtn');
-  const close = $('#closeLightbox');
   const dialog = $('#lightbox');
-  if (!image || !heart || !close || !dialog?.open) return;
+  if (!image || !heart || !dialog?.open) return;
 
   const rect = image.getBoundingClientRect();
   if (!rect.width || !rect.height) return;
 
-  const inset = 10;
-  const gap = 8;
-  const closeSize = close.getBoundingClientRect().width || 38;
-  const heartSize = heart.getBoundingClientRect().width || 43;
+  const inset = 12;
+  const heartSize = heart.getBoundingClientRect().width || 44;
 
   const top = Math.max(8, rect.top + inset);
-  const closeLeft = Math.min(window.innerWidth - closeSize - 8, rect.right - closeSize - inset);
-  const heartLeft = Math.max(8, closeLeft - heartSize - gap);
-
-  close.style.top = `${top}px`;
-  close.style.left = `${closeLeft}px`;
-  close.style.right = 'auto';
+  const left = Math.max(8, Math.min(window.innerWidth - heartSize - 8, rect.right - heartSize - inset));
 
   heart.style.top = `${top}px`;
-  heart.style.left = `${heartLeft}px`;
+  heart.style.left = `${left}px`;
   heart.style.right = 'auto';
 }
-
 function setLightboxPhoto(photo) {
   activeLightboxPhoto = photo;
   const image = $('#lightboxImage');
@@ -910,7 +901,7 @@ function syncSurprisePolaroidFavourite() {
   if (!surprisePolaroidPhoto) return;
   const active = isFavourite(surprisePolaroidPhoto);
   button.classList.toggle('is-favourite', active);
-  button.textContent = '♡';
+  button.textContent = '';
   button.setAttribute('aria-pressed', String(active));
   button.setAttribute('aria-label', active ? 'Remove from favourites' : 'Add to favourites');
 }

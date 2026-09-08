@@ -1755,3 +1755,104 @@ body{padding-bottom:70px!important}
   }
   .lightbox__nav{top:50.5%!important}
 }
+
+
+/* v7.37: heart without outer circle; solid red fill when favourited */
+
+/* Gallery-card favourite: remove circular button chrome entirely */
+.photo-favourite-btn{
+  width:42px!important;
+  height:42px!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  display:grid!important;
+  place-items:center!important;
+}
+
+/* Lightbox favourite: place directly over photo, top-right, no outer circle */
+.lightbox__favourite{
+  width:44px!important;
+  height:44px!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  display:grid!important;
+  place-items:center!important;
+}
+
+/* One consistent heart silhouette. Empty = white outline, selected = solid red */
+.photo-favourite-btn::before,
+.lightbox__favourite::before{
+  content:""!important;
+  width:31px!important;
+  height:28px!important;
+  display:block!important;
+  background:transparent!important;
+  transform:none!important;
+  box-sizing:border-box!important;
+  filter:none!important;
+  -webkit-mask:
+    radial-gradient(circle at 30% 35%,#000 0 31%,transparent 32%) top left/55% 72% no-repeat,
+    radial-gradient(circle at 70% 35%,#000 0 31%,transparent 32%) top right/55% 72% no-repeat,
+    linear-gradient(45deg,transparent 32%,#000 33% 67%,transparent 68%) bottom/72% 65% no-repeat,
+    linear-gradient(-45deg,transparent 32%,#000 33% 67%,transparent 68%) bottom/72% 65% no-repeat;
+  mask:
+    radial-gradient(circle at 30% 35%,#000 0 31%,transparent 32%) top left/55% 72% no-repeat,
+    radial-gradient(circle at 70% 35%,#000 0 31%,transparent 32%) top right/55% 72% no-repeat,
+    linear-gradient(45deg,transparent 32%,#000 33% 67%,transparent 68%) bottom/72% 65% no-repeat,
+    linear-gradient(-45deg,transparent 32%,#000 33% 67%,transparent 68%) bottom/72% 65% no-repeat;
+}
+
+/* Empty heart: white outline using drop-shadow on masked shape */
+.photo-favourite-btn:not(.is-favourite)::before,
+.lightbox__favourite:not(.is-favourite)::before{
+  background:transparent!important;
+  border:0!important;
+  outline:0!important;
+  box-shadow:none!important;
+  filter:
+    drop-shadow(2px 0 0 #fff)
+    drop-shadow(-2px 0 0 #fff)
+    drop-shadow(0 2px 0 #fff)
+    drop-shadow(0 -2px 0 #fff)!important;
+}
+
+/* Favourited = same silhouette, fully filled vibrant red */
+.photo-favourite-btn.is-favourite::before,
+.lightbox__favourite.is-favourite::before{
+  background:#ef3340!important;
+  filter:none!important;
+}
+
+/* Ensure selected state never restores old button circle/background */
+.photo-favourite-btn.is-favourite,
+.lightbox__favourite.is-favourite{
+  background:transparent!important;
+  border:0!important;
+}
+
+/* Lightbox heart sits over the photo's top-right corner.
+   X remains separate above/right in the branded header. */
+.lightbox__favourite{
+  z-index:45!important;
+}
+
+
+/* X belongs to the wedding banner, not the photo */
+.lightbox__close{
+  top:18px!important;
+  right:20px!important;
+  left:auto!important;
+  width:38px!important;
+  height:38px!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  color:var(--olive-dark)!important;
+}
