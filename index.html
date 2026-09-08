@@ -216,12 +216,13 @@
     </section>
   </main>
 
-  <nav class="bottom-nav" aria-label="Wedding app navigation">
-    <button class="nav-item is-active" type="button" data-view-target="gallery"><span class="nav-gallery-icon"><img src="gallery-frame.png?v=7.19" alt="" /></span><strong>Gallery</strong></button>
-    <button class="nav-item" type="button" data-view-target="favourites"><span class="nav-favourite-icon" aria-hidden="true">♡</span><strong>Favourites</strong></button>
-    <button class="nav-item" type="button" data-view-target="surprise"><span class="nav-surprise-icon" aria-hidden="true">?</span><strong>Surprise</strong></button>
-    <button class="nav-item" type="button" data-view-target="info"><span class="nav-info-icon">ⓘ</span><strong>Info</strong></button>
-    <button class="nav-item" type="button" data-view-target="save"><span>⇩</span><strong>Save App</strong></button>
+  <nav class="bottom-nav" aria-label="Wedding app navigation"
+    style="display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:stretch!important;justify-content:stretch!important;height:70px!important;overflow:hidden!important;">
+    <button class="nav-item is-active" type="button" data-view-target="gallery" style="flex:1 1 0!important;min-width:0!important;width:auto!important;height:100%!important;"><span class="nav-gallery-icon"><img src="gallery-frame.png?v=7.19" alt="" /></span><strong>Gallery</strong></button>
+    <button class="nav-item" type="button" data-view-target="favourites" style="flex:1 1 0!important;min-width:0!important;width:auto!important;height:100%!important;"><span class="nav-favourite-icon" aria-hidden="true">♡</span><strong>Favourites</strong></button>
+    <button class="nav-item" type="button" data-view-target="surprise" style="flex:1 1 0!important;min-width:0!important;width:auto!important;height:100%!important;"><span class="nav-surprise-icon" aria-hidden="true">?</span><strong>Surprise</strong></button>
+    <button class="nav-item" type="button" data-view-target="info" style="flex:1 1 0!important;min-width:0!important;width:auto!important;height:100%!important;"><span class="nav-info-icon">ⓘ</span><strong>Info</strong></button>
+    <button class="nav-item" type="button" data-view-target="save" style="flex:1 1 0!important;min-width:0!important;width:auto!important;height:100%!important;"><span>⇩</span><strong>Save App</strong></button>
   </nav>
 
   <dialog id="lightbox" class="lightbox">
@@ -245,6 +246,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
   <script src="config.js?v=6.8"></script>
-  <script src="app-v4.js?v=7.27"></script>
+  <script src="app-v4.js?v=7.28"></script>
 </body>
 </html>

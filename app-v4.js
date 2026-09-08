@@ -71,8 +71,6 @@ function applyInstalledAppNavigation() {
 
   document.documentElement.classList.toggle('installed-app', installed);
 
-  const nav = document.querySelector('.bottom-nav');
-  if (nav) nav.style.gridTemplateColumns = '';
 
   if (installed && !$('#view-save').hidden) {
     showView('gallery');
