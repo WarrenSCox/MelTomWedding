@@ -4,6 +4,24 @@ const supabaseClient = configured ? window.supabase.createClient(cfg.supabaseUrl
 const storageBucket = cfg.storageBucket || 'wedding-photos';
 const $ = (s) => document.querySelector(s);
 
+const weddingSplash = $('#weddingSplash');
+if (weddingSplash) {
+  const started = performance.now();
+  const closeSplash = () => {
+    const wait = Math.max(0, 2200 - (performance.now() - started));
+    setTimeout(() => {
+      weddingSplash.classList.add('is-leaving');
+      setTimeout(() => weddingSplash.remove(), 650);
+    }, wait);
+  };
+  if (document.readyState === 'complete') closeSplash();
+  else {
+    window.addEventListener('load', closeSplash, { once: true });
+    setTimeout(closeSplash, 3500);
+  }
+}
+
+
 const galleryGrid = $('#galleryGrid');
 const emptyState = $('#emptyState');
 const uploadStatus = $('#uploadStatus');
@@ -125,7 +143,7 @@ function renderPhotos(photos) {
     const date = new Date(photo.created_at).toLocaleString([], {
       day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
     });
-    card.innerHTML = `<img loading="lazy" src="${escapeHtml(photo.image_url)}" alt="Wedding photo shared by ${escapeHtml(photo.guest_name)}"><div class="photo-meta"><strong>${escapeHtml(photo.guest_name)}</strong><span>${date}</span></div>`;
+    card.innerHTML = `<img loading="lazy" src="${escapeHtml(photo.image_url)}" alt="Wedding photo shared by ${escapeHtml(photo.guest_name)}"><div class="photo-meta"><strong>Uploaded by ${escapeHtml(photo.guest_name)}</strong><span>${date}</span></div>`;
     card.addEventListener('click', () => openLightbox(photo, date));
     galleryGrid.appendChild(card);
   }
@@ -134,7 +152,7 @@ function renderPhotos(photos) {
 function openLightbox(photo, date) {
   activeLightboxPhoto = photo;
   $('#lightboxImage').src = photo.image_url;
-  $('#lightboxName').textContent = photo.guest_name;
+  $('#lightboxName').textContent = `Uploaded by ${photo.guest_name}`;
   $('#lightboxDate').textContent = date;
   $('#lightbox').showModal();
 }

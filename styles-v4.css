@@ -189,3 +189,127 @@ h1,h2,h3{font-family:"Cormorant Garamond",Georgia,serif;font-weight:500;margin:0
   cursor:not-allowed;
   pointer-events:none;
 }
+
+
+/* v7.2: wedding invitation pop-up-book loading screen */
+.wedding-splash{
+  position:fixed;
+  inset:0;
+  z-index:99999;
+  display:grid;
+  place-items:center;
+  overflow:hidden;
+  background:var(--paper);
+  perspective:1200px;
+  transition:opacity .55s ease,visibility .55s ease;
+}
+.wedding-splash.is-leaving{opacity:0;visibility:hidden;pointer-events:none}
+.wedding-splash__stage{
+  width:min(88vw,430px);
+  aspect-ratio:4/5;
+  display:grid;
+  place-items:center;
+  perspective:1200px;
+}
+.wedding-splash__book{
+  position:relative;
+  width:86%;
+  height:72%;
+  transform-style:preserve-3d;
+  animation:bookLift 2.1s cubic-bezier(.2,.76,.2,1) both;
+}
+.wedding-splash__cover,
+.wedding-splash__page{
+  position:absolute;
+  inset:0;
+  border:1px solid rgba(72,84,65,.18);
+  background:linear-gradient(180deg,#fbfaf6 0%,#f4f1e8 100%);
+  box-shadow:0 16px 38px rgba(30,32,29,.10);
+  backface-visibility:hidden;
+}
+.wedding-splash__cover{
+  z-index:5;
+  transform-origin:0 50%;
+  animation:coverOpen 1.15s .18s cubic-bezier(.2,.72,.16,1) forwards;
+}
+.wedding-splash__cover::before{
+  content:"Mel & Tom’s Wedding";
+  position:absolute;
+  inset:0;
+  display:grid;
+  place-items:center;
+  padding:24px;
+  text-align:center;
+  color:var(--ink);
+  font:600 2rem "Cormorant Garamond",serif;
+}
+.wedding-splash__page{z-index:2}
+.wedding-splash__popup{
+  position:absolute;
+  left:9%;
+  right:9%;
+  bottom:12%;
+  height:72%;
+  z-index:4;
+  overflow:hidden;
+  box-shadow:0 18px 30px rgba(30,32,29,.14);
+  transform-origin:50% 100%;
+  transform:rotateX(88deg) translateY(18px) scale(.92);
+  animation:popupRise 1.2s .62s cubic-bezier(.16,.84,.24,1) forwards;
+}
+.wedding-splash__popup::after{
+  content:"";
+  position:absolute;
+  inset:auto 0 0;
+  height:34%;
+  background:linear-gradient(to bottom,transparent,rgba(244,241,232,.94));
+}
+.wedding-splash__popup img{
+  width:100%;
+  height:100%;
+  display:block;
+  object-fit:cover;
+}
+.wedding-splash__title{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:4%;
+  z-index:6;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  color:var(--ink);
+  opacity:0;
+  transform:translateY(12px);
+  animation:titleIn .65s 1.25s ease forwards;
+}
+.wedding-splash__title span{
+  font:600 1.45rem "Cormorant Garamond",serif;
+  letter-spacing:.04em;
+}
+.wedding-splash__title em{
+  margin-top:-5px;
+  font:400 1.8rem "Allura",cursive;
+}
+@keyframes coverOpen{
+  from{transform:rotateY(0deg)}
+  to{transform:rotateY(-118deg)}
+}
+@keyframes popupRise{
+  0%{transform:rotateX(88deg) translateY(18px) scale(.92);opacity:.15}
+  68%{transform:rotateX(-5deg) translateY(-3px) scale(1.01);opacity:1}
+  100%{transform:rotateX(0deg) translateY(0) scale(1);opacity:1}
+}
+@keyframes titleIn{to{opacity:1;transform:translateY(0)}}
+@keyframes bookLift{
+  0%{transform:translateY(28px) rotateX(10deg) scale(.92)}
+  48%{transform:translateY(4px) rotateX(2deg) scale(.98)}
+  100%{transform:translateY(0) rotateX(0) scale(1)}
+}
+@media(prefers-reduced-motion:reduce){
+  .wedding-splash__book,
+  .wedding-splash__cover,
+  .wedding-splash__popup,
+  .wedding-splash__title{animation-duration:.01ms!important;animation-delay:0ms!important}
+}
