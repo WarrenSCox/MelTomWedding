@@ -901,7 +901,7 @@ async function downloadPhotoZip(photos, btn, filename, originalHtml = null) {
       btn.innerHTML = original;
       if (btn === downloadSelectedBtn) updateSelectionUI();
       if (btn === $('#downloadAllBtn')) btn.disabled = totalPhotoCount === 0;
-    }, 1500);
+    }, 4000);
   }
 }
 
