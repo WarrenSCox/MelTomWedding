@@ -469,3 +469,53 @@ h1,h2,h3{font-family:"Cormorant Garamond",Georgia,serif;font-weight:500;margin:0
     font-size:.95rem!important;
   }
 }
+
+
+/* v7.12: force gallery title + controls onto one clean row */
+.gallery-heading{
+  display:flex!important;
+  flex-direction:row!important;
+  flex-wrap:nowrap!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:12px!important;
+}
+.gallery-heading h2{
+  flex:0 1 auto!important;
+  min-width:0!important;
+  margin:0!important;
+  white-space:nowrap!important;
+}
+.gallery-actions{
+  display:flex!important;
+  flex:0 0 auto!important;
+  flex-direction:row!important;
+  flex-wrap:nowrap!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  gap:10px!important;
+  margin:0 0 0 auto!important;
+  white-space:nowrap!important;
+}
+.gallery-actions .text-button,
+.gallery-count{
+  flex:0 0 auto!important;
+  white-space:nowrap!important;
+}
+@media(max-width:600px){
+  .gallery-heading{
+    gap:8px!important;
+    padding-left:18px!important;
+    padding-right:18px!important;
+  }
+  .gallery-heading h2{
+    font-size:1.34rem!important;
+  }
+  .gallery-actions{
+    gap:7px!important;
+  }
+  .gallery-actions .text-button,
+  .gallery-count{
+    font-size:.64rem!important;
+  }
+}

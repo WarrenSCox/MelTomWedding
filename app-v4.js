@@ -249,7 +249,7 @@ function renderPhotos(photos) {
   const downloadAllBtn = $('#downloadAllBtn');
   if (downloadAllBtn) downloadAllBtn.disabled = photos.length === 0;
   emptyState.hidden = photos.length > 0;
-  $('#photoCount').textContent = String(photos.length);
+  $('#photoCount').textContent = `${photos.length} ${photos.length === 1 ? 'pic' : 'pics'}`;
   $('#photoCount').setAttribute(
     'aria-label',
     `${photos.length} photo${photos.length === 1 ? '' : 's'} shared`
