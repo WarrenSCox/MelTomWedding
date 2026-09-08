@@ -11,3 +11,7 @@ A no-login mobile-first wedding photo gallery for Tom & Mel, styled directly fro
 - New v4 CSS/JS filenames and service-worker cache name to force the new look through older cached versions.
 
 Upload all files and folders in this directory to the root of the GitHub Pages repository.
+
+
+## v5 artwork update
+The original wedding invitation artwork is now included directly as `wedding-artwork.png` and used on the main Gallery page, Wedding Info page and Save App page. The release remains completely flat for easy GitHub browser upload.
