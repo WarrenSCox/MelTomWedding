@@ -80,3 +80,59 @@ input:focus{border-color:var(--olive)}
   .admin-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
   .photo-card__body{padding:10px}
 }
+
+
+/* v1.1: admin photo selection + selected ZIP download */
+.selection-toolbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin:18px 0 4px;
+  padding:12px 14px;
+  background:var(--paper-light);
+  border:1px solid var(--line);
+  border-radius:8px;
+  color:var(--olive-dark);
+  font-size:.78rem;
+  font-weight:600;
+}
+.selection-toolbar[hidden]{display:none!important}
+.selection-actions{display:flex;align-items:center;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.selection-actions .secondary{padding:8px 11px}
+#downloadSelectedBtn{border-color:var(--olive);color:var(--olive-dark)}
+#downloadSelectedBtn:disabled{opacity:.5;cursor:default}
+
+.photo-card{position:relative;-webkit-tap-highlight-color:transparent}
+.photo-card img{-webkit-user-drag:none}
+.admin-grid.is-selecting .photo-card{cursor:pointer}
+.photo-card.is-selected{
+  outline:3px solid var(--olive-dark);
+  outline-offset:-3px;
+}
+.photo-selection-mark{
+  display:none;
+  position:absolute;
+  z-index:2;
+  top:9px;
+  right:9px;
+  width:28px;
+  height:28px;
+  align-items:center;
+  justify-content:center;
+  border:2px solid white;
+  border-radius:50%;
+  background:rgba(30,32,29,.48);
+  color:white;
+  font:700 17px/1 "Montserrat",sans-serif;
+  box-shadow:0 1px 4px rgba(0,0,0,.2);
+  pointer-events:none;
+}
+.admin-grid.is-selecting .photo-selection-mark{display:flex}
+.photo-card.is-selected .photo-selection-mark{display:flex;background:var(--olive-dark)}
+
+@media(max-width:620px){
+  .selection-toolbar{align-items:flex-start;gap:9px;padding:10px}
+  .selection-actions{gap:6px}
+  .selection-actions .secondary{padding:7px 9px;font-size:.72rem}
+}
