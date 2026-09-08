@@ -52,6 +52,9 @@ function showView(name) {
     button.classList.toggle('is-active', button.dataset.viewTarget === name && button.classList.contains('nav-item'));
   });
   window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  if (name === 'favourites') void loadFavourites();
+  if (name === 'surprise') void openRandomPhoto();
 }
 
 document.querySelectorAll('[data-view-target]').forEach((button) => {
@@ -67,6 +70,12 @@ function applyInstalledAppNavigation() {
   if (saveNav) saveNav.hidden = installed;
 
   document.documentElement.classList.toggle('installed-app', installed);
+
+  const nav = document.querySelector('.bottom-nav');
+  if (nav) {
+    const visibleItems = [...nav.querySelectorAll('.nav-item')].filter(item => !item.hidden).length;
+    nav.style.gridTemplateColumns = `repeat(${visibleItems}, minmax(0, 1fr))`;
+  }
 
   if (installed && !$('#view-save').hidden) {
     showView('gallery');
@@ -227,6 +236,67 @@ const PAGE_SIZE = 40;
 let currentPhotos = [];
 let totalPhotoCount = 0;
 let activeLightboxPhoto = null;
+let albumPhotosCache = null;
+
+const FAVOURITES_KEY = 'weddingFavouritePhotoIds';
+let favouriteIds = new Set();
+let favouritePhotos = [];
+const favouriteSelectedPhotos = new Map();
+let favouriteSelectionMode = false;
+let favouriteSelectionDownloading = false;
+
+try {
+  const savedFavouriteIds = JSON.parse(localStorage.getItem(FAVOURITES_KEY) || '[]');
+  if (Array.isArray(savedFavouriteIds)) {
+    favouriteIds = new Set(savedFavouriteIds.map(String));
+  }
+} catch (error) {
+  console.warn('Could not read favourites:', error);
+}
+
+function formatPhotoDate(value) {
+  return new Date(value).toLocaleString([], {
+    day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
+  });
+}
+
+function saveFavouriteIds() {
+  localStorage.setItem(FAVOURITES_KEY, JSON.stringify([...favouriteIds]));
+}
+
+function isFavourite(photo) {
+  return favouriteIds.has(String(photo.id));
+}
+
+function syncFavouriteButtons() {
+  document.querySelectorAll('[data-favourite-id]').forEach(button => {
+    const active = favouriteIds.has(button.dataset.favouriteId);
+    button.classList.toggle('is-favourite', active);
+    button.textContent = active ? '♥' : '♡';
+    button.setAttribute('aria-pressed', String(active));
+    button.setAttribute('aria-label', active ? 'Remove from favourites' : 'Add to favourites');
+  });
+
+  const lightboxFavouriteBtn = $('#lightboxFavouriteBtn');
+  if (lightboxFavouriteBtn && activeLightboxPhoto) {
+    const active = isFavourite(activeLightboxPhoto);
+    lightboxFavouriteBtn.classList.toggle('is-favourite', active);
+    lightboxFavouriteBtn.textContent = active ? '♥' : '♡';
+    lightboxFavouriteBtn.setAttribute('aria-pressed', String(active));
+    lightboxFavouriteBtn.setAttribute('aria-label', active ? 'Remove from favourites' : 'Add to favourites');
+  }
+}
+
+function toggleFavourite(photo) {
+  const key = String(photo.id);
+  if (favouriteIds.has(key)) favouriteIds.delete(key);
+  else favouriteIds.add(key);
+  saveFavouriteIds();
+  syncFavouriteButtons();
+
+  if (!$('#view-favourites').hidden) void loadFavourites();
+}
+
 
 async function loadPhotos(reset = true) {
   if (!configured) {
@@ -239,6 +309,7 @@ async function loadPhotos(reset = true) {
 
   const from = reset ? 0 : currentPhotos.length;
   const to = from + PAGE_SIZE - 1;
+  if (reset) albumPhotosCache = null;
 
   const { data, error, count } = await supabaseClient
     .from('photos')
@@ -280,6 +351,7 @@ async function loadPhotos(reset = true) {
   loadMoreBtn.hidden = currentPhotos.length >= totalPhotoCount;
   loadMoreBtn.disabled = false;
   loadMoreBtn.textContent = 'Load more memories';
+  syncFavouriteButtons();
 }
 
 // v7.21: persistent photo selection across gallery pages and refreshes.
@@ -303,7 +375,7 @@ function updateSelectionUI() {
     const selected = selectedPhotos.has(card.dataset.photoId);
     card.classList.toggle('is-selected', selected);
     card.setAttribute('aria-pressed', String(selected));
-    card.setAttribute('aria-label', `${selected ? 'Deselect' : 'Select'} photo. ${card.dataset.photoLabel}`);
+    card.setAttribute('aria-label', `${selected ? 'Deselect' : 'Select'} wedding photo`);
     const mark = card.querySelector('.photo-selection-mark');
     if (mark) mark.textContent = selected ? '✓' : '';
   });
@@ -325,64 +397,131 @@ function cancelSelection() {
 
 $('#cancelSelectionBtn').addEventListener('click', cancelSelection);
 document.addEventListener('keydown', event => {
-  if (event.key === 'Escape' && selectionMode && !$('#lightbox').open) cancelSelection();
+  if (event.key !== 'Escape' || $('#lightbox').open) return;
+  if (selectionMode) cancelSelection();
+  if (favouriteSelectionMode) cancelFavouriteSelection();
 });
+
+function createFavouriteButton(photo) {
+  const heart = document.createElement('button');
+  heart.type = 'button';
+  heart.className = 'photo-favourite-btn';
+  heart.dataset.favouriteId = String(photo.id);
+  heart.addEventListener('click', event => {
+    event.preventDefault();
+    event.stopPropagation();
+    toggleFavourite(photo);
+  });
+  return heart;
+}
+
+function attachLongPressSelection(card, photo, onToggle, isSelecting) {
+  let holdTimer = null;
+  let startX = 0;
+  let startY = 0;
+  let suppressClick = false;
+
+  const clearHold = () => {
+    if (holdTimer !== null) clearTimeout(holdTimer);
+    holdTimer = null;
+  };
+
+  card.addEventListener('pointerdown', event => {
+    if (event.target.closest('.photo-favourite-btn')) return;
+    if (isSelecting() || (event.pointerType !== 'touch' && event.pointerType !== 'pen')) return;
+    if (event.button !== 0) return;
+
+    startX = event.clientX;
+    startY = event.clientY;
+    clearHold();
+
+    holdTimer = setTimeout(() => {
+      holdTimer = null;
+      suppressClick = true;
+      onToggle(photo);
+      navigator.vibrate?.(25);
+    }, 550);
+  });
+
+  card.addEventListener('pointermove', event => {
+    if (Math.hypot(event.clientX - startX, event.clientY - startY) > 12) clearHold();
+  });
+  card.addEventListener('pointerup', clearHold);
+  card.addEventListener('pointercancel', clearHold);
+  card.addEventListener('contextmenu', event => {
+    if (event.target.closest('.photo-favourite-btn')) return;
+    if (event.pointerType === 'mouse' && !isSelecting()) return;
+    event.preventDefault();
+    clearHold();
+    if (!isSelecting()) {
+      suppressClick = true;
+      onToggle(photo);
+    }
+  });
+
+  card.addEventListener('click', event => {
+    if (event.target.closest('.photo-favourite-btn')) return;
+    if (suppressClick) {
+      suppressClick = false;
+      event.preventDefault();
+      return;
+    }
+    if (isSelecting()) onToggle(photo);
+    else openLightbox(photo);
+  });
+}
+
+function buildPhotoCard(photo, options = {}) {
+  const card = document.createElement('article');
+  card.className = 'photo-card';
+  card.dataset.photoId = photoKey(photo);
+  card.tabIndex = 0;
+  card.setAttribute('role', 'button');
+
+  const mark = document.createElement('span');
+  mark.className = 'photo-selection-mark';
+  mark.setAttribute('aria-hidden', 'true');
+
+  const heart = createFavouriteButton(photo);
+
+  const img = document.createElement('img');
+  img.loading = 'lazy';
+  img.decoding = 'async';
+  img.fetchPriority = 'low';
+  img.draggable = false;
+  img.src = photo.image_url;
+  img.alt = `Wedding photo shared by ${photo.guest_name}`;
+
+  const meta = document.createElement('div');
+  meta.className = 'photo-meta';
+  const name = document.createElement('strong');
+  name.textContent = `Uploaded by ${photo.guest_name}`;
+  meta.append(name);
+
+  card.append(mark, heart, img, meta);
+
+  const toggle = options.toggleSelection || togglePhotoSelection;
+  const selecting = options.isSelecting || (() => selectionMode);
+  attachLongPressSelection(card, photo, toggle, selecting);
+
+  card.addEventListener('keydown', event => {
+    if (event.target !== card) return;
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      if (selecting()) toggle(photo);
+      else openLightbox(photo);
+    }
+  });
+
+  return card;
+}
 
 function renderPhotoCards(photos) {
   for (const photo of photos) {
-    const card = document.createElement('button');
-    card.type = 'button';
-    card.className = 'photo-card';
-    card.dataset.photoId = photoKey(photo);
-    const date = new Date(photo.created_at).toLocaleString([], {
-      day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
-    });
-    card.dataset.photoLabel = `Uploaded by ${photo.guest_name}`;
-    card.innerHTML = `<span class="photo-selection-mark" aria-hidden="true"></span><img loading="lazy" decoding="async" fetchpriority="low" draggable="false" src="${escapeHtml(photo.image_url)}" alt="Wedding photo shared by ${escapeHtml(photo.guest_name)}"><div class="photo-meta"><strong>Uploaded by ${escapeHtml(photo.guest_name)}</strong><span>${date}</span></div>`;
-
-    let holdTimer = null;
-    let startX = 0, startY = 0, held = false, suppressClick = false;
-    const clearHold = () => { if (holdTimer !== null) clearTimeout(holdTimer); holdTimer = null; };
-    card.addEventListener('pointerdown', event => {
-      if (selectionMode || (event.pointerType !== 'touch' && event.pointerType !== 'pen')) return;
-      if (event.button !== 0) return;
-      clearHold();
-      held = false;
-      startX = event.clientX; startY = event.clientY;
-      holdTimer = setTimeout(() => {
-        holdTimer = null;
-        held = true;
-        suppressClick = true;
-        togglePhotoSelection(photo);
-        navigator.vibrate?.(25);
-      }, 550);
-    });
-    card.addEventListener('pointermove', event => {
-      if (Math.hypot(event.clientX - startX, event.clientY - startY) > 12) clearHold();
-    });
-    card.addEventListener('pointerup', clearHold);
-    card.addEventListener('pointercancel', () => { clearHold(); held = false; });
-    card.addEventListener('contextmenu', event => {
-      if (event.pointerType === 'mouse' && !selectionMode) return;
-      event.preventDefault();
-      clearHold();
-      if (!held && !selectionMode) {
-        suppressClick = true;
-        togglePhotoSelection(photo);
-      }
-    });
-    card.addEventListener('click', event => {
-      if (suppressClick) {
-        suppressClick = false;
-        event.preventDefault();
-        return;
-      }
-      if (selectionMode) togglePhotoSelection(photo);
-      else openLightbox(photo, date);
-    });
-    galleryGrid.appendChild(card);
+    galleryGrid.appendChild(buildPhotoCard(photo));
   }
   updateSelectionUI();
+  syncFavouriteButtons();
 }
 
 $('#loadMoreBtn').addEventListener('click', async () => {
@@ -412,12 +551,41 @@ async function fetchAllPhotoRecords() {
   return all;
 }
 
-function openLightbox(photo, date) {
+async function getAlbumPhotos(force = false) {
+  if (!force && albumPhotosCache) return albumPhotosCache;
+  albumPhotosCache = await fetchAllPhotoRecords();
+  return albumPhotosCache;
+}
+
+function setLightboxPhoto(photo) {
   activeLightboxPhoto = photo;
   $('#lightboxImage').src = photo.image_url;
   $('#lightboxName').textContent = `Uploaded by ${photo.guest_name}`;
-  $('#lightboxDate').textContent = date;
+  $('#lightboxDate').textContent = formatPhotoDate(photo.created_at);
+  syncFavouriteButtons();
+}
+
+function openLightbox(photo) {
+  setLightboxPhoto(photo);
   $('#lightbox').showModal();
+  void getAlbumPhotos().catch(console.error);
+}
+
+async function navigateLightbox(direction) {
+  if (!activeLightboxPhoto) return;
+
+  try {
+    const photos = await getAlbumPhotos();
+    if (!photos.length) return;
+
+    let index = photos.findIndex(photo => String(photo.id) === String(activeLightboxPhoto.id));
+    if (index < 0) index = 0;
+
+    const nextIndex = (index + direction + photos.length) % photos.length;
+    setLightboxPhoto(photos[nextIndex]);
+  } catch (error) {
+    console.error('Could not navigate photos:', error);
+  }
 }
 
 
@@ -511,7 +679,7 @@ $('#downloadAllBtn').addEventListener('click', async () => {
   btn.disabled = true;
   btn.textContent = 'Preparing album…';
   try {
-    const allPhotos = await fetchAllPhotoRecords();
+    const allPhotos = await getAlbumPhotos(true);
     await downloadPhotoZip(allPhotos, btn, 'Mel-and-Tom-Wedding-Photos.zip');
   } catch (error) {
     console.error(error);
@@ -532,6 +700,185 @@ downloadSelectedBtn.addEventListener('click', async () => {
   if (success) cancelSelection();
   else updateSelectionUI();
 });
+
+
+const favouritesGrid = $('#favouritesGrid');
+const favouritesEmptyState = $('#favouritesEmptyState');
+const favouriteSelectionToolbar = $('#favouriteSelectionToolbar');
+const favouriteSelectionCount = $('#favouriteSelectionCount');
+const downloadSelectedFavouritesBtn = $('#downloadSelectedFavouritesBtn');
+const downloadAllFavouritesBtn = $('#downloadAllFavouritesBtn');
+
+function updateFavouriteSelectionUI() {
+  const count = favouriteSelectedPhotos.size;
+  favouriteSelectionToolbar.hidden = !favouriteSelectionMode;
+  favouriteSelectionCount.textContent = `${count} selected`;
+  downloadSelectedFavouritesBtn.textContent = `Download selected (${count}) ↓`;
+  downloadSelectedFavouritesBtn.disabled = !count || favouriteSelectionDownloading;
+  favouritesGrid.classList.toggle('is-selecting', favouriteSelectionMode);
+
+  favouritesGrid.querySelectorAll('.photo-card[data-photo-id]').forEach(card => {
+    const selected = favouriteSelectedPhotos.has(card.dataset.photoId);
+    card.classList.toggle('is-selected', selected);
+    card.setAttribute('aria-pressed', String(selected));
+    const mark = card.querySelector('.photo-selection-mark');
+    if (mark) mark.textContent = selected ? '✓' : '';
+  });
+}
+
+function toggleFavouriteSelection(photo) {
+  const key = photoKey(photo);
+  if (favouriteSelectedPhotos.has(key)) favouriteSelectedPhotos.delete(key);
+  else favouriteSelectedPhotos.set(key, photo);
+  favouriteSelectionMode = true;
+  updateFavouriteSelectionUI();
+}
+
+function cancelFavouriteSelection() {
+  favouriteSelectedPhotos.clear();
+  favouriteSelectionMode = false;
+  updateFavouriteSelectionUI();
+}
+
+async function loadFavourites() {
+  favouritesGrid.innerHTML = '';
+
+  if (!configured || favouriteIds.size === 0) {
+    favouritePhotos = [];
+    favouritesEmptyState.hidden = false;
+    $('#favouriteCount').textContent = '0';
+    downloadAllFavouritesBtn.disabled = true;
+    cancelFavouriteSelection();
+    return;
+  }
+
+  const ids = [...favouriteIds];
+  const { data, error } = await supabaseClient
+    .from('photos')
+    .select('*')
+    .in('id', ids)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error(error);
+    favouritesEmptyState.hidden = false;
+    return;
+  }
+
+  favouritePhotos = data || [];
+
+  // Prune favourites whose photo has been deleted from the shared album.
+  const existingIds = new Set(favouritePhotos.map(photo => String(photo.id)));
+  let changed = false;
+  for (const id of [...favouriteIds]) {
+    if (!existingIds.has(id)) {
+      favouriteIds.delete(id);
+      favouriteSelectedPhotos.delete(id);
+      changed = true;
+    }
+  }
+  if (changed) saveFavouriteIds();
+
+  favouritesEmptyState.hidden = favouritePhotos.length > 0;
+  $('#favouriteCount').textContent = String(favouritePhotos.length);
+  downloadAllFavouritesBtn.disabled = favouritePhotos.length === 0;
+
+  for (const photo of favouritePhotos) {
+    favouritesGrid.appendChild(buildPhotoCard(photo, {
+      toggleSelection: toggleFavouriteSelection,
+      isSelecting: () => favouriteSelectionMode
+    }));
+  }
+
+  updateFavouriteSelectionUI();
+  syncFavouriteButtons();
+}
+
+$('#cancelFavouriteSelectionBtn').addEventListener('click', cancelFavouriteSelection);
+
+downloadSelectedFavouritesBtn.addEventListener('click', async () => {
+  if (!favouriteSelectedPhotos.size || favouriteSelectionDownloading) return;
+  favouriteSelectionDownloading = true;
+  const photos = [...favouriteSelectedPhotos.values()];
+  const success = await downloadPhotoZip(
+    photos,
+    downloadSelectedFavouritesBtn,
+    'Mel-and-Tom-Favourite-Selected-Photos.zip'
+  );
+  favouriteSelectionDownloading = false;
+  if (success) cancelFavouriteSelection();
+  else updateFavouriteSelectionUI();
+});
+
+downloadAllFavouritesBtn.addEventListener('click', async () => {
+  if (!favouritePhotos.length) return;
+  await downloadPhotoZip(
+    favouritePhotos,
+    downloadAllFavouritesBtn,
+    'Mel-and-Tom-My-Favourites.zip'
+  );
+});
+
+$('#lightboxFavouriteBtn').addEventListener('click', () => {
+  if (activeLightboxPhoto) toggleFavourite(activeLightboxPhoto);
+});
+
+$('#previousPhotoBtn').addEventListener('click', () => void navigateLightbox(-1));
+$('#nextPhotoBtn').addEventListener('click', () => void navigateLightbox(1));
+
+let lightboxSwipeStartX = null;
+$('#lightbox').addEventListener('pointerdown', event => {
+  if (event.pointerType === 'touch' && !event.target.closest('button')) {
+    lightboxSwipeStartX = event.clientX;
+  }
+});
+$('#lightbox').addEventListener('pointerup', event => {
+  if (lightboxSwipeStartX === null) return;
+  const delta = event.clientX - lightboxSwipeStartX;
+  lightboxSwipeStartX = null;
+  if (Math.abs(delta) < 50) return;
+  void navigateLightbox(delta < 0 ? 1 : -1);
+});
+$('#lightbox').addEventListener('pointercancel', () => {
+  lightboxSwipeStartX = null;
+});
+
+document.addEventListener('keydown', event => {
+  if (!$('#lightbox').open) return;
+  if (event.key === 'ArrowRight') void navigateLightbox(1);
+  if (event.key === 'ArrowLeft') void navigateLightbox(-1);
+});
+
+async function openRandomPhoto() {
+  const status = $('#surpriseStatus');
+  if (!configured) {
+    status.textContent = 'The wedding album is not connected yet.';
+    return;
+  }
+
+  status.textContent = 'Finding a memory…';
+  try {
+    const photos = await getAlbumPhotos();
+    if (!photos.length) {
+      status.textContent = 'No photos have been shared yet.';
+      return;
+    }
+
+    let pool = photos;
+    if (activeLightboxPhoto && photos.length > 1) {
+      pool = photos.filter(photo => String(photo.id) !== String(activeLightboxPhoto.id));
+    }
+
+    const photo = pool[Math.floor(Math.random() * pool.length)];
+    status.textContent = '';
+    openLightbox(photo);
+  } catch (error) {
+    console.error(error);
+    status.textContent = 'Could not pick a surprise just now.';
+  }
+}
+
+$('#surpriseAgainBtn').addEventListener('click', () => void openRandomPhoto());
 
 $('#closeLightbox').addEventListener('click', () => $('#lightbox').close());
 $('#lightbox').addEventListener('click', (e) => {

@@ -108,6 +108,44 @@
       </div>
     </section>
 
+    <section id="view-favourites" class="view favourites-view" data-view="favourites" hidden>
+      <section class="simple-view-heading">
+        <p class="eyebrow">YOUR LITTLE COLLECTION</p>
+        <h1>My favourites</h1>
+        <div class="favourites-actions">
+          <button id="downloadAllFavouritesBtn" class="text-button" type="button" disabled>
+            Download all (<span id="favouriteCount">0</span>) ↓
+          </button>
+        </div>
+      </section>
+
+      <div id="favouriteSelectionToolbar" class="selection-toolbar" hidden>
+        <span id="favouriteSelectionCount" aria-live="polite">0 selected</span>
+        <div class="selection-actions">
+          <button id="cancelFavouriteSelectionBtn" type="button">Cancel</button>
+          <button id="downloadSelectedFavouritesBtn" type="button">Download selected (0) ↓</button>
+        </div>
+      </div>
+
+      <section id="favouritesEmptyState" class="empty-state favourites-empty">
+        <div class="line-heart">♡</div>
+        <h3>No favourites yet</h3>
+        <p>Tap the heart on a photo to keep it here.</p>
+      </section>
+      <section id="favouritesGrid" class="gallery-grid favourites-grid" aria-live="polite"></section>
+    </section>
+
+    <section id="view-surprise" class="view surprise-view" data-view="surprise" hidden>
+      <section class="surprise-panel">
+        <div class="surprise-mark" aria-hidden="true">?</div>
+        <p class="eyebrow">A RANDOM MEMORY</p>
+        <h1>Surprise me</h1>
+        <p>Tap below and we'll pick a photo from the whole wedding album.</p>
+        <button id="surpriseAgainBtn" class="primary-button surprise-button" type="button">Surprise me ♡</button>
+        <p id="surpriseStatus" class="upload-status" aria-live="polite"></p>
+      </section>
+    </section>
+
     <section id="view-info" class="view" data-view="info" hidden>
       <section class="info-cover">
         <div class="info-cover__copy">
@@ -180,15 +218,20 @@
 
   <nav class="bottom-nav" aria-label="Wedding app navigation">
     <button class="nav-item is-active" type="button" data-view-target="gallery"><span class="nav-gallery-icon"><img src="gallery-frame.png?v=7.19" alt="" /></span><strong>Gallery</strong></button>
+    <button class="nav-item" type="button" data-view-target="favourites"><span class="nav-favourite-icon" aria-hidden="true">♡</span><strong>Favourites</strong></button>
+    <button class="nav-item" type="button" data-view-target="surprise"><span class="nav-surprise-icon" aria-hidden="true">?</span><strong>Surprise</strong></button>
     <button class="nav-item" type="button" data-view-target="info"><span class="nav-info-icon">ⓘ</span><strong>Info</strong></button>
     <button class="nav-item" type="button" data-view-target="save"><span>⇩</span><strong>Save App</strong></button>
   </nav>
 
   <dialog id="lightbox" class="lightbox">
     <button id="closeLightbox" class="lightbox__close" aria-label="Close">×</button>
+    <button id="lightboxFavouriteBtn" class="lightbox__favourite" type="button" aria-label="Add to favourites" aria-pressed="false">♡</button>
+    <button id="previousPhotoBtn" class="lightbox__nav lightbox__nav--previous" type="button" aria-label="Previous photo">‹</button>
     <img id="lightboxImage" alt="Wedding photo" />
-    <div class="lightbox__meta"><strong id="lightboxName"></strong><span id="lightboxDate"></span></div>
+    <button id="nextPhotoBtn" class="lightbox__nav lightbox__nav--next" type="button" aria-label="Next photo">›</button>
     <button id="downloadPhotoBtn" class="lightbox__download" type="button">Download photo ↓</button>
+    <div class="lightbox__meta"><strong id="lightboxName"></strong><span class="lightbox__meta-dot">·</span><span id="lightboxDate"></span></div>
   </dialog>
 
   <dialog id="installHelp" class="install-help">
@@ -202,6 +245,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
   <script src="config.js?v=6.8"></script>
-  <script src="app-v4.js?v=7.24"></script>
+  <script src="app-v4.js?v=7.25"></script>
 </body>
 </html>

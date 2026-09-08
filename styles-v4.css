@@ -673,3 +673,223 @@ h1,h2,h3{font-family:"Cormorant Garamond",Georgia,serif;font-weight:500;margin:0
   #photoUploadButton{gap:10px}
   #photoUploadButton .upload-button-icon{width:25px;height:25px;flex-basis:25px}
 }
+
+
+/* v7.25: upload polish, even photo frames, favourites, surprise and lightbox browsing */
+
+/* Upload icon is deliberately lighter/smaller than v7.24 */
+#photoUploadButton .upload-button-icon{
+  width:22px!important;
+  height:22px!important;
+  flex-basis:22px!important;
+}
+#photoUploadButton .upload-button-icon svg{
+  stroke-width:1.25!important;
+}
+
+/* An explicit, even white frame: same top, left and right inset */
+.gallery-grid .photo-card{
+  position:relative;
+  display:block;
+  width:100%;
+  margin:0 0 8px;
+  padding:9px 9px 0!important;
+  background:#fff!important;
+  border:1px solid #ded9cc!important;
+  color:inherit;
+  text-align:inherit;
+  font:inherit;
+  cursor:pointer;
+  overflow:visible;
+  box-sizing:border-box;
+}
+.gallery-grid .photo-card img{
+  display:block;
+  width:100%;
+  height:auto;
+  margin:0;
+}
+.gallery-grid .photo-card .photo-meta{
+  padding:8px 0 9px;
+  display:block;
+  color:var(--muted);
+}
+.gallery-grid .photo-card .photo-meta strong{
+  display:block;
+  color:var(--ink);
+  font-weight:600;
+}
+
+/* Selection hugs the actual image rather than the outer white card */
+.gallery-grid .photo-card.is-selected{outline:none!important}
+.gallery-grid .photo-card.is-selected img{
+  outline:3px solid var(--olive-dark);
+  outline-offset:-3px;
+  box-shadow:none!important;
+}
+.gallery-grid .photo-selection-mark{
+  top:18px;
+  left:18px;
+  right:auto;
+}
+
+/* Heart control on gallery/favourite photo */
+.photo-favourite-btn{
+  position:absolute;
+  z-index:3;
+  top:16px;
+  right:16px;
+  width:34px;
+  height:34px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:0;
+  border:2px solid rgba(255,255,255,.95);
+  border-radius:50%;
+  background:rgba(30,32,29,.46);
+  color:#fff;
+  font:400 23px/1 Georgia,serif;
+  box-shadow:0 1px 5px rgba(0,0,0,.2);
+}
+.photo-favourite-btn.is-favourite{
+  background:var(--olive-dark);
+  color:#fff;
+}
+.gallery-grid.is-selecting .photo-favourite-btn{opacity:.58}
+
+/* Favourites view */
+.simple-view-heading{
+  padding:38px 22px 18px;
+  border-bottom:1px solid var(--line);
+}
+.simple-view-heading h1{
+  margin:2px 0 10px;
+  font:600 2.35rem/1 "Cormorant Garamond",Georgia,serif;
+}
+.favourites-actions{display:flex;justify-content:flex-end}
+.favourites-grid{padding-top:18px}
+.favourites-empty{margin-top:24px}
+
+/* Surprise tab */
+.surprise-view{
+  min-height:calc(100vh - 150px);
+}
+.surprise-panel{
+  min-height:calc(100vh - 150px);
+  padding:70px 28px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+}
+.surprise-mark{
+  width:64px;
+  height:64px;
+  border:1px solid var(--olive);
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  color:var(--olive-dark);
+  font:500 2.7rem/1 "Cormorant Garamond",Georgia,serif;
+  margin-bottom:18px;
+}
+.surprise-panel h1{
+  margin:3px 0 10px;
+  font:600 2.7rem/1 "Cormorant Garamond",Georgia,serif;
+}
+.surprise-panel>p:not(.eyebrow):not(.upload-status){
+  max-width:420px;
+  color:var(--muted);
+  line-height:1.6;
+}
+.surprise-button{
+  width:min(420px,100%);
+  margin-top:18px;
+}
+
+/* Five nav items in browser, four when installed; JS sets exact column count */
+.bottom-nav .nav-item strong{
+  font-size:.78rem;
+  white-space:nowrap;
+}
+.bottom-nav .nav-item > .nav-favourite-icon{
+  font:400 1.75rem/30px Georgia,serif!important;
+}
+.bottom-nav .nav-item > .nav-surprise-icon{
+  width:27px!important;
+  height:27px!important;
+  border:1.6px solid currentColor;
+  border-radius:50%;
+  font:600 1rem/25px "Cormorant Garamond",Georgia,serif!important;
+}
+
+/* Full-screen photo controls */
+.lightbox__favourite{
+  position:fixed;
+  z-index:3;
+  left:18px;
+  top:16px;
+  width:43px;
+  height:43px;
+  padding:0;
+  border:1px solid rgba(255,255,255,.6);
+  border-radius:50%;
+  background:rgba(18,18,16,.38);
+  color:#fff;
+  font:400 30px/1 Georgia,serif;
+}
+.lightbox__favourite.is-favourite{background:var(--olive-dark)}
+.lightbox__nav{
+  position:fixed;
+  z-index:3;
+  top:46%;
+  transform:translateY(-50%);
+  width:48px;
+  height:64px;
+  border:0;
+  background:rgba(18,18,16,.38);
+  color:#fff;
+  font:300 3.5rem/1 "Cormorant Garamond",Georgia,serif;
+}
+.lightbox__nav--previous{left:0}
+.lightbox__nav--next{right:0}
+
+/* Keep uploader + date/time on one line */
+.lightbox__meta{
+  left:50%!important;
+  bottom:22px!important;
+  width:auto!important;
+  max-width:92vw;
+  transform:translateX(-50%)!important;
+  display:flex!important;
+  flex-wrap:nowrap!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:8px!important;
+  white-space:nowrap!important;
+  font-size:clamp(.68rem,2.5vw,.82rem)!important;
+}
+.lightbox__meta strong,
+.lightbox__meta span{white-space:nowrap!important}
+.lightbox__meta-dot{opacity:.7}
+
+/* Make room so download and single-line metadata do not overlap */
+.lightbox__download{bottom:62px!important}
+
+@media(max-width:600px){
+  #photoUploadButton .upload-button-icon{
+    width:20px!important;
+    height:20px!important;
+    flex-basis:20px!important;
+  }
+  .bottom-nav .nav-item{gap:1px}
+  .bottom-nav .nav-item strong{font-size:.66rem}
+  .bottom-nav .nav-item > span{width:27px;height:27px}
+  .bottom-nav .nav-item > .nav-gallery-icon img{width:25px!important;height:25px!important}
+  .bottom-nav .nav-item > .nav-info-icon{font-size:1.32rem!important}
+  .simple-view-heading{padding:30px 18px 16px}
+  .photo-favourite-btn{width:31px;height:31px;font-size:21px}
+  .lightbox__nav{width:40px;height:58px;font-size:3rem}
+}
