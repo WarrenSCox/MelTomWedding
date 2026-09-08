@@ -75,7 +75,7 @@
             placeholder="type your name here"
             aria-label="Your name" autocomplete="name" />
         </label>
-        <label id="photoUploadButton" class="primary-button is-disabled" for="photoInput" aria-disabled="true"><span aria-hidden="true">＋</span> Click to share a memory</label>
+        <label id="photoUploadButton" class="primary-button is-disabled" for="photoInput" aria-disabled="true"><span class="upload-button-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M12 16V4m0 0-4 4m4-4 4 4M5 14v5h14v-5"/></svg></span><span>Click here to upload your photos</span></label>
         <input id="photoInput" type="file" accept="image/*" multiple hidden disabled />
         <div id="uploadStatus" class="upload-status" aria-live="polite"></div>
       </section>
@@ -202,6 +202,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
   <script src="config.js?v=6.8"></script>
-  <script src="app-v4.js?v=7.21"></script>
+  <script src="app-v4.js?v=7.24"></script>
 </body>
 </html>

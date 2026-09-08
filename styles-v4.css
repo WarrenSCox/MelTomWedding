@@ -633,3 +633,43 @@ h1,h2,h3{font-family:"Cormorant Garamond",Georgia,serif;font-weight:500;margin:0
 .gallery-grid .photo-card.is-selected .photo-selection-mark{display:flex;background:var(--olive-dark)}
 @media(max-width:600px){.selection-toolbar{margin:0 18px 16px;gap:8px;padding:10px;font-size:.68rem}.selection-actions{gap:10px}}
 \n.gallery-grid button.photo-card{appearance:none;-webkit-appearance:none;width:100%;padding:0;border:0;border-radius:0;background:transparent;display:block;overflow:visible}\n
+
+/* v7.24: upload CTA icon + cleaner selected-photo treatment */
+#photoUploadButton{
+  gap:12px;
+}
+#photoUploadButton .upload-button-icon{
+  display:inline-flex;
+  width:28px;
+  height:28px;
+  align-items:center;
+  justify-content:center;
+  flex:0 0 28px;
+}
+#photoUploadButton .upload-button-icon svg{
+  display:block;
+  width:100%;
+  height:100%;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:1.7;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+
+/* Selected state hugs the photo itself instead of outlining the full card/metadata block */
+.gallery-grid .photo-card.is-selected{
+  outline:none!important;
+}
+.gallery-grid .photo-card.is-selected img{
+  box-shadow:inset 0 0 0 3px var(--olive-dark);
+}
+.gallery-grid .photo-card.is-selected .photo-meta{
+  border-left:0!important;
+  border-right:0!important;
+}
+
+@media(max-width:600px){
+  #photoUploadButton{gap:10px}
+  #photoUploadButton .upload-button-icon{width:25px;height:25px;flex-basis:25px}
+}
