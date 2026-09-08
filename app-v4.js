@@ -865,8 +865,8 @@ $('#downloadPhotoBtn').addEventListener('click', async () => {
   }
 });
 
-async function downloadPhotoZip(photos, btn, filename) {
-  const original = btn.innerHTML;
+async function downloadPhotoZip(photos, btn, filename, originalHtml = null) {
+  const original = originalHtml ?? btn.innerHTML;
   btn.disabled = true;
   try {
     if (!window.JSZip) throw new Error('ZIP library did not load');
@@ -908,11 +908,12 @@ async function downloadPhotoZip(photos, btn, filename) {
 $('#downloadAllBtn').addEventListener('click', async () => {
   if (!totalPhotoCount) return;
   const btn = $('#downloadAllBtn');
+  const originalHtml = btn.innerHTML;
   btn.disabled = true;
   btn.textContent = 'Preparing album…';
   try {
     const allPhotos = await getAlbumPhotos(true);
-    await downloadPhotoZip(allPhotos, btn, 'Mel-and-Tom-Wedding-Photos.zip');
+    await downloadPhotoZip(allPhotos, btn, 'Mel-and-Tom-Wedding-Photos.zip', originalHtml);
   } catch (error) {
     console.error(error);
     btn.textContent = 'Download failed';
