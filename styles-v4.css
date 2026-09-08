@@ -893,3 +893,39 @@ h1,h2,h3{font-family:"Cormorant Garamond",Georgia,serif;font-weight:500;margin:0
   .photo-favourite-btn{width:31px;height:31px;font-size:21px}
   .lightbox__nav{width:40px;height:58px;font-size:3rem}
 }
+
+
+/* v7.26: keep bottom navigation on a single row */
+.bottom-nav{
+  display:grid!important;
+  grid-auto-flow:column!important;
+  grid-auto-columns:minmax(0,1fr)!important;
+  grid-template-columns:none!important;
+  align-items:stretch!important;
+  overflow:hidden!important;
+}
+.bottom-nav .nav-item{
+  min-width:0!important;
+  width:100%!important;
+  padding:2px 1px!important;
+  overflow:hidden!important;
+}
+.bottom-nav .nav-item strong{
+  display:block!important;
+  max-width:100%!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+  font-size:.66rem!important;
+  line-height:1!important;
+}
+.bottom-nav .nav-item > span{
+  flex:0 0 auto!important;
+}
+@media(max-width:420px){
+  .bottom-nav .nav-item strong{font-size:.61rem!important}
+  .bottom-nav .nav-item > .nav-gallery-icon img{width:23px!important;height:23px!important}
+  .bottom-nav .nav-item > .nav-favourite-icon{font-size:1.55rem!important}
+  .bottom-nav .nav-item > .nav-surprise-icon{width:24px!important;height:24px!important;font-size:.9rem!important;line-height:22px!important}
+  .bottom-nav .nav-item > .nav-info-icon{font-size:1.22rem!important}
+}

@@ -72,10 +72,7 @@ function applyInstalledAppNavigation() {
   document.documentElement.classList.toggle('installed-app', installed);
 
   const nav = document.querySelector('.bottom-nav');
-  if (nav) {
-    const visibleItems = [...nav.querySelectorAll('.nav-item')].filter(item => !item.hidden).length;
-    nav.style.gridTemplateColumns = `repeat(${visibleItems}, minmax(0, 1fr))`;
-  }
+  if (nav) nav.style.gridTemplateColumns = '';
 
   if (installed && !$('#view-save').hidden) {
     showView('gallery');
