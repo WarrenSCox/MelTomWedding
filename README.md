@@ -21,3 +21,8 @@ The original wedding invitation artwork is now included directly as `wedding-art
 - Reworked the supplied invitation artwork for a cleaner, crisper digital presentation.
 - Moved the hero artwork higher and tightened the header spacing.
 - Improved mobile composition and edge blending into the ivory background.
+
+
+## v6.1 hotfix
+- Replaced the previous artwork asset with the new revised wedding illustration.
+- Optimized/resized for faster mobile loading while keeping it crisp.
