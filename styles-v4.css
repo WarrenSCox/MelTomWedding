@@ -2005,3 +2005,6 @@ body{padding-bottom:70px!important}
   fill:#ef3340!important;
   stroke:#ef3340!important;
 }
+
+/* v7.42: thinner heart outline; preserve size and selected fill. */
+.favourite-heart-svg path{stroke-width:1.5!important;}
