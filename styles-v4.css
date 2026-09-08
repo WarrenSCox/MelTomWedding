@@ -313,3 +313,19 @@ h1,h2,h3{font-family:"Cormorant Garamond",Georgia,serif;font-weight:500;margin:0
   .wedding-splash__popup,
   .wedding-splash__title{animation-duration:.01ms!important;animation-delay:0ms!important}
 }
+
+
+/* v7.3: true installed-app launch animation */
+html.app-launching body > :not(.wedding-splash){
+  visibility:hidden!important;
+}
+html.app-launching .wedding-splash{
+  display:grid!important;
+  visibility:visible!important;
+}
+html.app-revealing body > :not(.wedding-splash){
+  visibility:visible!important;
+}
+html:not(.app-launching) .wedding-splash{
+  display:none;
+}

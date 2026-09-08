@@ -5,20 +5,32 @@ const storageBucket = cfg.storageBucket || 'wedding-photos';
 const $ = (s) => document.querySelector(s);
 
 const weddingSplash = $('#weddingSplash');
-if (weddingSplash) {
+const launchedStandalone =
+  document.documentElement.classList.contains('app-launching') ||
+  window.matchMedia('(display-mode: standalone)').matches ||
+  window.navigator.standalone === true;
+
+if (weddingSplash && launchedStandalone) {
   const started = performance.now();
   const closeSplash = () => {
-    const wait = Math.max(0, 2200 - (performance.now() - started));
+    const wait = Math.max(0, 2300 - (performance.now() - started));
     setTimeout(() => {
       weddingSplash.classList.add('is-leaving');
-      setTimeout(() => weddingSplash.remove(), 650);
+      document.documentElement.classList.add('app-revealing');
+      setTimeout(() => {
+        weddingSplash.remove();
+        document.documentElement.classList.remove('app-launching', 'app-revealing');
+      }, 650);
     }, wait);
   };
   if (document.readyState === 'complete') closeSplash();
   else {
     window.addEventListener('load', closeSplash, { once: true });
-    setTimeout(closeSplash, 3500);
+    setTimeout(closeSplash, 3600);
   }
+} else if (weddingSplash) {
+  weddingSplash.remove();
+  document.documentElement.classList.remove('app-launching', 'app-revealing');
 }
 
 
