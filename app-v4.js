@@ -214,8 +214,10 @@ window.matchMedia('(display-mode: standalone)').addEventListener?.('change', app
     if (index < 0) return;
 
     // Finger moves left = next page. Finger moves right = previous page.
-    const targetIndex = dx < 0 ? index + 1 : index - 1;
-    if (targetIndex < 0 || targetIndex >= views.length) return;
+    // Wrap continuously at either end of the available page list.
+    const targetIndex = dx < 0
+      ? (index + 1) % views.length
+      : (index - 1 + views.length) % views.length;
 
     showView(views[targetIndex]);
   }, { passive: true });
