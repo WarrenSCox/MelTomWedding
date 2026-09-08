@@ -1856,3 +1856,72 @@ body{padding-bottom:70px!important}
   box-shadow:none!important;
   color:var(--olive-dark)!important;
 }
+
+
+/* v7.38: reliable inline-SVG favourites — identical geometry in both states */
+.photo-favourite-btn,
+.lightbox__favourite,
+#surprisePolaroidFavourite{
+  display:grid!important;
+  place-items:center!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  font-size:0!important;
+  line-height:0!important;
+}
+
+.photo-favourite-btn::before,
+.lightbox__favourite::before,
+#surprisePolaroidFavourite::before{
+  content:none!important;
+  display:none!important;
+}
+
+.favourite-heart-svg{
+  display:block!important;
+  width:31px!important;
+  height:28px!important;
+  overflow:visible!important;
+}
+
+.favourite-heart-svg path{
+  fill:transparent!important;
+  stroke:#fff!important;
+  stroke-width:2.2!important;
+  stroke-linecap:round!important;
+  stroke-linejoin:round!important;
+  vector-effect:non-scaling-stroke!important;
+  transition:fill .14s ease,stroke .14s ease!important;
+}
+
+/* Same exact path when selected: only fill/stroke colour changes */
+.photo-favourite-btn.is-favourite .favourite-heart-svg path,
+.lightbox__favourite.is-favourite .favourite-heart-svg path,
+#surprisePolaroidFavourite.is-favourite .favourite-heart-svg path{
+  fill:#ef3340!important;
+  stroke:#ef3340!important;
+}
+
+#surprisePolaroidFavourite:not(.is-favourite) .favourite-heart-svg path{
+  stroke:var(--olive-dark)!important;
+}
+
+/* Keep the lightbox heart over the actual image top-right */
+.lightbox__favourite{
+  width:44px!important;
+  height:44px!important;
+  z-index:45!important;
+}
+
+.photo-favourite-btn{
+  width:42px!important;
+  height:42px!important;
+}
+
+#surprisePolaroidFavourite{
+  width:40px!important;
+  height:40px!important;
+}

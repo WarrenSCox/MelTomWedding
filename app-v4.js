@@ -267,26 +267,33 @@ function isFavourite(photo) {
   return favouriteIds.has(String(photo.id));
 }
 
+const HEART_SVG = `
+  <svg class="favourite-heart-svg" viewBox="0 0 32 29" aria-hidden="true" focusable="false">
+    <path d="M16 27.2 3.7 15.4C-2.4 9.6 1.9.7 9.4.7c3.2 0 5.4 1.8 6.6 3.5C17.2 2.5 19.4.7 22.6.7c7.5 0 11.8 8.9 5.7 14.7L16 27.2Z"/>
+  </svg>`;
+
 function syncFavouriteButtons() {
   document.querySelectorAll('[data-favourite-id]').forEach(button => {
     const active = favouriteIds.has(button.dataset.favouriteId);
     button.classList.toggle('is-favourite', active);
-    button.textContent = '';
+    button.innerHTML = HEART_SVG;
     button.setAttribute('aria-pressed', String(active));
     button.setAttribute('aria-label', active ? 'Remove from favourites' : 'Add to favourites');
   });
 
-  if (typeof syncSurprisePolaroidFavourite === 'function') syncSurprisePolaroidFavourite();
   const lightboxFavouriteBtn = $('#lightboxFavouriteBtn');
   if (lightboxFavouriteBtn && activeLightboxPhoto) {
     const active = isFavourite(activeLightboxPhoto);
     lightboxFavouriteBtn.classList.toggle('is-favourite', active);
-    lightboxFavouriteBtn.textContent = '';
+    lightboxFavouriteBtn.innerHTML = HEART_SVG;
     lightboxFavouriteBtn.setAttribute('aria-pressed', String(active));
     lightboxFavouriteBtn.setAttribute('aria-label', active ? 'Remove from favourites' : 'Add to favourites');
   }
-}
 
+  if (typeof syncSurprisePolaroidFavourite === 'function') {
+    syncSurprisePolaroidFavourite();
+  }
+}
 function toggleFavourite(photo) {
   const key = String(photo.id);
   if (favouriteIds.has(key)) favouriteIds.delete(key);
@@ -898,10 +905,10 @@ function closeSurprisePolaroid() {
 
 function syncSurprisePolaroidFavourite() {
   const button = $('#surprisePolaroidFavourite');
-  if (!surprisePolaroidPhoto) return;
+  if (!button || !surprisePolaroidPhoto) return;
   const active = isFavourite(surprisePolaroidPhoto);
   button.classList.toggle('is-favourite', active);
-  button.textContent = '';
+  button.innerHTML = HEART_SVG;
   button.setAttribute('aria-pressed', String(active));
   button.setAttribute('aria-label', active ? 'Remove from favourites' : 'Add to favourites');
 }
