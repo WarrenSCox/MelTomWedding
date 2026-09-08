@@ -315,17 +315,10 @@ h1,h2,h3{font-family:"Cormorant Garamond",Georgia,serif;font-weight:500;margin:0
 }
 
 
-/* v7.3: true installed-app launch animation */
-html.app-launching body > :not(.wedding-splash){
-  visibility:hidden!important;
-}
-html.app-launching .wedding-splash{
-  display:grid!important;
-  visibility:visible!important;
-}
-html.app-revealing body > :not(.wedding-splash){
-  visibility:visible!important;
-}
-html:not(.app-launching) .wedding-splash{
-  display:none;
+/* v7.8: minimal home/info copy */
+#guestName::placeholder{
+  color:var(--ink)!important;
+  opacity:.82!important;
+  font-style:normal!important;
+  font-weight:400!important;
 }

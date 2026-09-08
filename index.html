@@ -34,13 +34,6 @@
       justify-self:stretch!important;
     }
   </style>
-  <style>
-    #guestName::placeholder{
-      color:var(--ink)!important;
-      opacity:.72!important;
-      font-style:normal!important;
-    }
-  </style>
 </head>
 <body>
   <div id="weddingSplash" class="wedding-splash" aria-hidden="true">
@@ -78,7 +71,6 @@
 
       <section class="upload-panel">
         <label class="guest-name-field" for="guestName">
-          <span class="guest-name-field__label">Your name</span>
           <input id="guestName" type="text" maxlength="40" required
             placeholder="type your name here"
             aria-label="Your name" autocomplete="name" />
@@ -90,7 +82,6 @@
 
       <section class="gallery-heading">
         <div>
-          <p class="eyebrow">THE SHARED ALBUM</p>
           <h2>Everyone's photos</h2>
           <p id="photoCount">No photos yet — be the first to add one.</p>
         </div>
@@ -124,7 +115,6 @@
       </section>
 
       <section class="invite-section timeline-section">
-        <p class="eyebrow">TIMELINE</p>
         <h2>Order of the day</h2>
         <div class="timeline">
           <article class="left"><div><strong>Arrive</strong><span>12.15pm</span></div><i><svg class="timeline-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 20 12 3l10 17H2Z"/><path d="M12 3v17M6 20l6-10 6 10M9 20v-5l3-5 3 5v5M4 20v-4m16 4v-4"/><path d="M7 11 12 3l5 8"/></svg></i></article>
@@ -137,7 +127,6 @@
       </section>
 
       <section class="invite-section details-section">
-        <p class="eyebrow">DETAILS</p>
         <article>
           <h2>Accommodation</h2>
           <p>Whatton House has plenty of hotels and B&amp;Bs nearby, all just a short taxi ride away.</p>
@@ -204,6 +193,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
   <script src="config.js?v=6.8"></script>
-  <script src="app-v4.js?v=7.7"></script>
+  <script src="app-v4.js?v=7.8"></script>
 </body>
 </html>
