@@ -1,18 +1,13 @@
-# Tom & Mel Wedding App · v3
+# Tom & Mel Wedding Photo App — v4
 
-A mobile-first wedding photo and information app for **Tom & Mel · 10 September 2026**.
+A no-login mobile-first wedding photo gallery for Tom & Mel, styled directly from the printed invitation.
 
-## v3 changes
-- Completely restyled to mirror the invitation: warm ivory paper, black editorial serif type, handwritten “and”, muted botanical greens and fine-line styling.
-- No login or wedding-code screen: guests go directly into the gallery.
-- Gallery and multi-photo upload remain the main experience.
-- New **Wedding Info** page with venue, full timeline, accommodation, taxi and dietary information from the invitation.
-- New dedicated **Save App** page plus PWA install support.
-- Bottom mobile navigation: Gallery / Info / Save App.
-- No generated artwork is included in this release.
+## v4 visual rebuild
+- Uses the actual Whatton House tipi watercolour from the supplied invitation as the main app artwork.
+- Rebuilt invitation-style TOM / and / MEL lockup, spaced date typography and cream/olive palette.
+- Gallery opens immediately — no login screen.
+- Dedicated Wedding Info page with venue, full timeline, accommodation, taxis and dietaries.
+- Save App page with PWA install / Add to Home Screen guidance.
+- New v4 CSS/JS filenames and service-worker cache name to force the new look through older cached versions.
 
-## Publishing
-Upload the contents of this folder to the root of the separate GitHub repository and allow GitHub Pages to rebuild.
-
-## Photo backend
-See `SETUP.md` to connect Supabase. If `config.js` still contains `YOUR_SUPABASE_URL`, the UI works but photos cannot yet be uploaded/shared.
+Upload all files and folders in this directory to the root of the GitHub Pages repository.

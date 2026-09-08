@@ -2,23 +2,21 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#f6f2e9" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#f4f1e8" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="Tom & Mel" />
-  <title>Tom & Mel · Wedding Photos</title>
-  <link rel="manifest" href="manifest.webmanifest" />
-  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <title>Tom & Mel · 10.09.2026</title>
+  <link rel="manifest" href="manifest.webmanifest?v=4" />
+  <link rel="apple-touch-icon" href="icon-192.png?v=4" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles-v4.css?v=4" />
 </head>
 <body>
   <header class="site-header">
-    <div class="botanical botanical--left" aria-hidden="true"></div>
-    <div class="botanical botanical--right" aria-hidden="true"></div>
     <button class="brand" type="button" data-view-target="gallery" aria-label="Open gallery">
       <span class="brand__names"><span>TOM</span><em>and</em><span>MEL</span></span>
       <span class="brand__date">10 . 09 . 2026</span>
@@ -27,20 +25,20 @@
 
   <main id="app">
     <section id="view-gallery" class="view is-active" data-view="gallery">
-      <section class="intro">
-        <p class="kicker">SHARE THE MOMENTS</p>
-        <h1>Our wedding through your eyes</h1>
-        <p>Upload your favourite photos and enjoy everyone else's memories from the day.</p>
+      <section class="invite-hero" aria-label="Tom and Mel wedding">
+        <img src="assets/whatton-tipi-watercolour.jpg" alt="Watercolour illustration of the wedding tipi at Whatton House" />
+        <div class="invite-hero__fade"></div>
+        <div class="invite-hero__copy">
+          <p class="script-line">Share the moments</p>
+          <p class="hero-sub">UPLOAD YOUR PHOTOS AND<br>SEE EVERYONE'S MEMORIES</p>
+        </div>
       </section>
 
-      <section class="upload-card paper-card">
-        <div class="upload-card__icon" aria-hidden="true">↥</div>
-        <div class="upload-card__copy">
-          <p class="section-label">ADD YOUR PHOTOS</p>
-          <h2>Share a memory</h2>
-          <p>Choose one or several photos from your phone. No account or login needed.</p>
-        </div>
-        <label class="upload-button" for="photoInput">Choose photos</label>
+      <section class="upload-panel">
+        <p class="eyebrow">ADD YOUR PHOTOS</p>
+        <h1>Share a memory</h1>
+        <p class="lead">Choose one or several photos from your phone. No account or login needed.</p>
+        <label class="primary-button" for="photoInput"><span aria-hidden="true">＋</span> Choose photos</label>
         <input id="photoInput" type="file" accept="image/*" multiple hidden />
         <label class="guest-name-field">
           <span>Your name <small>(optional)</small></span>
@@ -51,14 +49,14 @@
 
       <section class="gallery-heading">
         <div>
-          <p class="section-label">THE SHARED ALBUM</p>
+          <p class="eyebrow">THE SHARED ALBUM</p>
           <h2>Everyone's photos</h2>
           <p id="photoCount">No photos yet — be the first to add one.</p>
         </div>
-        <button id="refreshBtn" class="text-button" type="button">↻ Refresh</button>
+        <button id="refreshBtn" class="text-button" type="button">Refresh ↻</button>
       </section>
 
-      <section id="emptyState" class="empty-state paper-card">
+      <section id="emptyState" class="empty-state">
         <div class="line-heart">♡</div>
         <h3>The story starts here</h3>
         <p>Guest photos will appear here as they're shared.</p>
@@ -67,96 +65,75 @@
     </section>
 
     <section id="view-info" class="view" data-view="info" hidden>
-      <section class="intro intro--compact">
-        <p class="kicker">WEDDING INFORMATION</p>
-        <h1>Everything for the big day</h1>
-        <p>Tipis at Whatton House · Thursday 10 September 2026</p>
+      <section class="info-cover">
+        <div class="info-cover__copy">
+          <p class="eyebrow">WEDDING INFORMATION</p>
+          <h1>Tom <span>&</span> Mel</h1>
+          <p class="info-date">10 . 09 . 2026</p>
+          <p>Tipis at Whatton House</p>
+        </div>
+        <img src="assets/whatton-tipi-watercolour.jpg" alt="Watercolour illustration of Whatton House wedding tipi" />
       </section>
 
-      <section class="venue-card paper-card">
-        <p class="section-label">THE VENUE</p>
+      <section class="invite-section venue-section">
+        <p class="eyebrow">THE CEREMONY & CELEBRATION</p>
         <h2>Tipis at Whatton House</h2>
-        <p>Whatton House, London Road,<br>Loughborough, LE12 5BG</p>
-        <div class="venue-time"><span>Guest arrival</span><strong>12.15pm</strong></div>
+        <p class="venue-address">Whatton House, London Road<br>Loughborough LE12 5BG</p>
+        <div class="big-time">12.15pm <span>guest arrival</span></div>
       </section>
 
-      <section class="info-section paper-card timeline-card">
-        <p class="section-label">TIMELINE</p>
+      <section class="invite-section timeline-section">
+        <p class="eyebrow">TIMELINE</p>
         <h2>Order of the day</h2>
         <div class="timeline">
-          <article><span class="timeline__icon">⌂</span><div><strong>Arrive</strong><span>12.15pm</span></div></article>
-          <article><span class="timeline__icon">◎</span><div><strong>Ceremony</strong><span>1.00pm</span></div></article>
-          <article><span class="timeline__icon">♢</span><div><strong>Drinks &amp; Snacks</strong><span>2.00pm</span></div></article>
-          <article><span class="timeline__icon">♧</span><div><strong>Wedding Breakfast</strong><span>4.00pm</span></div></article>
-          <article><span class="timeline__icon">⌁</span><div><strong>Let's Party</strong><span>7.30pm</span></div></article>
-          <article><span class="timeline__icon">☾</span><div><strong>Let's Eat Again</strong><span>8.30pm</span></div></article>
+          <article class="left"><div><strong>Arrive</strong><span>12.15pm</span></div><i>⌂</i></article>
+          <article class="right"><i>◎</i><div><strong>Ceremony</strong><span>1.00pm</span></div></article>
+          <article class="left"><div><strong>Drinks &amp; Snacks</strong><span>2.00pm</span></div><i>♢</i></article>
+          <article class="right"><i>♧</i><div><strong>Wedding Breakfast</strong><span>4.00pm</span></div></article>
+          <article class="left"><div><strong>Let's Party</strong><span>7.30pm</span></div><i>⌁</i></article>
+          <article class="right"><i>☾</i><div><strong>Let's Eat Again</strong><span>8.30pm</span></div></article>
         </div>
       </section>
 
-      <section class="details-grid">
-        <article class="paper-card detail-card">
-          <p class="section-label">ACCOMMODATION</p>
-          <h2>Nearby stays</h2>
+      <section class="invite-section details-section">
+        <p class="eyebrow">DETAILS</p>
+        <article>
+          <h2>Accommodation</h2>
           <p>Whatton House has plenty of hotels and B&amp;Bs nearby, all just a short taxi ride away.</p>
-          <ul>
-            <li>The Royal Oak · 2.5 miles</li>
-            <li>The Falcon Inn, Long Whatton · 3.5 miles</li>
-            <li>Radisson Blu EMA · 3.5 miles</li>
-            <li>Leonardo Hotel EMA</li>
-          </ul>
+          <p><strong>The Royal Oak</strong> (2.5 miles)<br><strong>The Falcon Inn</strong> (3.5 miles), Long Whatton<br><strong>Radisson Blu EMA</strong> (3.5 miles)<br><strong>Leonardo Hotel EMA</strong></p>
         </article>
-
-        <article class="paper-card detail-card">
-          <p class="section-label">TRANSPORT</p>
-          <h2>Local taxis</h2>
-          <p><strong>Loughborough Taxis</strong><br><a href="tel:01509230230">01509 230230</a></p>
-          <p><strong>Taxi Long Eaton</strong><br><a href="tel:07426718612">07426 718612</a></p>
-          <p><strong>AAA Private Hire Shepshed Ltd</strong><br><a href="tel:01509504488">01509 504488</a></p>
+        <div class="fine-divider"></div>
+        <article>
+          <h2>Transport</h2>
+          <p>Loughborough Taxis · <a href="tel:01509230230">01509 230230</a><br>
+          Taxi Long Eaton · <a href="tel:07426718612">07426 718612</a><br>
+          AAA Private Hire Shepshed Ltd · <a href="tel:01509504488">01509 504488</a></p>
         </article>
-
-        <article class="paper-card detail-card detail-card--wide">
-          <p class="section-label">DIETARIES</p>
-          <h2>Food allergies</h2>
+        <div class="fine-divider"></div>
+        <article>
+          <h2>Dietaries</h2>
           <p>Please let Tom or Mel know in advance if there are any food allergies they need to be aware of.</p>
         </article>
+        <p class="closing-script">We can't wait to celebrate with you</p>
       </section>
-
-      <p class="closing-script">We can't wait to celebrate with you</p>
     </section>
 
     <section id="view-save" class="view" data-view="save" hidden>
-      <section class="intro intro--compact">
-        <p class="kicker">KEEP IT HANDY</p>
+      <section class="save-cover">
+        <img src="assets/whatton-tipi-square.jpg" alt="Watercolour wedding tipi" />
+        <div class="save-cover__mark">
+          <span class="mini-brand"><b>TOM</b><em>and</em><b>MEL</b></span>
+          <small>10 . 09 . 2026</small>
+        </div>
+      </section>
+      <section class="save-content">
+        <p class="eyebrow">KEEP IT HANDY</p>
         <h1>Save to your mobile</h1>
         <p>Add the wedding app to your Home Screen so the gallery is only one tap away.</p>
-      </section>
-
-      <section class="save-card paper-card">
-        <div class="phone-mark" aria-hidden="true">
-          <span class="phone-mark__heart">♡</span>
-          <span>T &amp; M</span>
-          <small>10 . 09 . 26</small>
-        </div>
-        <button id="installBtn" class="install-button" type="button">⇩ Save to mobile</button>
-
+        <button id="installBtn" class="primary-button install-button" type="button">↓ Save to mobile</button>
         <div class="install-instructions">
-          <article>
-            <h2>On iPhone</h2>
-            <ol>
-              <li>Open this page in Safari.</li>
-              <li>Tap the <strong>Share</strong> icon.</li>
-              <li>Choose <strong>Add to Home Screen</strong>.</li>
-              <li>Tap <strong>Add</strong>.</li>
-            </ol>
-          </article>
-          <article>
-            <h2>On Android</h2>
-            <ol>
-              <li>Tap <strong>Save to mobile</strong> above.</li>
-              <li>If prompted, choose <strong>Install</strong>.</li>
-              <li>If no prompt appears, use your browser menu and choose <strong>Add to Home screen</strong>.</li>
-            </ol>
-          </article>
+          <article><h2>iPhone</h2><p>Open in Safari, tap <strong>Share</strong>, choose <strong>Add to Home Screen</strong>, then tap <strong>Add</strong>.</p></article>
+          <article><h2>Android</h2><p>Tap <strong>Save to mobile</strong>. If your browser doesn't prompt, open its menu and choose <strong>Install app</strong> or <strong>Add to Home screen</strong>.</p></article>
         </div>
       </section>
     </section>
@@ -179,11 +156,11 @@
     <div class="install-help__icon">♡</div>
     <h3>Save Tom &amp; Mel's wedding app</h3>
     <p id="installHelpText">Add this page to your Home Screen for quick access throughout the day.</p>
-    <button id="installHelpDone" class="install-help__done" type="button">Got it</button>
+    <button id="installHelpDone" class="primary-button install-help__done" type="button">Got it</button>
   </dialog>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="config.js"></script>
-  <script src="app.js"></script>
+  <script src="config.js?v=4"></script>
+  <script src="app-v4.js?v=4"></script>
 </body>
 </html>
