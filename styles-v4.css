@@ -589,3 +589,16 @@ h1,h2,h3{font-family:"Cormorant Garamond",Georgia,serif;font-weight:500;margin:0
   height:30px;
   object-fit:contain;
 }
+
+
+/* v7.18: tightly cropped gallery icon, matched to Info icon footprint */
+.bottom-nav .nav-item > .nav-gallery-icon{
+  width:30px!important;
+  height:30px!important;
+}
+.bottom-nav .nav-item > .nav-gallery-icon img{
+  width:30px!important;
+  height:30px!important;
+  object-fit:contain!important;
+  transform:none!important;
+}
