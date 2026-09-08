@@ -1249,3 +1249,124 @@ body{padding-bottom:70px!important}
 @media(prefers-reduced-motion:reduce){
   .surprise-confetti{display:none!important}
 }
+
+
+/* v7.30: enforce the intended v7.29 polish */
+
+/* Really tighten the gap below the upload CTA */
+.upload-panel{
+  padding-bottom:8px!important;
+}
+.upload-status{
+  min-height:0!important;
+  margin-top:8px!important;
+}
+.upload-status:empty{
+  display:none!important;
+}
+.gallery-heading{
+  margin-top:0!important;
+}
+
+/* Info icon footprint matched more closely to Gallery / Surprise */
+.bottom-nav .nav-item > .nav-info-icon{
+  font-size:1.86rem!important;
+  line-height:27px!important;
+  transform:translateY(0)!important;
+}
+
+/* Use pseudo glyphs so arrows sit dead-centre in their grey hit areas */
+.lightbox__nav{
+  font-size:0!important;
+  line-height:0!important;
+  padding:0!important;
+  display:grid!important;
+  place-items:center!important;
+}
+.lightbox__nav::before{
+  display:block;
+  font:300 3.15rem/1 "Cormorant Garamond",Georgia,serif;
+  color:#fff;
+  transform:translateY(-1px);
+}
+.lightbox__nav--previous::before{content:"‹"}
+.lightbox__nav--next::before{content:"›"}
+.lightbox__nav--previous,
+.lightbox__nav--next{
+  padding:0!important;
+}
+
+/* Hearts are visually centred independently of the text baseline */
+.photo-favourite-btn,
+.lightbox__favourite{
+  font-size:0!important;
+  line-height:0!important;
+  padding:0!important;
+  display:grid!important;
+  place-items:center!important;
+}
+.photo-favourite-btn::before,
+.lightbox__favourite::before{
+  content:"♡";
+  display:block;
+  color:#fff;
+  font:400 24px/1 Georgia,serif;
+  transform:translateY(2px);
+}
+.lightbox__favourite::before{
+  font-size:31px;
+  transform:translateY(3px);
+}
+.photo-favourite-btn.is-favourite::before,
+.lightbox__favourite.is-favourite::before{
+  content:"♥";
+  color:#a45f63;
+}
+.photo-favourite-btn.is-favourite,
+.lightbox__favourite.is-favourite{
+  background:rgba(52,45,45,.64)!important;
+  border-color:#c7aaa9!important;
+}
+
+/* Keep the muted red heart legible but pastel */
+.photo-favourite-btn.is-favourite::before,
+.lightbox__favourite.is-favourite::before{
+  text-shadow:0 0 1px rgba(255,255,255,.18);
+}
+
+/* Confetti sits above the Surprise page and gets a clear one-shot burst */
+.surprise-confetti{
+  position:fixed!important;
+  inset:0!important;
+  z-index:999!important;
+}
+.surprise-confetti.is-playing::before,
+.surprise-confetti.is-playing::after{
+  content:"";
+  position:absolute;
+  bottom:12%;
+  width:22px;
+  height:38px;
+  border:2px solid rgba(102,115,93,.55);
+  border-radius:4px 4px 10px 10px;
+  background:rgba(194,170,136,.42);
+  animation:partyPopperKick .7s ease-out 1 both;
+}
+.surprise-confetti.is-playing::before{
+  left:8%;
+  transform:rotate(-24deg);
+}
+.surprise-confetti.is-playing::after{
+  right:8%;
+  transform:rotate(24deg);
+}
+@keyframes partyPopperKick{
+  0%{opacity:0;scale:.8}
+  30%{opacity:1;scale:1.08}
+  100%{opacity:.75;scale:1}
+}
+@media(max-width:600px){
+  .upload-panel{padding-bottom:6px!important}
+  .bottom-nav .nav-item > .nav-info-icon{font-size:1.75rem!important}
+  .lightbox__nav::before{font-size:2.95rem}
+}

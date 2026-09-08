@@ -56,7 +56,9 @@ function showView(name) {
   if (name === 'favourites') void loadFavourites();
   if (name === 'surprise') {
     playSurpriseConfetti();
-    void openRandomPhoto();
+    setTimeout(() => {
+      if (!$('#view-surprise').hidden) void openRandomPhoto();
+    }, 950);
   }
 }
 
