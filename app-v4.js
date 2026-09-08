@@ -11,52 +11,72 @@ const launchedStandalone =
   window.navigator.standalone === true;
 
 if (weddingSplash && launchedStandalone) {
+  // v7.45: one controlled timeline. Never animate the two title lines independently.
+  const names = weddingSplash.querySelector('.wedding-splash__title span');
+  const wedding = weddingSplash.querySelector('.wedding-splash__title em');
+  const title = weddingSplash.querySelector('.wedding-splash__title');
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let finished = false;
+  let ready = document.readyState === 'complete';
   const started = performance.now();
-  const splashNames = weddingSplash.querySelector('.wedding-splash__title span');
-  const splashWedding = weddingSplash.querySelector('.wedding-splash__title em');
 
-  // v7.44: deterministic title reveal — names first, then "Wedding".
-  // Inline styles deliberately override any older cached CSS animation rules.
-  if (splashNames && splashWedding) {
-    [splashNames, splashWedding].forEach(el => {
+  const reveal = (element) => {
+    element.style.setProperty('opacity', '1', 'important');
+    element.style.setProperty('transform', 'translateY(0)', 'important');
+  };
+  const finish = () => {
+    if (finished) return;
+    finished = true;
+    weddingSplash.classList.add('is-leaving');
+    document.documentElement.classList.add('app-revealing');
+    setTimeout(() => {
+      weddingSplash.remove();
+      document.documentElement.classList.remove('app-launching', 'app-revealing');
+    }, 650);
+  };
+
+  if (title && names && wedding) {
+    title.style.setProperty('opacity', '1', 'important');
+    title.style.setProperty('transform', 'none', 'important');
+    title.style.setProperty('animation', 'none', 'important');
+    [names, wedding].forEach(el => {
       el.style.setProperty('opacity', '0', 'important');
       el.style.setProperty('transform', 'translateY(8px)', 'important');
       el.style.setProperty('animation', 'none', 'important');
-      el.style.setProperty('transition', 'opacity .38s ease, transform .38s ease', 'important');
+      el.style.setProperty('transition', reduced ? 'none' : 'opacity .4s ease, transform .4s ease', 'important');
     });
 
-    setTimeout(() => {
-      splashNames.style.setProperty('opacity', '1', 'important');
-      splashNames.style.setProperty('transform', 'translateY(0)', 'important');
-
+    const showNames = () => {
+      reveal(names);
+      // Wedding cannot appear until the names have completed their reveal.
       setTimeout(() => {
-        splashWedding.style.setProperty('opacity', '1', 'important');
-        splashWedding.style.setProperty('transform', 'translateY(0)', 'important');
-      }, 430);
-    }, 1040);
+        reveal(wedding);
+        setTimeout(() => {
+          const closeWhenReady = () => {
+            if (ready || performance.now() - started > 6500) finish();
+            else setTimeout(closeWhenReady, 100);
+          };
+          closeWhenReady();
+        }, reduced ? 100 : 650);
+      }, reduced ? 0 : 520);
+    };
+    const startTitle = () => setTimeout(showNames, reduced ? 0 : 1050);
+    if (document.fonts && document.fonts.ready) {
+      Promise.race([
+        document.fonts.ready,
+        new Promise(resolve => setTimeout(resolve, 1800))
+      ]).then(startTitle, startTitle);
+    } else startTitle();
+  } else {
+    setTimeout(finish, 2300);
   }
 
-  const closeSplash = () => {
-    const wait = Math.max(0, 2500 - (performance.now() - started));
-    setTimeout(() => {
-      weddingSplash.classList.add('is-leaving');
-      document.documentElement.classList.add('app-revealing');
-      setTimeout(() => {
-        weddingSplash.remove();
-        document.documentElement.classList.remove('app-launching', 'app-revealing');
-      }, 650);
-    }, wait);
-  };
-  if (document.readyState === 'complete') closeSplash();
-  else {
-    window.addEventListener('load', closeSplash, { once: true });
-    setTimeout(closeSplash, 3800);
-  }
+  if (!ready) window.addEventListener('load', () => { ready = true; }, { once: true });
+  setTimeout(finish, 8000); // Last-resort escape if loading stalls.
 } else if (weddingSplash) {
   weddingSplash.remove();
   document.documentElement.classList.remove('app-launching', 'app-revealing');
 }
-
 
 const galleryGrid = $('#galleryGrid');
 const emptyState = $('#emptyState');
@@ -64,6 +84,7 @@ const uploadStatus = $('#uploadStatus');
 const guestNameInput = $('#guestName');
 const photoInput = $('#photoInput');
 const photoUploadButton = $('#photoUploadButton');
+let uploadInProgress = false;
 
 // Simple app-style navigation
 function showView(name) {
@@ -113,9 +134,9 @@ guestNameInput.value = localStorage.getItem('weddingGuestName') || '';
 
 function updateUploadAvailability() {
   const hasName = guestNameInput.value.trim().length > 0;
-  photoInput.disabled = !hasName;
-  photoUploadButton.classList.toggle('is-disabled', !hasName);
-  photoUploadButton.setAttribute('aria-disabled', hasName ? 'false' : 'true');
+  photoInput.disabled = !hasName || uploadInProgress;
+  photoUploadButton.classList.toggle('is-disabled', !hasName || uploadInProgress);
+  photoUploadButton.setAttribute('aria-disabled', hasName && !uploadInProgress ? 'false' : 'true');
 }
 
 guestNameInput.addEventListener('input', () => {
@@ -187,7 +208,20 @@ async function preparePhotoForUpload(file) {
   }
 }
 
-photoInput.addEventListener('change', async (e) => {
+
+const uploadConfirmDialog = $('#uploadConfirmDialog');
+const confirmUploadBtn = $('#confirmUploadBtn');
+const cancelUploadBtn = $('#cancelUploadBtn');
+let pendingUpload = null;
+
+function cancelPendingUpload() {
+  if (uploadInProgress) return;
+  pendingUpload = null;
+  photoInput.value = '';
+  uploadConfirmDialog.close();
+}
+
+photoInput.addEventListener('change', (e) => {
   const guestName = guestNameInput.value.trim();
   if (!guestName) {
     e.target.value = '';
@@ -201,9 +235,43 @@ photoInput.addEventListener('change', async (e) => {
   if (!files.length) return;
   if (!configured) {
     uploadStatus.textContent = 'Photo storage is not connected yet. Follow SETUP.md to connect Supabase.';
+    e.target.value = '';
     return;
   }
 
+  // Capture this exact selection before opening the confirmation.
+  pendingUpload = { files, guestName };
+  $('#uploadConfirmTitle').textContent =
+    `Ready to upload ${files.length} photo${files.length === 1 ? '' : 's'}?`;
+  uploadConfirmDialog.showModal();
+});
+
+cancelUploadBtn.addEventListener('click', cancelPendingUpload);
+uploadConfirmDialog.addEventListener('cancel', (event) => {
+  if (uploadInProgress) event.preventDefault();
+  else {
+    pendingUpload = null;
+    photoInput.value = '';
+  }
+});
+uploadConfirmDialog.addEventListener('close', () => {
+  if (!uploadInProgress) {
+    pendingUpload = null;
+    photoInput.value = '';
+  }
+});
+
+confirmUploadBtn.addEventListener('click', async () => {
+  if (uploadInProgress || !pendingUpload) return;
+  const { files, guestName } = pendingUpload;
+  pendingUpload = null;
+  uploadInProgress = true;
+  uploadConfirmDialog.close();
+  photoInput.disabled = true;
+  photoUploadButton.classList.add('is-disabled');
+  photoUploadButton.setAttribute('aria-disabled', 'true');
+
+  try {
   localStorage.setItem('weddingGuestName', guestName);
   uploadStatus.textContent = `Uploading ${files.length} photo${files.length > 1 ? 's' : ''}…`;
 
@@ -251,8 +319,12 @@ photoInput.addEventListener('change', async (e) => {
   uploadStatus.textContent = failed
     ? `${done} uploaded, ${failed} failed. Please try the failed photo${failed === 1 ? '' : 's'} again.`
     : `${done} photo${done === 1 ? '' : 's'} added to Tom & Mel's gallery ♡`;
-  e.target.value = '';
   await loadPhotos();
+  } finally {
+    uploadInProgress = false;
+    photoInput.value = '';
+    updateUploadAvailability();
+  }
 });
 
 const PAGE_SIZE = 40;

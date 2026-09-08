@@ -2031,7 +2031,8 @@ body{padding-bottom:70px!important}
   }
 }
 
-/* Launch animation: Mel & Tom's appears first, then Wedding */
+
+/* v7.45: launch title is controlled by one JS timeline */
 .wedding-splash__title{
   opacity:1!important;
   transform:none!important;
@@ -2040,26 +2041,44 @@ body{padding-bottom:70px!important}
 .wedding-splash__title span,
 .wedding-splash__title em{
   opacity:0;
+  animation:none!important;
 }
-.wedding-splash__title span{
-  transform:translateY(8px);
-  animation:splashMelTomIn .42s 1.08s ease forwards!important;
+
+
+/* v7.45: upload confirmation */
+.upload-confirm-dialog{
+  width:min(90vw,420px);
+  max-width:420px;
+  max-height:calc(100dvh - 40px);
+  overflow:auto;
+  padding:0;
+  border:1px solid var(--line);
+  border-radius:4px;
+  background:var(--paper-light);
+  color:var(--ink);
+  box-shadow:0 20px 60px rgba(30,32,29,.18);
 }
-.wedding-splash__title em{
-  transform:translateY(8px);
-  animation:splashWeddingIn .52s 1.42s ease forwards!important;
+.upload-confirm-dialog::backdrop{background:rgba(30,32,29,.48)}
+.upload-confirm-dialog__inner{
+  display:flex;flex-direction:column;align-items:center;
+  padding:34px 26px 25px;text-align:center;
 }
-@keyframes splashMelTomIn{
-  to{opacity:1;transform:translateY(0)}
+.upload-confirm-dialog .eyebrow{margin-bottom:15px}
+.upload-confirm-dialog h2{
+  font-family:"Cormorant Garamond",Georgia,serif;
+  font-size:2rem;line-height:1.1;font-weight:500;
 }
-@keyframes splashWeddingIn{
-  to{opacity:1;transform:translateY(0)}
+.upload-confirm-dialog p:not(.eyebrow){
+  margin:18px 0 26px;color:var(--muted);
+  font-size:.88rem;line-height:1.7;
 }
-@media(prefers-reduced-motion:reduce){
-  .wedding-splash__title span,
-  .wedding-splash__title em{
-    opacity:1!important;
-    transform:none!important;
-    animation:none!important;
-  }
+.upload-confirm-dialog .primary-button{
+  width:100%;min-height:50px;font-size:1.25rem;
 }
+.upload-confirm-dialog__cancel{
+  margin-top:14px;padding:9px 22px;border:0;
+  background:transparent;color:var(--olive-dark);
+  font-family:"Montserrat",sans-serif;font-size:.78rem;
+  cursor:pointer;text-decoration:underline;text-underline-offset:3px;
+}
+.upload-confirm-dialog button:focus-visible{outline:2px solid var(--olive-dark);outline-offset:3px}

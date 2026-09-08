@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles-v4.css?v=7.43" />
+  <link rel="stylesheet" href="styles-v4.css?v=7.45" />
   <script>
     (function () {
       var standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
@@ -21,6 +21,10 @@
     })();
   </script>
   <style>
+
+    /* Hide the launch lettering before the first paint. */
+    .wedding-splash__title{opacity:1!important;transform:none!important;animation:none!important}
+    .wedding-splash__title span,.wedding-splash__title em{opacity:0;animation:none!important}
     html.installed-app .bottom-nav [data-view-target="save"]{display:none!important}
     html.installed-app .bottom-nav{
       display:grid!important;
@@ -79,6 +83,17 @@
         <input id="photoInput" type="file" accept="image/*" multiple hidden disabled />
         <div id="uploadStatus" class="upload-status" aria-live="polite"></div>
       </section>
+
+
+<dialog id="uploadConfirmDialog" class="upload-confirm-dialog" aria-labelledby="uploadConfirmTitle" aria-describedby="uploadConfirmDescription">
+  <div class="upload-confirm-dialog__inner">
+    <p class="eyebrow">ONE LAST CHECK</p>
+    <h2 id="uploadConfirmTitle">Ready to upload?</h2>
+    <p id="uploadConfirmDescription">Once uploaded, your photos will be added to the public wedding gallery and you won’t be able to delete them yourself.</p>
+    <button id="confirmUploadBtn" class="primary-button" type="button">Yes, upload</button>
+    <button id="cancelUploadBtn" class="upload-confirm-dialog__cancel" type="button">Cancel</button>
+  </div>
+</dialog>
 
       <section class="gallery-heading">
         <h2>Everyone's photos</h2>
@@ -255,6 +270,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
   <script src="config.js?v=6.8"></script>
-  <script src="app-v4.js?v=7.44"></script>
+  <script src="app-v4.js?v=7.45"></script>
 </body>
 </html>
