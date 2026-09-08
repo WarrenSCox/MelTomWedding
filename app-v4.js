@@ -130,13 +130,13 @@ applyInstalledAppNavigation();
 window.matchMedia('(display-mode: standalone)').addEventListener?.('change', applyInstalledAppNavigation);
 
 
-// v7.48: edge-swipe page navigation.
-// Swipe inward from the left/right edge to change page.
+// v7.49: full-screen horizontal swipe navigation.
+// Swipe left/right anywhere on the page to change tabs.
 // Surprise is intentionally excluded because it opens a transient Polaroid, not a page.
 (() => {
-  const EDGE_ZONE = 34;
-  const MIN_SWIPE = 54;
-  const MAX_VERTICAL_DRIFT = 70;
+  const MIN_SWIPE = 58;
+  const MAX_VERTICAL_DRIFT = 80;
+  const DIRECTION_RATIO = 1.25;
   let gesture = null;
 
   function swipeViews() {
@@ -155,30 +155,27 @@ window.matchMedia('(display-mode: standalone)').addEventListener?.('change', app
   }
 
   function pageHasOpenOverlay() {
-    return Boolean(
-      document.querySelector('dialog[open]') ||
-      document.querySelector('.surprise-polaroid[open]')
-    );
+    return Boolean(document.querySelector('dialog[open]'));
+  }
+
+  function shouldIgnoreTarget(target) {
+    return Boolean(target.closest(
+      'button, a, input, textarea, select, label, [contenteditable="true"], .lightbox, .surprise-polaroid'
+    ));
   }
 
   document.addEventListener('touchstart', event => {
-    if (event.touches.length !== 1 || pageHasOpenOverlay()) {
+    if (
+      event.touches.length !== 1 ||
+      pageHasOpenOverlay() ||
+      shouldIgnoreTarget(event.target)
+    ) {
       gesture = null;
       return;
     }
 
     const touch = event.touches[0];
-    const width = window.innerWidth;
-    const fromLeft = touch.clientX <= EDGE_ZONE;
-    const fromRight = touch.clientX >= width - EDGE_ZONE;
-
-    if (!fromLeft && !fromRight) {
-      gesture = null;
-      return;
-    }
-
     gesture = {
-      side: fromLeft ? 'left' : 'right',
       startX: touch.clientX,
       startY: touch.clientY,
       lastX: touch.clientX,
@@ -199,26 +196,25 @@ window.matchMedia('(display-mode: standalone)').addEventListener?.('change', app
       return;
     }
 
-    const { side, startX, startY, lastX, lastY } = gesture;
+    const { startX, startY, lastX, lastY } = gesture;
     gesture = null;
 
     const dx = lastX - startX;
     const dy = lastY - startY;
-    if (Math.abs(dy) > MAX_VERTICAL_DRIFT) return;
+    const horizontal = Math.abs(dx);
+    const vertical = Math.abs(dy);
 
-    const isValid =
-      (side === 'left' && dx >= MIN_SWIPE) ||
-      (side === 'right' && dx <= -MIN_SWIPE);
-    if (!isValid) return;
+    if (horizontal < MIN_SWIPE) return;
+    if (vertical > MAX_VERTICAL_DRIFT) return;
+    if (horizontal < vertical * DIRECTION_RATIO) return;
 
     const views = swipeViews();
     const current = activeSwipeView();
     const index = views.indexOf(current);
     if (index < 0) return;
 
-    // Left-edge inward swipe = previous page.
-    // Right-edge inward swipe = next page.
-    const targetIndex = side === 'left' ? index - 1 : index + 1;
+    // Finger moves left = next page. Finger moves right = previous page.
+    const targetIndex = dx < 0 ? index + 1 : index - 1;
     if (targetIndex < 0 || targetIndex >= views.length) return;
 
     showView(views[targetIndex]);
