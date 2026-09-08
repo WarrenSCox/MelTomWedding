@@ -15,3 +15,9 @@ Upload all files and folders in this directory to the root of the GitHub Pages r
 
 ## v5 artwork update
 The original wedding invitation artwork is now included directly as `wedding-artwork.png` and used on the main Gallery page, Wedding Info page and Save App page. The release remains completely flat for easy GitHub browser upload.
+
+
+## v6
+- Reworked the supplied invitation artwork for a cleaner, crisper digital presentation.
+- Moved the hero artwork higher and tightened the header spacing.
+- Improved mobile composition and edge blending into the ivory background.
