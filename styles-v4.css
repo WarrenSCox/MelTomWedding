@@ -929,3 +929,157 @@ h1,h2,h3{font-family:"Cormorant Garamond",Georgia,serif;font-weight:500;margin:0
   .bottom-nav .nav-item > .nav-surprise-icon{width:24px!important;height:24px!important;font-size:.9rem!important;line-height:22px!important}
   .bottom-nav .nav-item > .nav-info-icon{font-size:1.22rem!important}
 }
+
+
+/* v7.27 emergency layout fix: one-row nav + stable lightbox controls */
+
+/* Bottom navigation must never wrap */
+.bottom-nav{
+  display:flex!important;
+  flex-direction:row!important;
+  flex-wrap:nowrap!important;
+  align-items:stretch!important;
+  justify-content:stretch!important;
+  grid-template-columns:none!important;
+  grid-auto-flow:unset!important;
+  grid-auto-columns:unset!important;
+  overflow:hidden!important;
+}
+.bottom-nav .nav-item{
+  flex:1 1 0!important;
+  min-width:0!important;
+  width:auto!important;
+  max-width:none!important;
+  height:100%!important;
+  padding:2px 0!important;
+}
+.bottom-nav .nav-item[hidden]{display:none!important}
+.bottom-nav .nav-item strong{
+  font-size:.62rem!important;
+  line-height:1!important;
+  white-space:nowrap!important;
+  overflow:visible!important;
+  text-overflow:clip!important;
+}
+@media(max-width:380px){
+  .bottom-nav .nav-item strong{font-size:.57rem!important}
+}
+
+/* Stop the dialog's grid layout from repositioning controls */
+.lightbox[open]{
+  display:block!important;
+  position:fixed!important;
+  inset:0!important;
+  width:100vw!important;
+  height:100vh!important;
+  overflow:hidden!important;
+}
+
+/* Photo centered with dedicated space below for download + metadata */
+.lightbox #lightboxImage{
+  position:fixed!important;
+  left:50%!important;
+  top:48%!important;
+  transform:translate(-50%,-50%)!important;
+  width:auto!important;
+  height:auto!important;
+  max-width:94vw!important;
+  max-height:calc(100vh - 230px)!important;
+  object-fit:contain!important;
+  margin:0!important;
+}
+
+/* Top controls */
+.lightbox__close{
+  position:fixed!important;
+  top:14px!important;
+  right:18px!important;
+  left:auto!important;
+  bottom:auto!important;
+  transform:none!important;
+  z-index:10!important;
+}
+.lightbox__favourite{
+  position:fixed!important;
+  top:16px!important;
+  left:18px!important;
+  right:auto!important;
+  bottom:auto!important;
+  transform:none!important;
+  z-index:10!important;
+  background:rgba(18,18,16,.48)!important;
+  color:#fff!important;
+}
+
+/* Previous/next sit at the sides of the photo */
+.lightbox__nav{
+  position:fixed!important;
+  top:48%!important;
+  bottom:auto!important;
+  transform:translateY(-50%)!important;
+  z-index:10!important;
+  width:44px!important;
+  height:60px!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:rgba(18,18,16,.42)!important;
+  color:#fff!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+}
+.lightbox__nav--previous{left:0!important;right:auto!important}
+.lightbox__nav--next{right:0!important;left:auto!important}
+
+/* Bottom controls get their own fixed positions and cannot overlap */
+.lightbox__download{
+  position:fixed!important;
+  left:16px!important;
+  right:16px!important;
+  bottom:70px!important;
+  width:calc(100% - 32px)!important;
+  margin:0!important;
+  z-index:10!important;
+}
+.lightbox__meta{
+  position:fixed!important;
+  left:16px!important;
+  right:16px!important;
+  bottom:24px!important;
+  width:auto!important;
+  max-width:none!important;
+  transform:none!important;
+  display:flex!important;
+  flex-wrap:nowrap!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:7px!important;
+  white-space:nowrap!important;
+  font-size:.74rem!important;
+  z-index:10!important;
+}
+.lightbox__meta strong,
+.lightbox__meta span{
+  white-space:nowrap!important;
+  display:inline!important;
+}
+
+@media(max-width:600px){
+  .lightbox #lightboxImage{
+    top:47%!important;
+    max-width:94vw!important;
+    max-height:calc(100vh - 220px)!important;
+  }
+  .lightbox__nav{
+    top:47%!important;
+    width:38px!important;
+    height:54px!important;
+  }
+  .lightbox__download{bottom:66px!important}
+  .lightbox__meta{
+    bottom:22px!important;
+    font-size:.69rem!important;
+    gap:5px!important;
+  }
+}
