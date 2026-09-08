@@ -155,3 +155,9 @@ h1,h2,h3 { font-family: "Cormorant Garamond", Georgia, serif; font-weight: 500; 
   .timeline__icon { margin-left:14px; }
   .bottom-nav { width:100%; border-left:0; border-right:0; }
 }
+
+/* v6.2: give the handwritten conjunction breathing room */
+.brand__names{gap:clamp(14px,3vw,25px)}
+.brand__names em{margin:0;transform:translateY(2px)}
+.mini-brand{gap:12px}
+.mini-brand em{margin:0 4px}

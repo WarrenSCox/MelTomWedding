@@ -1,7 +1,7 @@
 {
-  "name": "Tom & Mel · Wedding",
-  "short_name": "Tom & Mel",
-  "description": "Wedding photos and information for Tom & Mel · 10 September 2026.",
+  "name": "Mel & Tom · Wedding",
+  "short_name": "Mel & Tom",
+  "description": "Wedding photos and information for Mel & Tom · 10 September 2026.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

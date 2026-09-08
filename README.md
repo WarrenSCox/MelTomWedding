@@ -26,3 +26,8 @@ The original wedding invitation artwork is now included directly as `wedding-art
 ## v6.1 hotfix
 - Replaced the previous artwork asset with the new revised wedding illustration.
 - Optimized/resized for faster mobile loading while keeping it crisp.
+
+
+## v6.2 hotfix
+- Changed couple-name branding to Mel and Tom.
+- Increased spacing around the handwritten “and”.

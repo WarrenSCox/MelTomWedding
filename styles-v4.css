@@ -68,3 +68,9 @@ h1,h2,h3{font-family:"Cormorant Garamond",Georgia,serif;font-weight:500;margin:0
   .hero-sub{font-size:.72rem;letter-spacing:.19em}
   .upload-panel{padding-top:14px}
 }
+
+/* v6.2: give the handwritten conjunction breathing room */
+.brand__names{gap:clamp(14px,3vw,25px)}
+.brand__names em{margin:0;transform:translateY(2px)}
+.mini-brand{gap:12px}
+.mini-brand em{margin:0 4px}
