@@ -58,6 +58,25 @@ document.querySelectorAll('[data-view-target]').forEach((button) => {
   button.addEventListener('click', () => showView(button.dataset.viewTarget));
 });
 
+function applyInstalledAppNavigation() {
+  const installed =
+    window.matchMedia('(display-mode: standalone)').matches ||
+    window.navigator.standalone === true;
+
+  const saveNav = document.querySelector('[data-view-target="save"]');
+  if (saveNav) saveNav.hidden = installed;
+
+  document.documentElement.classList.toggle('installed-app', installed);
+
+  if (installed && !$('#view-save').hidden) {
+    showView('gallery');
+  }
+}
+
+applyInstalledAppNavigation();
+window.matchMedia('(display-mode: standalone)').addEventListener?.('change', applyInstalledAppNavigation);
+
+
 guestNameInput.value = localStorage.getItem('weddingGuestName') || '';
 
 function updateUploadAvailability() {
