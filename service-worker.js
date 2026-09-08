@@ -1,4 +1,4 @@
-const CACHE = 'mel-tom-wedding-v7.33';
+const CACHE = 'mel-tom-wedding-v7.34';
 
 const APP_SHELL = [
   './',
@@ -42,11 +42,8 @@ self.addEventListener('activate', event => {
 function isCoreRequest(request) {
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return false;
-
   if (request.mode === 'navigate') return true;
-
-  const cleanPath = url.pathname;
-  return CORE_PATHS.has(cleanPath);
+  return CORE_PATHS.has(url.pathname);
 }
 
 async function networkFirst(request) {
@@ -75,9 +72,9 @@ async function networkFirst(request) {
   }
 }
 
-async function cacheFirst(request) {
+async function cacheFirstSameOrigin(request) {
   const cache = await caches.open(CACHE);
-  const cached = await cache.match(request, { ignoreSearch: false });
+  const cached = await cache.match(request);
 
   if (cached) return cached;
 
@@ -95,10 +92,17 @@ self.addEventListener('fetch', event => {
 
   if (request.method !== 'GET') return;
 
+  const url = new URL(request.url);
+
+  // CRITICAL: never intercept or cache Supabase/API/CDN/photo requests.
+  // This prevents stale gallery data after uploads.
+  if (url.origin !== self.location.origin) return;
+
   if (isCoreRequest(request)) {
     event.respondWith(networkFirst(request));
     return;
   }
 
-  event.respondWith(cacheFirst(request));
+  // Only static files served by this GitHub Pages site are cache-first.
+  event.respondWith(cacheFirstSameOrigin(request));
 });
