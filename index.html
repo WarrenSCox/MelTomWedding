@@ -90,6 +90,13 @@
         </div>
       </section>
 
+      <div id="selectionToolbar" class="selection-toolbar" hidden>
+        <span id="selectionCount" aria-live="polite">0 selected</span>
+        <div class="selection-actions">
+          <button id="cancelSelectionBtn" type="button">Cancel</button>
+          <button id="downloadSelectedBtn" type="button">Download selected (0) ↓</button>
+        </div>
+      </div>
       <section id="emptyState" class="empty-state">
         <div class="line-heart">♡</div>
         <h3>The story starts here</h3>
@@ -195,6 +202,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
   <script src="config.js?v=6.8"></script>
-  <script src="app-v4.js?v=7.20"></script>
+  <script src="app-v4.js?v=7.21"></script>
 </body>
 </html>

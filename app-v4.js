@@ -253,6 +253,9 @@ async function loadPhotos(reset = true) {
   }
 
   totalPhotoCount = count ?? totalPhotoCount;
+  for (const photo of data || []) {
+    if (selectedPhotos.has(photoKey(photo))) selectedPhotos.set(photoKey(photo), photo);
+  }
 
   if (reset) {
     currentPhotos = [];
@@ -279,17 +282,107 @@ async function loadPhotos(reset = true) {
   loadMoreBtn.textContent = 'Load more memories';
 }
 
+// v7.21: persistent photo selection across gallery pages and refreshes.
+const selectedPhotos = new Map();
+let selectionMode = false;
+let selectionDownloading = false;
+const selectionToolbar = $('#selectionToolbar');
+const selectionCount = $('#selectionCount');
+const downloadSelectedBtn = $('#downloadSelectedBtn');
+
+function photoKey(photo) { return String(photo.id); }
+
+function updateSelectionUI() {
+  const count = selectedPhotos.size;
+  selectionToolbar.hidden = !selectionMode;
+  selectionCount.textContent = `${count} selected`;
+  downloadSelectedBtn.textContent = `Download selected (${count}) ↓`;
+  downloadSelectedBtn.disabled = !count || selectionDownloading;
+  galleryGrid.classList.toggle('is-selecting', selectionMode);
+  galleryGrid.querySelectorAll('.photo-card[data-photo-id]').forEach(card => {
+    const selected = selectedPhotos.has(card.dataset.photoId);
+    card.classList.toggle('is-selected', selected);
+    card.setAttribute('aria-pressed', String(selected));
+    card.setAttribute('aria-label', `${selected ? 'Deselect' : 'Select'} photo. ${card.dataset.photoLabel}`);
+    const mark = card.querySelector('.photo-selection-mark');
+    if (mark) mark.textContent = selected ? '✓' : '';
+  });
+}
+
+function togglePhotoSelection(photo) {
+  const key = photoKey(photo);
+  if (selectedPhotos.has(key)) selectedPhotos.delete(key);
+  else selectedPhotos.set(key, photo);
+  selectionMode = true;
+  updateSelectionUI();
+}
+
+function cancelSelection() {
+  selectedPhotos.clear();
+  selectionMode = false;
+  updateSelectionUI();
+}
+
+$('#cancelSelectionBtn').addEventListener('click', cancelSelection);
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape' && selectionMode && !$('#lightbox').open) cancelSelection();
+});
+
 function renderPhotoCards(photos) {
   for (const photo of photos) {
-    const card = document.createElement('article');
+    const card = document.createElement('button');
+    card.type = 'button';
     card.className = 'photo-card';
+    card.dataset.photoId = photoKey(photo);
     const date = new Date(photo.created_at).toLocaleString([], {
       day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
     });
-    card.innerHTML = `<img loading="lazy" decoding="async" fetchpriority="low" src="${escapeHtml(photo.image_url)}" alt="Wedding photo shared by ${escapeHtml(photo.guest_name)}"><div class="photo-meta"><strong>Uploaded by ${escapeHtml(photo.guest_name)}</strong><span>${date}</span></div>`;
-    card.addEventListener('click', () => openLightbox(photo, date));
+    card.dataset.photoLabel = `Uploaded by ${photo.guest_name}`;
+    card.innerHTML = `<span class="photo-selection-mark" aria-hidden="true"></span><img loading="lazy" decoding="async" fetchpriority="low" draggable="false" src="${escapeHtml(photo.image_url)}" alt="Wedding photo shared by ${escapeHtml(photo.guest_name)}"><div class="photo-meta"><strong>Uploaded by ${escapeHtml(photo.guest_name)}</strong><span>${date}</span></div>`;
+
+    let holdTimer = null;
+    let startX = 0, startY = 0, held = false, suppressClick = false;
+    const clearHold = () => { if (holdTimer !== null) clearTimeout(holdTimer); holdTimer = null; };
+    card.addEventListener('pointerdown', event => {
+      if (selectionMode || (event.pointerType !== 'touch' && event.pointerType !== 'pen')) return;
+      if (event.button !== 0) return;
+      clearHold();
+      held = false;
+      startX = event.clientX; startY = event.clientY;
+      holdTimer = setTimeout(() => {
+        holdTimer = null;
+        held = true;
+        suppressClick = true;
+        togglePhotoSelection(photo);
+        navigator.vibrate?.(25);
+      }, 550);
+    });
+    card.addEventListener('pointermove', event => {
+      if (Math.hypot(event.clientX - startX, event.clientY - startY) > 12) clearHold();
+    });
+    card.addEventListener('pointerup', clearHold);
+    card.addEventListener('pointercancel', () => { clearHold(); held = false; });
+    card.addEventListener('contextmenu', event => {
+      if (event.pointerType === 'mouse' && !selectionMode) return;
+      event.preventDefault();
+      clearHold();
+      if (!held && !selectionMode) {
+        suppressClick = true;
+        togglePhotoSelection(photo);
+      }
+    });
+    card.addEventListener('click', event => {
+      if (suppressClick) {
+        suppressClick = false;
+        event.preventDefault();
+        return;
+      }
+      if (selectionMode) togglePhotoSelection(photo);
+      else openLightbox(photo, date);
+    });
     galleryGrid.appendChild(card);
   }
+  updateSelectionUI();
 }
 
 $('#loadMoreBtn').addEventListener('click', async () => {
@@ -372,22 +465,16 @@ $('#downloadPhotoBtn').addEventListener('click', async () => {
   }
 });
 
-$('#downloadAllBtn').addEventListener('click', async () => {
-  if (!totalPhotoCount) return;
-  const btn = $('#downloadAllBtn');
-  const original = btn.textContent;
+async function downloadPhotoZip(photos, btn, filename) {
+  const original = btn.innerHTML;
   btn.disabled = true;
-
   try {
     if (!window.JSZip) throw new Error('ZIP library did not load');
-    btn.textContent = 'Preparing album…';
-    const allPhotos = await fetchAllPhotoRecords();
     const zip = new JSZip();
     const usedNames = new Set();
-
-    for (let i = 0; i < allPhotos.length; i++) {
-      btn.textContent = `Zipping ${i + 1}/${allPhotos.length}…`;
-      const photo = allPhotos[i];
+    for (let i = 0; i < photos.length; i++) {
+      btn.textContent = `Zipping ${i + 1}/${photos.length}…`;
+      const photo = photos[i];
       const blob = await fetchPhotoBlob(photo.image_url);
       let name = safeDownloadName(photo, i);
       if (usedNames.has(name)) {
@@ -399,20 +486,51 @@ $('#downloadAllBtn').addEventListener('click', async () => {
       usedNames.add(name);
       zip.file(name, blob);
     }
-
     btn.textContent = 'Creating ZIP…';
     const zipBlob = await zip.generateAsync({ type: 'blob' });
-    triggerBlobDownload(zipBlob, 'Mel-and-Tom-Wedding-Photos.zip');
+    triggerBlobDownload(zipBlob, filename);
     btn.textContent = 'Downloaded ✓';
+    return true;
   } catch (error) {
     console.error(error);
     btn.textContent = 'Download failed';
+    return false;
   } finally {
     setTimeout(() => {
-      btn.disabled = totalPhotoCount === 0;
-      btn.textContent = original;
+      btn.disabled = false;
+      btn.innerHTML = original;
+      if (btn === downloadSelectedBtn) updateSelectionUI();
+      if (btn === $('#downloadAllBtn')) btn.disabled = totalPhotoCount === 0;
     }, 1500);
   }
+}
+
+$('#downloadAllBtn').addEventListener('click', async () => {
+  if (!totalPhotoCount) return;
+  const btn = $('#downloadAllBtn');
+  btn.disabled = true;
+  btn.textContent = 'Preparing album…';
+  try {
+    const allPhotos = await fetchAllPhotoRecords();
+    await downloadPhotoZip(allPhotos, btn, 'Mel-and-Tom-Wedding-Photos.zip');
+  } catch (error) {
+    console.error(error);
+    btn.textContent = 'Download failed';
+    setTimeout(() => {
+      btn.disabled = totalPhotoCount === 0;
+      btn.textContent = 'Download all (' + totalPhotoCount + ') ↓';
+    }, 1500);
+  }
+});
+
+downloadSelectedBtn.addEventListener('click', async () => {
+  if (!selectedPhotos.size || selectionDownloading) return;
+  selectionDownloading = true;
+  const photos = [...selectedPhotos.values()];
+  const success = await downloadPhotoZip(photos, downloadSelectedBtn, 'Mel-and-Tom-Selected-Photos.zip');
+  selectionDownloading = false;
+  if (success) cancelSelection();
+  else updateSelectionUI();
 });
 
 $('#closeLightbox').addEventListener('click', () => $('#lightbox').close());

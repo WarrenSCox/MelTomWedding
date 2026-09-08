@@ -615,3 +615,21 @@ h1,h2,h3{font-family:"Cormorant Garamond",Georgia,serif;font-weight:500;margin:0
 
 /* v7.20: balance Info icon */
 .bottom-nav .nav-item > .nav-info-icon{font-size:1.46rem!important;}
+
+
+/* v7.21: photo selection, without changing the approved gallery heading */
+.selection-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 18px 18px;padding:12px 14px;background:var(--paper-light);border:1px solid var(--line);border-radius:4px;font:500 .72rem/1.5 "Montserrat",sans-serif;color:var(--olive-dark)}
+.selection-toolbar[hidden]{display:none!important}
+.selection-actions{display:flex;align-items:center;justify-content:flex-end;gap:14px;flex-wrap:wrap}
+.selection-actions button{border:0;background:transparent;padding:5px 0;color:var(--olive-dark);font:inherit;cursor:pointer}
+.selection-actions #downloadSelectedBtn{border-bottom:1px solid var(--olive-dark)}
+.selection-actions button:disabled{opacity:.45;cursor:default}
+.gallery-grid .photo-card{position:relative;text-align:inherit;font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.gallery-grid .photo-card:focus-visible{outline:2px solid var(--olive-dark);outline-offset:3px}
+.gallery-grid .photo-card img{-webkit-user-drag:none}
+.gallery-grid .photo-card.is-selected{outline:3px solid var(--olive-dark);outline-offset:-3px}
+.photo-selection-mark{display:none;position:absolute;z-index:2;top:10px;right:10px;width:27px;height:27px;align-items:center;justify-content:center;border:2px solid white;border-radius:50%;background:rgba(30,32,29,.48);color:white;font:700 17px/1 "Montserrat",sans-serif;box-shadow:0 1px 4px rgba(0,0,0,.2);pointer-events:none}
+.gallery-grid.is-selecting .photo-selection-mark{display:flex}
+.gallery-grid .photo-card.is-selected .photo-selection-mark{display:flex;background:var(--olive-dark)}
+@media(max-width:600px){.selection-toolbar{margin:0 18px 16px;gap:8px;padding:10px;font-size:.68rem}.selection-actions{gap:10px}}
+\n.gallery-grid button.photo-card{appearance:none;-webkit-appearance:none;width:100%;padding:0;border:0;border-radius:0;background:transparent;display:block;overflow:visible}\n
