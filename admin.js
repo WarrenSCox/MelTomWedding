@@ -142,19 +142,31 @@
     seatingMenuToggle.checked = enabled === true;
     seatingMenuToggleLabel.textContent = enabled ? 'On' : 'Off';
   }
+  function formatDiag(value) {
+    if (value == null) return 'none';
+    if (typeof value === 'string') return value;
+    try { return JSON.stringify(value); } catch { return String(value); }
+  }
+
   async function seatingMenuMarkerExists() {
     const { data } = anonStorage.storage.from(storageBucket).getPublicUrl(SEATING_MENU_MARKER_PATH);
     try {
       const response = await fetch(`${data.publicUrl}?t=${Date.now()}`, { method:'GET', cache:'no-store' });
+      window.__seatingMenuDiag = window.__seatingMenuDiag || {};
+      window.__seatingMenuDiag.markerUrl = data.publicUrl;
+      window.__seatingMenuDiag.markerHttpStatus = response.status;
       if (response.ok) return true;
       if (response.status === 400 || response.status === 404) return false;
-      throw new Error(`Marker check returned ${response.status}`);
+      throw new Error(`Marker GET returned HTTP ${response.status}`);
     } catch (error) {
       console.error('Seating marker check failed:', error);
       window.__seatingMenuLastError = error;
+      window.__seatingMenuDiag = window.__seatingMenuDiag || {};
+      window.__seatingMenuDiag.markerCheckError = error?.message || String(error);
       return null;
     }
   }
+
   async function loadSeatingFeature() {
     seatingMenuToggle.disabled = true;
     setFeatureStatus('Checking visibility…');
@@ -172,38 +184,75 @@
     if (seatingFeatureBusy) return;
     seatingFeatureBusy = true;
     seatingMenuToggle.disabled = true;
-    setFeatureStatus(enabled ? 'Revealing Plan…' : 'Hiding Plan…');
+    window.__seatingMenuDiag = {};
+    setFeatureStatus(enabled ? 'Stage 1/3: creating marker…' : 'Stage 1/3: removing marker…');
+
     try {
       if (enabled) {
-        const marker = new Blob([JSON.stringify({enabled:true,updated_at:new Date().toISOString()})], {type:'application/json'});
-        const { error } = await anonStorage.storage.from(storageBucket).upload(
-          SEATING_MENU_MARKER_PATH, marker, {contentType:'application/json',cacheControl:'0',upsert:false}
+        const marker = new Blob(
+          [JSON.stringify({ enabled: true, updated_at: new Date().toISOString() })],
+          { type: 'application/json' }
         );
-        if (error) {
+
+        const uploadResult = await anonStorage.storage
+          .from(storageBucket)
+          .upload(SEATING_MENU_MARKER_PATH, marker, {
+            contentType: 'application/json',
+            cacheControl: '0',
+            upsert: false
+          });
+
+        window.__seatingMenuDiag.uploadData = uploadResult?.data || null;
+        window.__seatingMenuDiag.uploadError = uploadResult?.error || null;
+
+        if (uploadResult.error) {
           const exists = await seatingMenuMarkerExists();
-          if (!exists) throw error;
+          if (!exists) throw uploadResult.error;
         }
       } else {
-        const { error } = await supabase.storage.from(storageBucket).remove([SEATING_MENU_MARKER_PATH]);
-        if (error) throw error;
+        const removeResult = await supabase.storage
+          .from(storageBucket)
+          .remove([SEATING_MENU_MARKER_PATH]);
+
+        window.__seatingMenuDiag.removeData = removeResult?.data || null;
+        window.__seatingMenuDiag.removeError = removeResult?.error || null;
+
+        if (removeResult.error) throw removeResult.error;
       }
+
+      setFeatureStatus('Stage 2/3: checking marker URL…');
       const confirmed = await seatingMenuMarkerExists();
-      if (confirmed !== enabled) throw new Error('The visibility change could not be confirmed.');
+      window.__seatingMenuDiag.confirmed = confirmed;
+
+      setFeatureStatus('Stage 3/3: confirming final state…');
+      if (confirmed !== enabled) {
+        throw new Error(
+          `Expected ${enabled ? 'ON' : 'OFF'} but marker check returned ${confirmed}; HTTP ${window.__seatingMenuDiag.markerHttpStatus ?? 'unknown'}`
+        );
+      }
+
       renderSeatingMenuToggle(enabled);
-      setFeatureStatus(enabled ? 'Visible to guests.' : 'Hidden from guests.');
+      setFeatureStatus(
+        `${enabled ? 'Visible to guests.' : 'Hidden from guests.'} ` +
+        `HTTP ${window.__seatingMenuDiag.markerHttpStatus ?? 'unknown'}`
+      );
     } catch (error) {
-      console.error('Seating/menu switch failed:', error);
+      console.error('Seating/menu switch failed:', error, window.__seatingMenuDiag);
       const actual = await seatingMenuMarkerExists();
       if (actual !== null) renderSeatingMenuToggle(actual);
 
-      const parts = [];
-      if (error?.message) parts.push(error.message);
-      if (error?.statusCode) parts.push(`status ${error.statusCode}`);
-      if (error?.error) parts.push(String(error.error));
-      if (error?.name && error.name !== 'Error') parts.push(error.name);
+      const d = window.__seatingMenuDiag || {};
+      const uploadErr = d.uploadError?.message || d.uploadError?.error || '';
+      const removeErr = d.removeError?.message || d.removeError?.error || '';
+      const details = [
+        `Error: ${error?.message || String(error)}`,
+        `HTTP: ${d.markerHttpStatus ?? 'unknown'}`,
+        uploadErr ? `Upload: ${uploadErr}` : 'Upload: no reported error',
+        removeErr ? `Remove: ${removeErr}` : '',
+        `Confirmed: ${d.confirmed ?? actual ?? 'unknown'}`
+      ].filter(Boolean).join(' | ');
 
-      const detail = parts.length ? parts.join(' · ') : 'Unknown error';
-      setFeatureStatus(`Switch failed: ${detail}`, true);
+      setFeatureStatus(`Switch failed. ${details}`, true);
     } finally {
       seatingFeatureBusy = false;
       seatingMenuToggle.disabled = false;
