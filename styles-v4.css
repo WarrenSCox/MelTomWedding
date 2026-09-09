@@ -2348,3 +2348,17 @@ body{padding-bottom:70px!important}
   .timeline-event>div{padding:12px}
   .timeline-event strong{font-size:1.24rem}
 }
+
+/* v7.56.1 mobile timeline width fix */
+.timeline-section--2026 .timeline--cards{width:100%;max-width:570px;box-sizing:border-box;padding:0 14px}
+.timeline-section--2026 .timeline--cards::before{left:82px}
+.timeline-section--2026 .timeline-event{width:100%;box-sizing:border-box;grid-template-columns:58px minmax(0,1fr);gap:22px}
+.timeline-section--2026 .timeline-event::before{left:65px}
+.timeline-section--2026 .timeline-event>div{min-width:0;width:auto;box-sizing:border-box;padding:13px 14px}
+.timeline-section--2026 .timeline-event strong{font-size:1.28rem;line-height:1.08;overflow-wrap:normal;word-break:normal;hyphens:none}
+.timeline-section--2026 .timeline-time{font-size:.61rem;letter-spacing:.02em}
+@media(max-width:380px){
+ .timeline-section--2026 .timeline--cards::before{left:78px}
+ .timeline-section--2026 .timeline-event{grid-template-columns:54px minmax(0,1fr);gap:20px}
+ .timeline-section--2026 .timeline-event::before{left:61px}
+}
