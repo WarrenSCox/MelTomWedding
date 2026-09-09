@@ -111,6 +111,7 @@ async function readSeatingMenuFlag() {
 }
 function closeSeatingTableDialog() {
   const d=document.querySelector('#seatingTableDialog'); if(d?.open)d.close();
+  const n=document.querySelector('#seatingNameDialog'); if(n?.open)n.close();
 }
 function setSeatingMenuVisibility(enabled) {
   seatingMenuEnabled=enabled===true;
@@ -167,6 +168,42 @@ function showView(name) {
 document.querySelectorAll('[data-view-target]').forEach((button) => {
   button.addEventListener('click', () => showView(button.dataset.viewTarget));
 });
+
+
+document.querySelectorAll('[data-seating-name]').forEach(button=>{
+  button.addEventListener('click',async()=>{
+    if(!seatingMenuEnabled)return;
+    await loadSeatingMenuData();
+
+    const guestName=button.dataset.seatingName;
+    const matches=[];
+    window.WEDDING_SEATING_TABLES.forEach(table=>{
+      if(table.guests.includes(guestName))matches.push(table.name);
+    });
+    if(!matches.length)return;
+
+    $('#seatingNameTitle').textContent=guestName;
+    const result=$('#seatingNameResult');
+    result.replaceChildren();
+
+    matches.forEach(tableName=>{
+      const p=document.createElement('p');
+      p.textContent=tableName;
+      result.append(p);
+    });
+
+    if(matches.length>1){
+      const note=document.createElement('p');
+      note.className='duplicate-note';
+      note.textContent=`There are ${matches.length} guests called ${guestName} on the seating plan.`;
+      result.append(note);
+    }
+
+    $('#seatingNameDialog').showModal();
+  });
+});
+$('#closeSeatingName').addEventListener('click',closeSeatingTableDialog);
+$('#seatingNameDone').addEventListener('click',closeSeatingTableDialog);
 
 document.querySelectorAll('[data-seating-table]').forEach(button=>{
   button.addEventListener('click',async()=>{
