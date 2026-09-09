@@ -150,7 +150,8 @@
       if (response.status === 400 || response.status === 404) return false;
       throw new Error(`Marker check returned ${response.status}`);
     } catch (error) {
-      console.error(error);
+      console.error('Seating marker check failed:', error);
+      window.__seatingMenuLastError = error;
       return null;
     }
   }
@@ -159,7 +160,8 @@
     setFeatureStatus('Checking visibility…');
     const enabled = await seatingMenuMarkerExists();
     if (enabled === null) {
-      setFeatureStatus('Could not check the switch. Try Refresh.', true);
+      const detail = window.__seatingMenuLastError?.message || 'Unknown marker check error';
+      setFeatureStatus(`Could not check the switch. ${detail}`, true);
       return;
     }
     renderSeatingMenuToggle(enabled);
@@ -190,10 +192,18 @@
       renderSeatingMenuToggle(enabled);
       setFeatureStatus(enabled ? 'Visible to guests.' : 'Hidden from guests.');
     } catch (error) {
-      console.error(error);
+      console.error('Seating/menu switch failed:', error);
       const actual = await seatingMenuMarkerExists();
       if (actual !== null) renderSeatingMenuToggle(actual);
-      setFeatureStatus('Switch failed. Nothing else in the app was changed.', true);
+
+      const parts = [];
+      if (error?.message) parts.push(error.message);
+      if (error?.statusCode) parts.push(`status ${error.statusCode}`);
+      if (error?.error) parts.push(String(error.error));
+      if (error?.name && error.name !== 'Error') parts.push(error.name);
+
+      const detail = parts.length ? parts.join(' · ') : 'Unknown error';
+      setFeatureStatus(`Switch failed: ${detail}`, true);
     } finally {
       seatingFeatureBusy = false;
       seatingMenuToggle.disabled = false;
