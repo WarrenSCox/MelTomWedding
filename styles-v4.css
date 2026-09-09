@@ -2139,7 +2139,7 @@ body{padding-bottom:70px!important}
   }
 }
 
-/* v7.53: hidden-by-default Seating plan & menu */
+/* v7.53d Seating plan & menu */
 .bottom-nav .nav-item[hidden]{display:none!important}
 .nav-plan-icon{display:grid;place-items:center}.nav-plan-svg{width:27px;height:27px;display:block}
 .seating-menu-view{padding-bottom:34px}.seating-menu-heading{text-align:center}
@@ -2149,16 +2149,14 @@ body{padding-bottom:70px!important}
 .seating-menu-card{max-width:650px;width:100%;margin:0 auto;padding:30px 18px;border:1px solid var(--line);background:var(--paper-light);text-align:center}
 .seating-menu-card>h2{margin:4px 0 18px;font:600 2rem "Cormorant Garamond",Georgia,serif}
 .seating-table-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-top:22px}
-.seating-table-button{min-width:0;min-height:76px;padding:10px 4px;border:1px solid var(--line);border-radius:0;background:var(--paper);color:var(--ink);font:600 1.04rem "Cormorant Garamond",Georgia,serif;cursor:pointer;-webkit-tap-highlight-color:transparent}
-.seating-table-button span,.seating-table-button small{display:block}.seating-table-button small{margin-top:5px;color:var(--muted);font:500 .57rem Montserrat,sans-serif;letter-spacing:.03em}
-.seating-table-button:focus-visible{outline:2px solid var(--olive);outline-offset:2px}
-.wedding-menu-card{padding-top:36px;padding-bottom:38px}.wedding-menu-card>h2{margin:7px 0 0;font:400 2.6rem "Cormorant Garamond",Georgia,serif;letter-spacing:.13em;text-transform:uppercase}
+.seating-table-button{min-width:0;min-height:76px;padding:10px 4px;border:1px solid var(--line);border-radius:0;background:var(--paper);color:var(--ink);font:600 1.04rem "Cormorant Garamond",Georgia,serif}
+.seating-table-button span,.seating-table-button small{display:block}.seating-table-button small{margin-top:5px;color:var(--muted);font:500 .57rem Montserrat,sans-serif}
+.wedding-menu-card>h2{font:400 2.6rem "Cormorant Garamond",Georgia,serif;letter-spacing:.13em;text-transform:uppercase}
 .menu-course{max-width:430px;margin:34px auto 0}.menu-course h3{margin:0 0 16px;font:500 1.45rem "Cormorant Garamond",Georgia,serif;letter-spacing:.13em;text-transform:uppercase}
 .menu-course p{margin:5px 0;font:500 .7rem/1.8 Montserrat,sans-serif;letter-spacing:.07em;text-transform:uppercase}
-.seating-table-dialog{width:min(420px,calc(100% - 28px));max-height:calc(100% - 40px);padding:0;border:1px solid var(--line);border-radius:2px;background:var(--paper-light);color:var(--ink)}
+.seating-table-dialog{width:min(420px,calc(100% - 28px));max-height:calc(100% - 40px);padding:0;border:1px solid var(--line);background:var(--paper-light);color:var(--ink)}
 .seating-table-dialog::backdrop{background:rgba(20,25,20,.6)}.seating-table-dialog-inner{position:relative;padding:35px 25px 25px;text-align:center}
-.seating-table-dialog h2{margin:8px 0 20px;font:600 2.2rem "Cormorant Garamond",Georgia,serif}
-.seating-table-close{position:absolute;top:7px;right:9px;border:0;background:none;color:var(--ink);font-size:28px;cursor:pointer}
-.seating-table-guests{margin-bottom:22px;padding:12px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-.seating-table-guests p{margin:9px 0;font:500 .82rem/1.5 Montserrat,sans-serif}.seating-table-dialog .primary-button{width:100%}
-@media(max-width:380px){.nav-plan-svg{width:24px;height:24px}.seating-table-grid{gap:6px}.seating-table-button{padding:8px 2px;font-size:.93rem}.seating-table-button small{font-size:.52rem}}
+.seating-table-dialog h2{margin:8px 0 20px;font:600 2.2rem "Cormorant Garamond",Georgia,serif}.seating-table-close{position:absolute;top:7px;right:9px;border:0;background:none;font-size:28px}
+.seating-table-guests{margin-bottom:22px;padding:12px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}.seating-table-guests p{margin:9px 0;font:500 .82rem/1.5 Montserrat,sans-serif}
+.seating-table-dialog .primary-button{width:100%}
+@media(max-width:380px){.nav-plan-svg{width:24px;height:24px}.seating-table-grid{gap:6px}.seating-table-button{font-size:.93rem}}

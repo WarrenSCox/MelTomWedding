@@ -15,7 +15,7 @@
   const adminGrid = $('#adminGrid');
   const photoCount = $('#photoCount');
   const storageBucket = cfg.storageBucket || 'Wedding photos';
-  const SEATING_MENU_MARKER_PATH = '_settings/seating-menu-enabled.json';
+  const SEATING_MENU_SETTING_PATH = '__settings/seating-menu';
   const seatingMenuToggle = $('#seatingMenuToggle');
   const seatingMenuToggleLabel = $('#seatingMenuToggleLabel');
   const featureStatus = $('#featureStatus');
@@ -120,9 +120,6 @@
   }
 
   const supabase = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey);
-  const anonStorage = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey, {
-    auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false }
-  });
 
   function setLoginStatus(message = '', error = false) {
     loginStatus.textContent = message;
@@ -142,124 +139,74 @@
     seatingMenuToggle.checked = enabled === true;
     seatingMenuToggleLabel.textContent = enabled ? 'On' : 'Off';
   }
-  function formatDiag(value) {
-    if (value == null) return 'none';
-    if (typeof value === 'string') return value;
-    try { return JSON.stringify(value); } catch { return String(value); }
+  async function readSeatingMenuFlag() {
+    const params = new URLSearchParams({
+      select: 'id',
+      storage_path: `eq.${SEATING_MENU_SETTING_PATH}`,
+      limit: '1'
+    });
+    const response = await fetch(`${cfg.supabaseUrl}/rest/v1/photos?${params}`, {
+      headers: { apikey: cfg.supabaseAnonKey, Authorization: `Bearer ${cfg.supabaseAnonKey}` },
+      cache: 'no-store'
+    });
+    if (!response.ok) throw new Error(`Could not read switch (${response.status})`);
+    const rows = await response.json();
+    return Array.isArray(rows) && rows.length > 0;
   }
-
-  async function seatingMenuMarkerExists() {
-    try {
-      const { data, error } = await anonStorage.storage
-        .from(storageBucket)
-        .list('_settings', {
-          limit: 100,
-          search: 'seating-menu-enabled.json'
-        });
-
-      if (error) throw error;
-
-      const exists = Array.isArray(data) &&
-        data.some(item => item.name === 'seating-menu-enabled.json');
-
-      window.__seatingMenuDiag = window.__seatingMenuDiag || {};
-      window.__seatingMenuDiag.listResult = data;
-      window.__seatingMenuDiag.markerHttpStatus = 'storage-list';
-      return exists;
-    } catch (error) {
-      console.error('Seating marker check failed:', error);
-      window.__seatingMenuLastError = error;
-      window.__seatingMenuDiag = window.__seatingMenuDiag || {};
-      window.__seatingMenuDiag.markerCheckError = error?.message || String(error);
-      return null;
+  async function createSeatingMenuFlag() {
+    if (await readSeatingMenuFlag()) return;
+    const response = await fetch(`${cfg.supabaseUrl}/rest/v1/photos`, {
+      method: 'POST',
+      headers: {
+        apikey: cfg.supabaseAnonKey,
+        Authorization: `Bearer ${cfg.supabaseAnonKey}`,
+        'Content-Type': 'application/json',
+        Prefer: 'return=minimal'
+      },
+      body: JSON.stringify({
+        image_url: 'setting://seating-menu',
+        storage_path: SEATING_MENU_SETTING_PATH,
+        guest_name: '__SYSTEM__'
+      })
+    });
+    if (!response.ok) {
+      const detail = await response.text();
+      throw new Error(`Could not turn on (${response.status}): ${detail || 'insert rejected'}`);
     }
   }
-
+  async function removeSeatingMenuFlag() {
+    const { error } = await supabase.from('photos').delete().eq('storage_path', SEATING_MENU_SETTING_PATH);
+    if (error) throw error;
+  }
   async function loadSeatingFeature() {
     seatingMenuToggle.disabled = true;
-    setFeatureStatus('Checking visibility…');
-    const enabled = await seatingMenuMarkerExists();
-    if (enabled === null) {
-      const detail = window.__seatingMenuLastError?.message || 'Unknown marker check error';
-      setFeatureStatus(`Could not check the switch. ${detail}`, true);
-      return;
+    try {
+      const enabled = await readSeatingMenuFlag();
+      renderSeatingMenuToggle(enabled);
+      setFeatureStatus(enabled ? 'Visible to guests.' : 'Hidden from guests.');
+    } catch (error) {
+      console.error(error);
+      setFeatureStatus(error.message || 'Could not check switch.', true);
+    } finally {
+      seatingMenuToggle.disabled = false;
     }
-    renderSeatingMenuToggle(enabled);
-    seatingMenuToggle.disabled = false;
-    setFeatureStatus(enabled ? 'Visible to guests.' : 'Hidden from guests.');
   }
   async function setSeatingFeature(enabled) {
     if (seatingFeatureBusy) return;
     seatingFeatureBusy = true;
     seatingMenuToggle.disabled = true;
-    window.__seatingMenuDiag = {};
-    setFeatureStatus(enabled ? 'Stage 1/3: creating marker…' : 'Stage 1/3: removing marker…');
-
+    setFeatureStatus(enabled ? 'Turning on…' : 'Turning off…');
     try {
-      if (enabled) {
-        const marker = new Blob(
-          [JSON.stringify({ enabled: true, updated_at: new Date().toISOString() })],
-          { type: 'application/json' }
-        );
-
-        const uploadResult = await anonStorage.storage
-          .from(storageBucket)
-          .upload(SEATING_MENU_MARKER_PATH, marker, {
-            contentType: 'application/json',
-            cacheControl: '0',
-            upsert: false
-          });
-
-        window.__seatingMenuDiag.uploadData = uploadResult?.data || null;
-        window.__seatingMenuDiag.uploadError = uploadResult?.error || null;
-
-        if (uploadResult.error) {
-          const exists = await seatingMenuMarkerExists();
-          if (!exists) throw uploadResult.error;
-        }
-      } else {
-        const removeResult = await supabase.storage
-          .from(storageBucket)
-          .remove([SEATING_MENU_MARKER_PATH]);
-
-        window.__seatingMenuDiag.removeData = removeResult?.data || null;
-        window.__seatingMenuDiag.removeError = removeResult?.error || null;
-
-        if (removeResult.error) throw removeResult.error;
-      }
-
-      setFeatureStatus('Stage 2/3: checking marker URL…');
-      const confirmed = await seatingMenuMarkerExists();
-      window.__seatingMenuDiag.confirmed = confirmed;
-
-      setFeatureStatus('Stage 3/3: confirming final state…');
-      if (confirmed !== enabled) {
-        throw new Error(
-          `Expected ${enabled ? 'ON' : 'OFF'} but storage check returned ${confirmed}`
-        );
-      }
-
+      if (enabled) await createSeatingMenuFlag();
+      else await removeSeatingMenuFlag();
+      const confirmed = await readSeatingMenuFlag();
+      if (confirmed !== enabled) throw new Error('Change could not be confirmed.');
       renderSeatingMenuToggle(enabled);
-      setFeatureStatus(
-        `${enabled ? 'Visible to guests.' : 'Hidden from guests.'}`
-      );
+      setFeatureStatus(enabled ? 'Visible to guests.' : 'Hidden from guests.');
     } catch (error) {
-      console.error('Seating/menu switch failed:', error, window.__seatingMenuDiag);
-      const actual = await seatingMenuMarkerExists();
-      if (actual !== null) renderSeatingMenuToggle(actual);
-
-      const d = window.__seatingMenuDiag || {};
-      const uploadErr = d.uploadError?.message || d.uploadError?.error || '';
-      const removeErr = d.removeError?.message || d.removeError?.error || '';
-      const details = [
-        `Error: ${error?.message || String(error)}`,
-        `Check: ${d.markerHttpStatus ?? 'unknown'}`,
-        uploadErr ? `Upload: ${uploadErr}` : 'Upload: no reported error',
-        removeErr ? `Remove: ${removeErr}` : '',
-        `Confirmed: ${d.confirmed ?? actual ?? 'unknown'}`
-      ].filter(Boolean).join(' | ');
-
-      setFeatureStatus(`Switch failed. ${details}`, true);
+      console.error(error);
+      try { renderSeatingMenuToggle(await readSeatingMenuFlag()); } catch {}
+      setFeatureStatus(`Switch failed: ${error.message || error}`, true);
     } finally {
       seatingFeatureBusy = false;
       seatingMenuToggle.disabled = false;
@@ -292,9 +239,6 @@
     adminGrid.innerHTML = '';
     photoCount.textContent = '';
     cancelSelection();
-    renderSeatingMenuToggle(false);
-    seatingMenuToggle.disabled = true;
-    setFeatureStatus('');
   }
 
   async function loadPhotos() {
@@ -302,6 +246,7 @@
     const { data, error } = await supabase
       .from('photos')
       .select('id,image_url,storage_path,guest_name,created_at')
+      .neq('storage_path', SEATING_MENU_SETTING_PATH)
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -489,9 +434,7 @@
   $('#refreshBtn').addEventListener('click', () => Promise.all([loadPhotos(), loadSeatingFeature()]));
 
   seatingMenuToggle.addEventListener('change', () => {
-    const requested = seatingMenuToggle.checked;
-    seatingMenuToggleLabel.textContent = requested ? 'On' : 'Off';
-    void setSeatingFeature(requested);
+    void setSeatingFeature(seatingMenuToggle.checked);
   });
 
   $('#cancelSelectionBtn').addEventListener('click', cancelSelection);

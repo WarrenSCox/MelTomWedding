@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles-v4.css?v=7.53" />
+  <link rel="stylesheet" href="styles-v4.css?v=7.53d" />
   <script>
     (function () {
       var standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
@@ -156,13 +156,10 @@
         <h1>Seating plan &amp; menu</h1>
         <p class="seating-menu-intro">Tap your table to see who’s sitting there.</p>
       </section>
-
-      <section class="seating-menu-content" aria-label="Seating plan and menu">
-        <article class="seating-menu-card seating-plan-card">
-          <p class="eyebrow">SEATING PLAN</p>
-          <h2>Our Favourite People</h2>
-          <div id="seatingTableGrid" class="seating-table-grid" aria-label="Wedding tables">
-            <button type="button" class="seating-table-button" data-seating-table="0"><span>Top Table</span><small>7 guests</small></button>
+      <section class="seating-menu-content">
+        <article class="seating-menu-card">
+          <p class="eyebrow">SEATING PLAN</p><h2>Our Favourite People</h2>
+          <div class="seating-table-grid">            <button type="button" class="seating-table-button" data-seating-table="0"><span>Top Table</span><small>7 guests</small></button>
             <button type="button" class="seating-table-button" data-seating-table="1"><span>Table 1</span><small>6 guests</small></button>
             <button type="button" class="seating-table-button" data-seating-table="2"><span>Table 2</span><small>6 guests</small></button>
             <button type="button" class="seating-table-button" data-seating-table="3"><span>Table 3</span><small>7 guests</small></button>
@@ -174,25 +171,20 @@
             <button type="button" class="seating-table-button" data-seating-table="9"><span>Table 9</span><small>6 guests</small></button>
             <button type="button" class="seating-table-button" data-seating-table="10"><span>Table 10</span><small>5 guests</small></button>
             <button type="button" class="seating-table-button" data-seating-table="11"><span>Table 11</span><small>7 guests</small></button>
-            <button type="button" class="seating-table-button" data-seating-table="12"><span>Table 12</span><small>9 guests</small></button>
-          </div>
+            <button type="button" class="seating-table-button" data-seating-table="12"><span>Table 12</span><small>9 guests</small></button></div>
         </article>
-
         <article class="seating-menu-card wedding-menu-card">
-          <p class="eyebrow">TOM &amp; MEL · 10TH SEPTEMBER 2026</p>
-          <h2>Menu</h2>
+          <p class="eyebrow">TOM &amp; MEL · 10TH SEPTEMBER 2026</p><h2>Menu</h2>
           <section class="menu-course"><h3>Canapés</h3><p>Pani Puri</p><p>Nectarine, Ricotta, Basil &amp; Balsamic Crostini</p><p>Mini Yorkshires, Roast Beef &amp; Horseradish</p><p>Aubergine Satay</p><p>Pork &amp; Chorizo Pintxos</p></section>
           <section class="menu-course"><h3>Main Course</h3><p>Porchetta</p><p>Merguez Roast Chicken</p><p>Gratin Dauphinoise Potatoes</p><p>Maple Roasted Carrots</p><p>Tenderstem Broccoli</p><p>Tomato &amp; Garden Herb Salad</p></section>
           <section class="menu-course"><h3>Children</h3><p>Cheesy Tomato Pasta</p></section>
           <section class="menu-course"><h3>Desserts</h3><p>Lemon Posset</p><p>Rocky Road Cheesecake</p></section>
         </article>
       </section>
-
       <dialog id="seatingTableDialog" class="seating-table-dialog" aria-labelledby="seatingTableTitle">
         <div class="seating-table-dialog-inner">
           <button type="button" id="closeSeatingTable" class="seating-table-close" aria-label="Close table">×</button>
-          <p class="eyebrow">OUR FAVOURITE PEOPLE</p>
-          <h2 id="seatingTableTitle"></h2>
+          <p class="eyebrow">OUR FAVOURITE PEOPLE</p><h2 id="seatingTableTitle"></h2>
           <div id="seatingTableGuests" class="seating-table-guests"></div>
           <button type="button" id="seatingTableDone" class="primary-button">Back to tables</button>
         </div>
@@ -271,7 +263,7 @@
     <button class="nav-item is-active" type="button" data-view-target="gallery" style="flex:1 1 0!important;min-width:0!important;width:auto!important;height:100%!important;"><span class="nav-gallery-icon"><img src="gallery-frame.png?v=7.19" alt="" /></span><strong>Gallery</strong></button>
     <button class="nav-item" type="button" data-view-target="favourites" style="flex:1 1 0!important;min-width:0!important;width:auto!important;height:100%!important;"><span class="nav-favourite-icon" aria-hidden="true">♡</span><strong>Favourites</strong></button>
     <button class="nav-item" type="button" data-view-target="surprise" style="flex:1 1 0!important;min-width:0!important;width:auto!important;height:100%!important;"><span class="nav-surprise-icon" aria-hidden="true">?</span><strong>Surprise</strong></button>
-    <button class="nav-item" type="button" data-view-target="seating-menu" hidden style="flex:1 1 0!important;min-width:0!important;width:auto!important;height:100%!important;"><span class="nav-plan-icon" aria-hidden="true"><svg class="nav-plan-svg" viewBox="0 0 27 27" focusable="false"><circle cx="13.5" cy="13.5" r="12.7" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M9 6.8v6.1m-2-6.1v3.9c0 1.2.9 2.2 2 2.2s2-1 2-2.2V6.8M9 12.9v7.3M17.8 6.8c-1.7 1.4-2.5 3.5-2.5 6.1h2.5v7.3m0-13.4v6.1" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"/></svg></span><strong>Plan</strong></button>
+    <button class="nav-item" type="button" data-view-target="seating-menu" hidden style="flex:1 1 0!important;min-width:0!important;width:auto!important;height:100%!important;"><span class="nav-plan-icon" aria-hidden="true"><svg class="nav-plan-svg" viewBox="0 0 27 27"><circle cx="13.5" cy="13.5" r="12.7" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M9 6.8v6.1m-2-6.1v3.9c0 1.2.9 2.2 2 2.2s2-1 2-2.2V6.8M9 12.9v7.3M17.8 6.8c-1.7 1.4-2.5 3.5-2.5 6.1h2.5v7.3m0-13.4v6.1" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round"/></svg></span><strong>Plan</strong></button>
     <button class="nav-item" type="button" data-view-target="info" style="flex:1 1 0!important;min-width:0!important;width:auto!important;height:100%!important;"><span class="nav-info-icon" aria-hidden="true"><svg class="nav-info-svg" viewBox="0 0 27 27" focusable="false"><circle cx="13.5" cy="13.5" r="12.7" fill="none" stroke="currentColor" stroke-width="1.6"/><text x="13.5" y="19" text-anchor="middle" fill="currentColor" font-family="Georgia,serif" font-size="18">i</text></svg></span><strong>Info</strong></button>
     <button class="nav-item" type="button" data-view-target="save" style="flex:1 1 0!important;min-width:0!important;width:auto!important;height:100%!important;"><span class="nav-save-icon" aria-hidden="true"><svg class="nav-save-svg" viewBox="0 0 27 27" focusable="false"><circle cx="13.5" cy="13.5" r="12.7" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M13.5 6.6v9.1m0 0-3.8-3.8m3.8 3.8 3.8-3.8M8.5 20.2h10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><strong>Save App</strong></button>
   </nav>
@@ -321,6 +313,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
   <script src="config.js?v=6.8"></script>
-  <script src="app-v4.js?v=7.53c"></script>
+  <script src="app-v4.js?v=7.53d"></script>
 </body>
 </html>

@@ -1,4 +1,3 @@
-/* v7.53 — verified seating plan data. Loaded only when the Plan feature is enabled. */
 window.WEDDING_SEATING_TABLES = [
   {
     "name": "Top Table",

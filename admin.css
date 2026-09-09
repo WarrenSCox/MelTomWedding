@@ -137,13 +137,10 @@ input:focus{border-color:var(--olive)}
   .selection-actions .secondary{padding:7px 9px;font-size:.72rem}
 }
 
-/* v1.3: no-SQL Seating plan & menu reveal switch */
 .feature-control{display:grid;grid-template-columns:1fr auto;gap:12px 22px;align-items:center;margin:24px 0 18px;padding:18px;border:1px solid var(--line);background:var(--paper-light)}
-.feature-control h2{margin:0 0 5px;font:600 1.55rem "Cormorant Garamond",serif}.feature-control .muted{margin:0;max-width:570px;font-size:.82rem;line-height:1.55}
-.feature-status{grid-column:1/-1;margin:0;min-height:1.2em;font-size:.78rem}.feature-switch{display:flex;align-items:center;gap:9px;margin:0;text-transform:none;letter-spacing:0;cursor:pointer}
-.feature-switch input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}.feature-switch-track{position:relative;display:block;width:52px;height:30px;border:1px solid var(--line);border-radius:999px;background:#d9d7ce;transition:.18s ease}
-.feature-switch-track span{position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:white;box-shadow:0 1px 3px rgba(0,0,0,.18);transition:.18s ease}
+.feature-control h2{margin:0 0 5px;font:600 1.55rem "Cormorant Garamond",serif}.feature-control .muted{margin:0;font-size:.82rem;line-height:1.55}
+.feature-status{grid-column:1/-1;margin:0;min-height:1.2em;font-size:.78rem}.feature-switch{display:flex;align-items:center;gap:9px;margin:0;cursor:pointer}
+.feature-switch input{position:absolute;width:1px;height:1px;opacity:0}.feature-switch-track{position:relative;display:block;width:52px;height:30px;border:1px solid var(--line);border-radius:999px;background:#d9d7ce}
+.feature-switch-track span{position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:white;box-shadow:0 1px 3px rgba(0,0,0,.18);transition:.18s}
 .feature-switch input:checked + .feature-switch-track{background:var(--olive)}.feature-switch input:checked + .feature-switch-track span{transform:translateX(22px)}
-.feature-switch input:focus-visible + .feature-switch-track{outline:2px solid var(--olive-dark);outline-offset:2px}.feature-switch input:disabled + .feature-switch-track{opacity:.55}
-.feature-switch strong{min-width:25px;color:var(--olive-dark);font-size:.8rem}
-@media(max-width:620px){.feature-control{grid-template-columns:1fr;padding:15px}.feature-switch{justify-self:start}.feature-status{grid-column:1}}
+.feature-switch strong{min-width:25px;color:var(--olive-dark);font-size:.8rem}@media(max-width:620px){.feature-control{grid-template-columns:1fr}.feature-status{grid-column:1}}
