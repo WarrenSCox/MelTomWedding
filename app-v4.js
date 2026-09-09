@@ -86,13 +86,68 @@ const photoInput = $('#photoInput');
 const photoUploadButton = $('#photoUploadButton');
 let uploadInProgress = false;
 
+// v7.53: Seating plan & menu feature flag.
+const SEATING_MENU_MARKER_PATH = '_settings/seating-menu-enabled.json';
+let seatingMenuEnabled = false;
+let seatingMenuDataPromise = null;
+let seatingMenuCheckInFlight = null;
+
+function closeSeatingTableDialog() {
+  const dialog = document.querySelector('#seatingTableDialog');
+  if (dialog?.open) dialog.close();
+}
+function setSeatingMenuVisibility(enabled) {
+  seatingMenuEnabled = enabled === true;
+  const nav = document.querySelector('.bottom-nav [data-view-target="seating-menu"]');
+  if (nav) nav.hidden = !seatingMenuEnabled;
+  const view = document.querySelector('[data-view="seating-menu"]');
+  if (!seatingMenuEnabled && view && !view.hidden) {
+    closeSeatingTableDialog();
+    showView('gallery');
+  }
+}
+function loadSeatingMenuData() {
+  if (window.WEDDING_SEATING_TABLES) return Promise.resolve();
+  if (seatingMenuDataPromise) return seatingMenuDataPromise;
+  seatingMenuDataPromise = new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = 'seating-menu-data.js?v=7.53';
+    script.onload = resolve;
+    script.onerror = () => reject(new Error('Could not load seating plan data.'));
+    document.head.append(script);
+  }).catch(error => { seatingMenuDataPromise = null; throw error; });
+  return seatingMenuDataPromise;
+}
+async function checkSeatingMenuVisibility() {
+  if (!configured || !supabaseClient || seatingMenuCheckInFlight) return seatingMenuCheckInFlight;
+  seatingMenuCheckInFlight = (async () => {
+    try {
+      const { data } = supabaseClient.storage.from(storageBucket).getPublicUrl(SEATING_MENU_MARKER_PATH);
+      const response = await fetch(`${data.publicUrl}?t=${Date.now()}`, { method:'GET', cache:'no-store' });
+      if (response.ok) {
+        await loadSeatingMenuData();
+        setSeatingMenuVisibility(true);
+      } else if (response.status === 400 || response.status === 404) {
+        setSeatingMenuVisibility(false);
+      }
+    } catch (error) {
+      console.warn('Seating/menu visibility check skipped:', error);
+    } finally {
+      seatingMenuCheckInFlight = null;
+    }
+  })();
+  return seatingMenuCheckInFlight;
+}
+
 // Simple app-style navigation
 function showView(name) {
+  if (name === 'seating-menu' && !seatingMenuEnabled) return;
   if (name === 'surprise') {
     void openRandomPhoto();
     return;
   }
   closeSurprisePolaroid();
+  closeSeatingTableDialog();
   document.querySelectorAll('[data-view]').forEach((view) => {
     const active = view.dataset.view === name;
     view.hidden = !active;
@@ -109,6 +164,35 @@ function showView(name) {
 document.querySelectorAll('[data-view-target]').forEach((button) => {
   button.addEventListener('click', () => showView(button.dataset.viewTarget));
 });
+
+document.querySelectorAll('[data-seating-table]').forEach(button => {
+  button.addEventListener('click', async () => {
+    if (!seatingMenuEnabled) return;
+    try {
+      await loadSeatingMenuData();
+      const table = window.WEDDING_SEATING_TABLES?.[Number(button.dataset.seatingTable)];
+      if (!table) return;
+      $('#seatingTableTitle').textContent = table.name;
+      const guests = $('#seatingTableGuests');
+      guests.replaceChildren();
+      table.guests.forEach(name => {
+        const row = document.createElement('p');
+        row.textContent = name;
+        guests.append(row);
+      });
+      $('#seatingTableDialog').showModal();
+    } catch (error) { console.error(error); }
+  });
+});
+$('#closeSeatingTable').addEventListener('click', closeSeatingTableDialog);
+$('#seatingTableDone').addEventListener('click', closeSeatingTableDialog);
+$('#seatingTableDialog').addEventListener('click', event => {
+  if (event.target === $('#seatingTableDialog')) closeSeatingTableDialog();
+});
+void checkSeatingMenuVisibility();
+window.addEventListener('focus', () => void checkSeatingMenuVisibility());
+document.addEventListener('visibilitychange', () => { if (!document.hidden) void checkSeatingMenuVisibility(); });
+setInterval(() => { if (!document.hidden) void checkSeatingMenuVisibility(); }, 30000);
 
 function applyInstalledAppNavigation() {
   const installed =
@@ -140,7 +224,7 @@ window.matchMedia('(display-mode: standalone)').addEventListener?.('change', app
   let gesture = null;
 
   function swipeViews() {
-    return ['gallery', 'favourites', 'info', 'save'].filter(name => {
+    return ['gallery', 'favourites', 'seating-menu', 'info', 'save'].filter(name => {
       const view = document.querySelector(`[data-view="${name}"]`);
       const nav = document.querySelector(`.bottom-nav [data-view-target="${name}"]`);
       return view && nav && !nav.hidden && getComputedStyle(nav).display !== 'none';

@@ -15,6 +15,11 @@
   const adminGrid = $('#adminGrid');
   const photoCount = $('#photoCount');
   const storageBucket = cfg.storageBucket || 'Wedding photos';
+  const SEATING_MENU_MARKER_PATH = '_settings/seating-menu-enabled.json';
+  const seatingMenuToggle = $('#seatingMenuToggle');
+  const seatingMenuToggleLabel = $('#seatingMenuToggleLabel');
+  const featureStatus = $('#featureStatus');
+  let seatingFeatureBusy = false;
 
   const selectedPhotos = new Map();
   let selectionMode = false;
@@ -115,6 +120,9 @@
   }
 
   const supabase = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey);
+  const anonStorage = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey, {
+    auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false }
+  });
 
   function setLoginStatus(message = '', error = false) {
     loginStatus.textContent = message;
@@ -124,6 +132,72 @@
   function setAdminStatus(message = '', error = false) {
     adminStatus.textContent = message;
     adminStatus.classList.toggle('error', error);
+  }
+
+  function setFeatureStatus(message = '', error = false) {
+    featureStatus.textContent = message;
+    featureStatus.classList.toggle('error', error);
+  }
+  function renderSeatingMenuToggle(enabled) {
+    seatingMenuToggle.checked = enabled === true;
+    seatingMenuToggleLabel.textContent = enabled ? 'On' : 'Off';
+  }
+  async function seatingMenuMarkerExists() {
+    const { data } = anonStorage.storage.from(storageBucket).getPublicUrl(SEATING_MENU_MARKER_PATH);
+    try {
+      const response = await fetch(`${data.publicUrl}?t=${Date.now()}`, { method:'GET', cache:'no-store' });
+      if (response.ok) return true;
+      if (response.status === 400 || response.status === 404) return false;
+      throw new Error(`Marker check returned ${response.status}`);
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  }
+  async function loadSeatingFeature() {
+    seatingMenuToggle.disabled = true;
+    setFeatureStatus('Checking visibility…');
+    const enabled = await seatingMenuMarkerExists();
+    if (enabled === null) {
+      setFeatureStatus('Could not check the switch. Try Refresh.', true);
+      return;
+    }
+    renderSeatingMenuToggle(enabled);
+    seatingMenuToggle.disabled = false;
+    setFeatureStatus(enabled ? 'Visible to guests.' : 'Hidden from guests.');
+  }
+  async function setSeatingFeature(enabled) {
+    if (seatingFeatureBusy) return;
+    seatingFeatureBusy = true;
+    seatingMenuToggle.disabled = true;
+    setFeatureStatus(enabled ? 'Revealing Plan…' : 'Hiding Plan…');
+    try {
+      if (enabled) {
+        const marker = new Blob([JSON.stringify({enabled:true,updated_at:new Date().toISOString()})], {type:'application/json'});
+        const { error } = await anonStorage.storage.from(storageBucket).upload(
+          SEATING_MENU_MARKER_PATH, marker, {contentType:'application/json',cacheControl:'0',upsert:false}
+        );
+        if (error) {
+          const exists = await seatingMenuMarkerExists();
+          if (!exists) throw error;
+        }
+      } else {
+        const { error } = await supabase.storage.from(storageBucket).remove([SEATING_MENU_MARKER_PATH]);
+        if (error) throw error;
+      }
+      const confirmed = await seatingMenuMarkerExists();
+      if (confirmed !== enabled) throw new Error('The visibility change could not be confirmed.');
+      renderSeatingMenuToggle(enabled);
+      setFeatureStatus(enabled ? 'Visible to guests.' : 'Hidden from guests.');
+    } catch (error) {
+      console.error(error);
+      const actual = await seatingMenuMarkerExists();
+      if (actual !== null) renderSeatingMenuToggle(actual);
+      setFeatureStatus('Switch failed. Nothing else in the app was changed.', true);
+    } finally {
+      seatingFeatureBusy = false;
+      seatingMenuToggle.disabled = false;
+    }
   }
 
   function formatDate(value) {
@@ -152,6 +226,9 @@
     adminGrid.innerHTML = '';
     photoCount.textContent = '';
     cancelSelection();
+    renderSeatingMenuToggle(false);
+    seatingMenuToggle.disabled = true;
+    setFeatureStatus('');
   }
 
   async function loadPhotos() {
@@ -335,7 +412,7 @@
 
     setLoginStatus('');
     showLoggedIn();
-    await loadPhotos();
+    await Promise.all([loadPhotos(), loadSeatingFeature()]);
   });
 
   $('#logoutBtn').addEventListener('click', async () => {
@@ -343,7 +420,13 @@
     showLoggedOut();
   });
 
-  $('#refreshBtn').addEventListener('click', loadPhotos);
+  $('#refreshBtn').addEventListener('click', () => Promise.all([loadPhotos(), loadSeatingFeature()]));
+
+  seatingMenuToggle.addEventListener('change', () => {
+    const requested = seatingMenuToggle.checked;
+    seatingMenuToggleLabel.textContent = requested ? 'On' : 'Off';
+    void setSeatingFeature(requested);
+  });
 
   $('#cancelSelectionBtn').addEventListener('click', cancelSelection);
   deleteSelectedBtn.addEventListener('click', deleteSelectedPhotos);
@@ -355,7 +438,7 @@
   supabase.auth.getSession().then(({ data }) => {
     if (data.session?.user?.email === ADMIN_EMAIL) {
       showLoggedIn();
-      loadPhotos();
+      Promise.all([loadPhotos(), loadSeatingFeature()]);
     } else {
       showLoggedOut();
     }

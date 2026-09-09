@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:wght@500;600&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="admin.css?v=1.2" />
+  <link rel="stylesheet" href="admin.css?v=1.3" />
 </head>
 <body>
   <main class="admin-shell">
@@ -45,6 +45,21 @@
       </div>
 
 
+
+      <section class="feature-control" aria-labelledby="seatingFeatureHeading">
+        <div>
+          <p class="eyebrow">GUEST APP</p>
+          <h2 id="seatingFeatureHeading">Seating plan &amp; menu</h2>
+          <p class="muted">Keep this off until you’re ready for guests to see the Plan tab.</p>
+        </div>
+        <label class="feature-switch">
+          <input id="seatingMenuToggle" type="checkbox" role="switch" disabled />
+          <span class="feature-switch-track" aria-hidden="true"><span></span></span>
+          <strong id="seatingMenuToggleLabel">Off</strong>
+        </label>
+        <p id="featureStatus" class="status feature-status" aria-live="polite"></p>
+      </section>
+
       <div id="selectionToolbar" class="selection-toolbar" hidden>
         <span id="selectionCount" aria-live="polite">0 selected</span>
         <div class="selection-actions">
@@ -60,6 +75,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="config.js"></script>
-  <script src="admin.js?v=1.2"></script>
+  <script src="admin.js?v=1.3"></script>
 </body>
 </html>
