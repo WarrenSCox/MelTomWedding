@@ -120,22 +120,35 @@ function loadSeatingMenuData() {
 }
 async function checkSeatingMenuVisibility() {
   if (!configured || !supabaseClient || seatingMenuCheckInFlight) return seatingMenuCheckInFlight;
+
   seatingMenuCheckInFlight = (async () => {
     try {
-      const { data } = supabaseClient.storage.from(storageBucket).getPublicUrl(SEATING_MENU_MARKER_PATH);
-      const response = await fetch(`${data.publicUrl}?t=${Date.now()}`, { method:'GET', cache:'no-store' });
-      if (response.ok) {
+      const { data, error } = await supabaseClient.storage
+        .from(storageBucket)
+        .list('_settings', {
+          limit: 100,
+          search: 'seating-menu-enabled.json'
+        });
+
+      if (error) throw error;
+
+      const enabled = Array.isArray(data) &&
+        data.some(item => item.name === 'seating-menu-enabled.json');
+
+      if (enabled) {
         await loadSeatingMenuData();
         setSeatingMenuVisibility(true);
-      } else if (response.status === 400 || response.status === 404) {
+      } else {
         setSeatingMenuVisibility(false);
       }
     } catch (error) {
+      // Non-disruptive fallback: leave the current state unchanged.
       console.warn('Seating/menu visibility check skipped:', error);
     } finally {
       seatingMenuCheckInFlight = null;
     }
   })();
+
   return seatingMenuCheckInFlight;
 }
 

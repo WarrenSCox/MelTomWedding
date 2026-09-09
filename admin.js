@@ -149,15 +149,23 @@
   }
 
   async function seatingMenuMarkerExists() {
-    const { data } = anonStorage.storage.from(storageBucket).getPublicUrl(SEATING_MENU_MARKER_PATH);
     try {
-      const response = await fetch(`${data.publicUrl}?t=${Date.now()}`, { method:'GET', cache:'no-store' });
+      const { data, error } = await anonStorage.storage
+        .from(storageBucket)
+        .list('_settings', {
+          limit: 100,
+          search: 'seating-menu-enabled.json'
+        });
+
+      if (error) throw error;
+
+      const exists = Array.isArray(data) &&
+        data.some(item => item.name === 'seating-menu-enabled.json');
+
       window.__seatingMenuDiag = window.__seatingMenuDiag || {};
-      window.__seatingMenuDiag.markerUrl = data.publicUrl;
-      window.__seatingMenuDiag.markerHttpStatus = response.status;
-      if (response.ok) return true;
-      if (response.status === 400 || response.status === 404) return false;
-      throw new Error(`Marker GET returned HTTP ${response.status}`);
+      window.__seatingMenuDiag.listResult = data;
+      window.__seatingMenuDiag.markerHttpStatus = 'storage-list';
+      return exists;
     } catch (error) {
       console.error('Seating marker check failed:', error);
       window.__seatingMenuLastError = error;
@@ -227,14 +235,13 @@
       setFeatureStatus('Stage 3/3: confirming final state…');
       if (confirmed !== enabled) {
         throw new Error(
-          `Expected ${enabled ? 'ON' : 'OFF'} but marker check returned ${confirmed}; HTTP ${window.__seatingMenuDiag.markerHttpStatus ?? 'unknown'}`
+          `Expected ${enabled ? 'ON' : 'OFF'} but storage check returned ${confirmed}`
         );
       }
 
       renderSeatingMenuToggle(enabled);
       setFeatureStatus(
-        `${enabled ? 'Visible to guests.' : 'Hidden from guests.'} ` +
-        `HTTP ${window.__seatingMenuDiag.markerHttpStatus ?? 'unknown'}`
+        `${enabled ? 'Visible to guests.' : 'Hidden from guests.'}`
       );
     } catch (error) {
       console.error('Seating/menu switch failed:', error, window.__seatingMenuDiag);
@@ -246,7 +253,7 @@
       const removeErr = d.removeError?.message || d.removeError?.error || '';
       const details = [
         `Error: ${error?.message || String(error)}`,
-        `HTTP: ${d.markerHttpStatus ?? 'unknown'}`,
+        `Check: ${d.markerHttpStatus ?? 'unknown'}`,
         uploadErr ? `Upload: ${uploadErr}` : 'Upload: no reported error',
         removeErr ? `Remove: ${removeErr}` : '',
         `Confirmed: ${d.confirmed ?? actual ?? 'unknown'}`
