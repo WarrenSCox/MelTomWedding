@@ -2483,3 +2483,9 @@ body{padding-bottom:70px!important}
   .floor-plan-image-wrap{max-height:73vh}
   .floor-plan-dialog__inner h2{margin-bottom:10px}
 }
+
+/* v7.59 temporary Happy Couple front-page feature */
+.happy-couple-hero{max-width:720px;margin:0 auto;padding:26px 18px 32px;text-align:center;border-bottom:1px solid var(--line)}
+.happy-couple-hero h2{margin:0 0 16px;font:600 clamp(2.35rem,9vw,3.5rem)/1 "Cormorant Garamond",Georgia,serif}
+.happy-couple-photo{padding:8px;border:1px solid var(--line);background:var(--paper-light)}
+.happy-couple-photo img{display:block;width:100%;height:auto}

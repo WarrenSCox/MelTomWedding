@@ -1,3 +1,19 @@
+
+// v7.59: show The Happy Couple for one minute, then restore the previous front page.
+(function () {
+  const hero = document.getElementById('happyCoupleHero');
+  if (!hero) return;
+  const key = 'happyCoupleHeroExpiresAt_v759';
+  let expiresAt = Number(localStorage.getItem(key));
+  if (!Number.isFinite(expiresAt) || expiresAt <= 0) {
+    expiresAt = Date.now() + 60000;
+    localStorage.setItem(key, String(expiresAt));
+  }
+  const removeHero = () => { if (Date.now() >= expiresAt) hero.remove(); };
+  removeHero();
+  if (hero.isConnected) setTimeout(removeHero, Math.max(0, expiresAt - Date.now()) + 100);
+})();
+
 const cfg = window.WEDDING_APP_CONFIG;
 const configured = cfg.supabaseUrl && !cfg.supabaseUrl.includes('YOUR_SUPABASE');
 const supabaseClient = configured ? window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey) : null;
