@@ -1,0 +1,127 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1500" viewBox="0 0 1200 1500">
+<rect width="1200" height="1500" fill="#f7f3e9"/>
+<style>
+  .title{font-family:cursive;font-size:72px;fill:#1e201d}
+  .label{font-family:Georgia,serif;font-size:23px;letter-spacing:3px;fill:#1e201d}
+  .name{font-family:Georgia,serif;font-size:18px;letter-spacing:1.5px;fill:#1e201d}
+  .table{fill:none;stroke:#333;stroke-width:2}
+  .leaf{fill:none;stroke:#66735d;stroke-width:3;stroke-linecap:round}
+  .leafFill{fill:#66735d;opacity:.86}
+</style>
+
+<!-- restrained botanical canopy -->
+<g opacity=".9">
+  <path class="leaf" d="M0 70 C120 10 220 80 330 25 M870 25 C980 80 1080 10 1200 70"/>
+  <path class="leaf" d="M80 0 C100 60 125 105 155 150 M1120 0 C1100 60 1075 105 1045 150"/>
+  <g class="leafFill">
+    <ellipse cx="72" cy="38" rx="14" ry="30" transform="rotate(-35 72 38)"/>
+    <ellipse cx="118" cy="72" rx="13" ry="28" transform="rotate(-24 118 72)"/>
+    <ellipse cx="165" cy="52" rx="14" ry="31" transform="rotate(26 165 52)"/>
+    <ellipse cx="220" cy="82" rx="13" ry="29" transform="rotate(-30 220 82)"/>
+    <ellipse cx="280" cy="46" rx="14" ry="31" transform="rotate(28 280 46)"/>
+    <ellipse cx="1128" cy="38" rx="14" ry="30" transform="rotate(35 1128 38)"/>
+    <ellipse cx="1082" cy="72" rx="13" ry="28" transform="rotate(24 1082 72)"/>
+    <ellipse cx="1035" cy="52" rx="14" ry="31" transform="rotate(-26 1035 52)"/>
+    <ellipse cx="980" cy="82" rx="13" ry="29" transform="rotate(30 980 82)"/>
+    <ellipse cx="920" cy="46" rx="14" ry="31" transform="rotate(-28 920 46)"/>
+  </g>
+</g>
+
+<text x="600" y="225" text-anchor="middle" class="title">Our Favourite People</text>
+
+<!-- TOP TABLE -->
+<text x="120" y="315" class="name">ROBERT S.</text>
+<text x="275" y="315" class="name">NICKY</text>
+<text x="390" y="315" class="name">TOM</text>
+<text x="500" y="315" class="name">HATTIE</text>
+<text x="620" y="315" class="name">MEL</text>
+<text x="730" y="315" class="name">JOHN, ANDREW, BOB</text>
+<text x="1045" y="315" class="name">DEBBY</text>
+<rect x="85" y="335" width="1030" height="70" class="table"/>
+<text x="600" y="380" text-anchor="middle" class="label">TOP TABLE</text>
+
+<!-- column 1 -->
+<g>
+<rect x="165" y="485" width="160" height="190" class="table"/>
+<text x="245" y="590" text-anchor="middle" class="label">TABLE 1</text>
+<text x="70" y="500" class="name">JAMES S.</text><text x="70" y="565" class="name">MICHELE</text><text x="70" y="630" class="name">NEIL</text>
+<text x="340" y="500" class="name">VEE</text><text x="340" y="565" class="name">SEBBY</text><text x="340" y="630" class="name">WARREN</text>
+
+<rect x="165" y="700" width="160" height="190" class="table"/>
+<text x="245" y="805" text-anchor="middle" class="label">TABLE 2</text>
+<text x="70" y="715" class="name">ANTHONY</text><text x="70" y="780" class="name">SAM</text><text x="70" y="845" class="name">CHRIS D.</text>
+<text x="340" y="715" class="name">ABI</text><text x="340" y="780" class="name">EVELYN</text><text x="340" y="845" class="name">JAMES B.</text>
+
+<rect x="165" y="915" width="160" height="190" class="table"/>
+<text x="245" y="1020" text-anchor="middle" class="label">TABLE 3</text>
+<text x="70" y="930" class="name">ANDRE</text><text x="70" y="995" class="name">ALISON</text><text x="70" y="1060" class="name">MIKE M.</text>
+<text x="340" y="930" class="name">SUE S.</text><text x="340" y="995" class="name">LES</text><text x="340" y="1060" class="name">ANDREA</text>
+<text x="245" y="1137" text-anchor="middle" class="name">EIAN</text>
+</g>
+
+<!-- column 2 -->
+<g>
+<rect x="520" y="485" width="160" height="190" class="table"/>
+<text x="600" y="590" text-anchor="middle" class="label">TABLE 4</text>
+<text x="425" y="500" class="name">PETER</text><text x="425" y="565" class="name">LUCY</text><text x="425" y="630" class="name">GARETH</text>
+<text x="695" y="500" class="name">JANE</text><text x="695" y="565" class="name">CHARLOTTE</text><text x="695" y="630" class="name">EVIE</text>
+
+<rect x="520" y="700" width="160" height="190" class="table"/>
+<text x="600" y="805" text-anchor="middle" class="label">TABLE 5</text>
+<text x="425" y="715" class="name">ELIZABETH</text><text x="425" y="780" class="name">JANE</text><text x="425" y="845" class="name">JAN</text>
+<text x="695" y="715" class="name">CHRIS H.</text><text x="695" y="780" class="name">JEAN</text><text x="695" y="845" class="name">STUART</text>
+
+<rect x="520" y="915" width="160" height="190" class="table"/>
+<text x="600" y="1020" text-anchor="middle" class="label">TABLE 6</text>
+<text x="425" y="930" class="name">ANNABEL</text><text x="425" y="995" class="name">JOE</text><text x="425" y="1060" class="name">SUSAN</text>
+<text x="695" y="930" class="name">LAURA</text><text x="695" y="995" class="name">JAMES</text><text x="695" y="1060" class="name">REBECCA</text>
+
+<rect x="520" y="1145" width="160" height="190" class="table"/>
+<text x="600" y="1250" text-anchor="middle" class="label">TABLE 7</text>
+<text x="425" y="1160" class="name">SUSAN S.</text><text x="425" y="1225" class="name">MARIAN</text><text x="425" y="1290" class="name">MARTIN</text>
+<text x="695" y="1160" class="name">KERRY</text><text x="695" y="1225" class="name">JORDAN</text><text x="695" y="1290" class="name">MANDY</text>
+<text x="600" y="1365" text-anchor="middle" class="name">KEVIN</text>
+</g>
+
+<!-- column 3 -->
+<g>
+<rect x="875" y="485" width="160" height="190" class="table"/>
+<text x="955" y="590" text-anchor="middle" class="label">TABLE 8</text>
+<text x="780" y="500" class="name">RYAN</text><text x="780" y="565" class="name">SEAN</text><text x="780" y="630" class="name">NIGEL</text>
+<text x="1050" y="500" class="name">MARK</text><text x="1050" y="565" class="name">RHIANON</text><text x="1050" y="630" class="name">NIALL</text>
+
+<rect x="875" y="700" width="160" height="190" class="table"/>
+<text x="955" y="805" text-anchor="middle" class="label">TABLE 9</text>
+<text x="780" y="715" class="name">JOANNE</text><text x="780" y="780" class="name">JOAN</text><text x="780" y="845" class="name">SUE</text>
+<text x="1050" y="715" class="name">SHARON</text><text x="1050" y="780" class="name">JOHN</text><text x="1050" y="845" class="name">MIKE W.</text>
+
+<rect x="875" y="915" width="160" height="190" class="table"/>
+<text x="955" y="1020" text-anchor="middle" class="label">TABLE 10</text>
+<text x="780" y="930" class="name">GARY W.</text><text x="780" y="995" class="name">JOANNA</text><text x="780" y="1060" class="name">AMY</text>
+<text x="1050" y="930" class="name">HELEN</text><text x="1050" y="995" class="name">ROBERT</text>
+</g>
+
+<!-- TABLE 11 diamond -->
+<polygon points="245,1180 365,1300 245,1420 125,1300" class="table"/>
+<text x="245" y="1310" text-anchor="middle" class="label">TABLE 11</text>
+<text x="80" y="1190" class="name">KATY</text>
+<text x="70" y="1255" class="name">ALEX</text>
+<text x="70" y="1320" class="name">BILLY</text>
+<text x="90" y="1390" class="name">AMELIE</text>
+<text x="375" y="1320" class="name">CASEY</text>
+<text x="355" y="1390" class="name">FIN</text>
+<text x="245" y="1460" text-anchor="middle" class="name">JACK</text>
+
+<!-- TABLE 12 diamond -->
+<polygon points="955,1180 1075,1300 955,1420 835,1300" class="table"/>
+<text x="955" y="1310" text-anchor="middle" class="label">TABLE 12</text>
+<text x="760" y="1190" class="name">LUCY</text>
+<text x="750" y="1255" class="name">BECKY</text>
+<text x="750" y="1320" class="name">MARIE</text>
+<text x="770" y="1390" class="name">GARRY</text>
+<text x="1090" y="1190" class="name">OLIVER</text>
+<text x="1090" y="1255" class="name">STEVE</text>
+<text x="1090" y="1320" class="name">JAKE</text>
+<text x="1090" y="1385" class="name">ZACH</text>
+<text x="955" y="1460" text-anchor="middle" class="name">NOAH</text>
+</svg>

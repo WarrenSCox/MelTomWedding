@@ -2362,3 +2362,105 @@ body{padding-bottom:70px!important}
  .timeline-section--2026 .timeline-event{grid-template-columns:54px minmax(0,1fr);gap:20px}
  .timeline-section--2026 .timeline-event::before{left:61px}
 }
+
+
+/* v7.57: floor-plan launcher/modal */
+.floor-plan-button{
+  grid-column:2 / 4;
+  min-height:150px;
+  display:grid;
+  grid-template-columns:auto 1fr auto;
+  gap:14px;
+  align-items:center;
+  padding:20px 22px;
+  border:1px solid var(--line);
+  border-radius:0;
+  background:var(--paper-light);
+  color:var(--ink);
+  text-align:left;
+  cursor:pointer;
+}
+.floor-plan-button__icon{
+  display:grid;
+  place-items:center;
+  width:38px;
+  height:38px;
+  border:1px solid var(--olive);
+  color:var(--olive-dark);
+  font-size:1.4rem;
+}
+.floor-plan-button>span:nth-child(2){
+  font:600 1.05rem/1.15 "Cormorant Garamond",Georgia,serif;
+}
+.floor-plan-button>strong{
+  color:var(--olive-dark);
+  font:400 2rem/1 "Cormorant Garamond",Georgia,serif;
+}
+.floor-plan-button:focus-visible{outline:2px solid var(--olive);outline-offset:2px}
+
+.floor-plan-dialog{
+  width:min(96vw,760px);
+  max-width:760px;
+  max-height:92vh;
+  padding:0;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:var(--paper-light);
+  color:var(--ink);
+}
+.floor-plan-dialog::backdrop{background:rgba(20,25,20,.72)}
+.floor-plan-dialog__inner{
+  position:relative;
+  padding:26px 18px 18px;
+  text-align:center;
+}
+.floor-plan-dialog__inner h2{
+  margin:5px 0 16px;
+  font:600 2rem "Cormorant Garamond",Georgia,serif;
+}
+.floor-plan-dialog__close{
+  position:absolute;
+  right:10px;
+  top:7px;
+  z-index:2;
+  width:40px;
+  height:40px;
+  border:1px solid var(--line);
+  border-radius:50%;
+  background:var(--paper-light);
+  color:var(--ink);
+  font-size:27px;
+  line-height:1;
+  cursor:pointer;
+}
+.floor-plan-image-wrap{
+  max-height:68vh;
+  overflow:auto;
+  border:1px solid var(--line);
+  background:var(--paper);
+  -webkit-overflow-scrolling:touch;
+}
+.floor-plan-image-wrap img{
+  display:block;
+  width:100%;
+  min-width:640px;
+  height:auto;
+}
+.floor-plan-save{
+  width:100%;
+  margin-top:14px;
+}
+.floor-plan-status{
+  min-height:1.2em;
+  margin:8px 0 0;
+  color:var(--muted);
+  font-size:.72rem;
+}
+@media(max-width:480px){
+  .floor-plan-button{min-height:125px;padding:15px 14px;gap:10px}
+  .floor-plan-button__icon{width:32px;height:32px}
+  .floor-plan-button>span:nth-child(2){font-size:.95rem}
+  .floor-plan-dialog{width:calc(100vw - 18px);max-height:94vh}
+  .floor-plan-dialog__inner{padding:24px 10px 12px}
+  .floor-plan-image-wrap{max-height:69vh}
+}

@@ -187,6 +187,40 @@ if (seatingNameSelect) {
   });
 }
 
+const floorPlanDialog = $('#floorPlanDialog');
+if ($('#openFloorPlan')) {
+  $('#openFloorPlan').addEventListener('click', () => floorPlanDialog.showModal());
+  $('#closeFloorPlan').addEventListener('click', () => floorPlanDialog.close());
+  floorPlanDialog.addEventListener('click', event => {
+    if (event.target === floorPlanDialog) floorPlanDialog.close();
+  });
+  floorPlanDialog.addEventListener('cancel', event => {
+    event.preventDefault();
+    floorPlanDialog.close();
+  });
+
+  $('#saveFloorPlan').addEventListener('click', async () => {
+    const button = $('#saveFloorPlan');
+    const status = $('#floorPlanStatus');
+    const original = button.textContent;
+    button.disabled = true;
+    button.textContent = 'Preparing…';
+    status.textContent = '';
+    try {
+      const blob = await fetchPhotoBlob('floor-plan.svg?v=7.57');
+      const result = await saveImageToDevice(blob, 'Mel-and-Tom-Floor-Plan.svg', 'Mel & Tom wedding floor plan');
+      if (result === 'shared') status.textContent = 'Choose where to save the floor plan.';
+      else if (result === 'downloaded') status.textContent = 'Floor plan downloaded.';
+    } catch (error) {
+      console.error(error);
+      status.textContent = 'Could not save the floor plan.';
+    } finally {
+      button.disabled = false;
+      button.textContent = original;
+    }
+  });
+}
+
 document.querySelectorAll('[data-seating-table]').forEach(button=>{
   button.addEventListener('click',async()=>{
     if(!seatingMenuEnabled)return;
@@ -942,6 +976,28 @@ function triggerBlobDownload(blob, filename) {
   setTimeout(() => URL.revokeObjectURL(url), 1500);
 }
 
+
+async function saveImageToDevice(blob, filename, shareTitle = 'Wedding photo') {
+  const type = blob.type || 'image/jpeg';
+  const file = new File([blob], filename, { type });
+
+  if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+    try {
+      await navigator.share({
+        files: [file],
+        title: shareTitle
+      });
+      return 'shared';
+    } catch (error) {
+      if (error?.name === 'AbortError') return 'cancelled';
+      console.warn('Native save/share unavailable, falling back to download:', error);
+    }
+  }
+
+  triggerBlobDownload(blob, filename);
+  return 'downloaded';
+}
+
 $('#downloadPhotoBtn').addEventListener('click', async () => {
   if (!activeLightboxPhoto) return;
   const btn = $('#downloadPhotoBtn');
@@ -950,16 +1006,18 @@ $('#downloadPhotoBtn').addEventListener('click', async () => {
   btn.textContent = 'Preparing…';
   try {
     const blob = await fetchPhotoBlob(activeLightboxPhoto.image_url);
-    triggerBlobDownload(blob, safeDownloadName(activeLightboxPhoto));
-    btn.textContent = 'Downloaded ✓';
+    const result = await saveImageToDevice(blob, safeDownloadName(activeLightboxPhoto), 'Mel & Tom wedding photo');
+    if (result === 'shared') btn.textContent = 'Choose where to save ✓';
+    else if (result === 'downloaded') btn.textContent = 'Downloaded ✓';
+    else btn.textContent = original;
   } catch (error) {
     console.error(error);
-    btn.textContent = 'Could not download';
+    btn.textContent = 'Could not save';
   } finally {
     setTimeout(() => {
       btn.disabled = false;
       btn.textContent = original;
-    }, 1200);
+    }, 1600);
   }
 });
 
@@ -1312,13 +1370,15 @@ $('#surprisePolaroidDownload').addEventListener('click', async () => {
   button.textContent = 'Preparing…';
   try {
     const blob = await fetchPhotoBlob(photo.image_url);
-    triggerBlobDownload(blob, safeDownloadName(photo));
+    const result = await saveImageToDevice(blob, safeDownloadName(photo), 'Mel & Tom wedding photo');
+    if (result === 'shared') $('#surprisePolaroidStatus').textContent = 'Choose where to save the photo.';
+    else if (result === 'downloaded') $('#surprisePolaroidStatus').textContent = 'Photo downloaded.';
   } catch (error) {
     console.error(error);
-    $('#surprisePolaroidStatus').textContent = 'Could not download this photo. Please try again.';
+    $('#surprisePolaroidStatus').textContent = 'Could not save this photo. Please try again.';
   } finally {
     button.disabled = false;
-    button.textContent = 'Download ↓';
+    button.textContent = 'Save photo';
   }
 });
 
