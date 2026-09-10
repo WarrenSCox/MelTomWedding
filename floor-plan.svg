@@ -3,7 +3,7 @@
 <style>
   .title{font-family:cursive;font-size:72px;fill:#1e201d}
   .label{font-family:Georgia,serif;font-size:23px;letter-spacing:3px;fill:#1e201d}
-  .name{font-family:Georgia,serif;font-size:18px;letter-spacing:1.5px;fill:#1e201d}
+  .name{font-family:Georgia,serif;font-size:16px;letter-spacing:1px;fill:#1e201d}
   .table{fill:none;stroke:#333;stroke-width:2}
   .leaf{fill:none;stroke:#66735d;stroke-width:3;stroke-linecap:round}
   .leafFill{fill:#66735d;opacity:.86}
@@ -45,17 +45,17 @@
 <rect x="165" y="485" width="160" height="190" class="table"/>
 <text x="245" y="590" text-anchor="middle" class="label">TABLE 1</text>
 <text x="70" y="500" class="name">JAMES S.</text><text x="70" y="565" class="name">MICHELE</text><text x="70" y="630" class="name">NEIL</text>
-<text x="340" y="500" class="name">VEE</text><text x="340" y="565" class="name">SEBBY</text><text x="340" y="630" class="name">WARREN</text>
+<text x="340" y="500" class="name">VEE</text><text x="340" y="565" class="name">SEBBY</text><text x="338" y="630" class="name">WARREN</text>
 
 <rect x="165" y="700" width="160" height="190" class="table"/>
 <text x="245" y="805" text-anchor="middle" class="label">TABLE 2</text>
 <text x="70" y="715" class="name">ANTHONY</text><text x="70" y="780" class="name">SAM</text><text x="70" y="845" class="name">CHRIS D.</text>
-<text x="340" y="715" class="name">ABI</text><text x="340" y="780" class="name">EVELYN</text><text x="340" y="845" class="name">JAMES B.</text>
+<text x="345" y="715" class="name">ABI</text><text x="345" y="780" class="name">EVELYN</text><text x="345" y="845" class="name">JAMES B.</text>
 
 <rect x="165" y="915" width="160" height="190" class="table"/>
 <text x="245" y="1020" text-anchor="middle" class="label">TABLE 3</text>
 <text x="70" y="930" class="name">ANDRE</text><text x="70" y="995" class="name">ALISON</text><text x="70" y="1060" class="name">MIKE M.</text>
-<text x="340" y="930" class="name">SUE S.</text><text x="340" y="995" class="name">LES</text><text x="340" y="1060" class="name">ANDREA</text>
+<text x="345" y="930" class="name">SUE S.</text><text x="345" y="995" class="name">LES</text><text x="345" y="1060" class="name">ANDREA</text>
 <text x="245" y="1137" text-anchor="middle" class="name">EIAN</text>
 </g>
 
@@ -63,18 +63,18 @@
 <g>
 <rect x="520" y="485" width="160" height="190" class="table"/>
 <text x="600" y="590" text-anchor="middle" class="label">TABLE 4</text>
-<text x="425" y="500" class="name">PETER</text><text x="425" y="565" class="name">LUCY</text><text x="425" y="630" class="name">GARETH</text>
+<text x="425" y="500" class="name">PETER</text><text x="425" y="565" class="name">LUCY</text><text x="432" y="630" class="name">GARETH</text>
 <text x="695" y="500" class="name">JANE</text><text x="695" y="565" class="name">CHARLOTTE</text><text x="695" y="630" class="name">EVIE</text>
 
 <rect x="520" y="700" width="160" height="190" class="table"/>
 <text x="600" y="805" text-anchor="middle" class="label">TABLE 5</text>
-<text x="425" y="715" class="name">ELIZABETH</text><text x="425" y="780" class="name">JANE</text><text x="425" y="845" class="name">JAN</text>
-<text x="695" y="715" class="name">CHRIS H.</text><text x="695" y="780" class="name">JEAN</text><text x="695" y="845" class="name">STUART</text>
+<text x="405" y="715" class="name">ELIZABETH</text><text x="425" y="780" class="name">JANE</text><text x="425" y="845" class="name">JAN</text>
+<text x="710" y="715" class="name">CHRIS H.</text><text x="695" y="780" class="name">JEAN</text><text x="695" y="845" class="name">STUART</text>
 
 <rect x="520" y="915" width="160" height="190" class="table"/>
 <text x="600" y="1020" text-anchor="middle" class="label">TABLE 6</text>
-<text x="425" y="930" class="name">ANNABEL</text><text x="425" y="995" class="name">JOE</text><text x="425" y="1060" class="name">SUSAN</text>
-<text x="695" y="930" class="name">LAURA</text><text x="695" y="995" class="name">JAMES</text><text x="695" y="1060" class="name">REBECCA</text>
+<text x="400" y="930" class="name">ANNABEL</text><text x="425" y="995" class="name">JOE</text><text x="425" y="1060" class="name">SUSAN</text>
+<text x="715" y="930" class="name">LAURA</text><text x="695" y="995" class="name">JAMES</text><text x="695" y="1060" class="name">REBECCA</text>
 
 <rect x="520" y="1145" width="160" height="190" class="table"/>
 <text x="600" y="1250" text-anchor="middle" class="label">TABLE 7</text>

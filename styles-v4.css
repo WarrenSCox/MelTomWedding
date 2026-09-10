@@ -2434,17 +2434,20 @@ body{padding-bottom:70px!important}
   cursor:pointer;
 }
 .floor-plan-image-wrap{
-  max-height:68vh;
+  max-height:72vh;
   overflow:auto;
   border:1px solid var(--line);
   background:var(--paper);
   -webkit-overflow-scrolling:touch;
+  touch-action:pan-x pan-y pinch-zoom;
 }
 .floor-plan-image-wrap img{
   display:block;
   width:100%;
-  min-width:640px;
+  max-width:none;
   height:auto;
+  transform-origin:top left;
+  touch-action:pan-x pan-y pinch-zoom;
 }
 .floor-plan-save{
   width:100%;
@@ -2463,4 +2466,20 @@ body{padding-bottom:70px!important}
   .floor-plan-dialog{width:calc(100vw - 18px);max-height:94vh}
   .floor-plan-dialog__inner{padding:24px 10px 12px}
   .floor-plan-image-wrap{max-height:69vh}
+}
+
+
+/* v7.58: floor plan fits screen first, then allows native pinch zoom/pan */
+.floor-plan-help{
+  margin:-8px 0 12px;
+  color:var(--muted);
+  font-size:.72rem;
+  letter-spacing:.02em;
+}
+.floor-plan-image-wrap{
+  overscroll-behavior:contain;
+}
+@media(max-width:480px){
+  .floor-plan-image-wrap{max-height:73vh}
+  .floor-plan-dialog__inner h2{margin-bottom:10px}
 }
