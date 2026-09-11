@@ -2483,4 +2483,87 @@ body{padding-bottom:70px!important}
   .floor-plan-image-wrap{max-height:73vh}
   .floor-plan-dialog__inner h2{margin-bottom:10px}
 }
-\n\n/* v7.60: Just Married header sign + independent global confetti */\n.site-header{height:132px}\n.brand{display:flex;flex-direction:column;align-items:center;justify-content:center}\n.just-married-sign{\n  display:inline-block;margin:0 0 7px;padding:4px 16px 5px;\n  border:1px solid rgba(72,84,65,.45);border-radius:2px;\n  background:#e8dfcc;color:var(--olive-dark);\n  box-shadow:0 2px 5px rgba(30,32,29,.08);\n  font-family:"Allura","Brush Script MT",cursive;font-size:1.55rem;line-height:1;letter-spacing:.01em;\n  transform:rotate(-1deg);\n}\n.global-confetti{position:fixed;inset:0;z-index:40;pointer-events:none;overflow:hidden}\n.global-confetti__piece{\n  position:absolute;left:var(--x);top:-22px;width:7px;height:12px;border-radius:2px;\n  opacity:0;background:#c2aa88;\n}\n.global-confetti__piece:nth-child(4n+1){background:#8f6767}\n.global-confetti__piece:nth-child(4n+2){background:#7f8b76}\n.global-confetti__piece:nth-child(4n+3){background:#9c91a5}\n.global-confetti__piece:nth-child(5n){width:5px;height:17px;border-radius:4px}\n.global-confetti.is-playing .global-confetti__piece{animation:globalWeddingConfetti var(--duration) ease-in var(--delay) 1 both}\n@keyframes globalWeddingConfetti{\n  0%{opacity:0;transform:translate(0,-20px) rotate(0)}\n  8%{opacity:1}\n  82%{opacity:1}\n  100%{opacity:0;transform:translate(var(--drift),calc(100vh + 50px)) rotate(var(--turn))}\n}\n@media(max-width:600px){.site-header{height:118px}.just-married-sign{font-size:1.35rem;padding:3px 14px 4px;margin-bottom:5px}}\n@media(prefers-reduced-motion:reduce){.global-confetti{display:none!important}}\n
+\n\n/* v7.60.1: richer Just Married sign + visible global Surprise-style confetti */
+.site-header{
+  height:188px!important;
+  overflow:visible!important;
+}
+.brand{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  overflow:visible!important;
+  padding-top:52px!important;
+}
+.just-married-sign{
+  position:relative;
+  display:inline-flex!important;
+  align-items:center;
+  justify-content:center;
+  min-width:230px;
+  min-height:50px;
+  margin:0 0 9px!important;
+  padding:5px 24px 7px!important;
+  border:1px solid #b8a17c!important;
+  border-radius:2px!important;
+  background:
+    linear-gradient(90deg,rgba(120,88,48,.08) 0 1px,transparent 1px 28px),
+    linear-gradient(#efe2c7,#e8d7b5)!important;
+  color:#334331!important;
+  box-shadow:0 4px 9px rgba(30,32,29,.14)!important;
+  font-family:"Allura","Brush Script MT",cursive!important;
+  font-size:2rem!important;
+  line-height:1!important;
+  letter-spacing:.01em!important;
+  transform:rotate(-1deg)!important;
+}
+.just-married-sign::before,
+.just-married-sign::after{
+  content:"";
+  position:absolute;
+  top:-43px;
+  width:1.5px;
+  height:47px;
+  background:#8e7757;
+  transform-origin:bottom;
+}
+.just-married-sign::before{left:30px;transform:rotate(24deg)}
+.just-married-sign::after{right:30px;transform:rotate(-24deg)}
+.brand__date{margin-top:4px!important}
+
+.global-confetti{
+  position:fixed!important;
+  inset:0!important;
+  z-index:9999!important;
+  pointer-events:none!important;
+  overflow:hidden!important;
+}
+.global-confetti__piece{
+  position:absolute;
+  left:var(--start-x);
+  top:var(--start-y);
+  width:8px;
+  height:13px;
+  border-radius:2px;
+  opacity:0;
+  background:#c2aa88;
+}
+.global-confetti__piece:nth-child(4n+1){background:#8f6767}
+.global-confetti__piece:nth-child(4n+2){background:#7f8b76}
+.global-confetti__piece:nth-child(4n+3){background:#9c91a5}
+.global-confetti__piece:nth-child(5n){width:5px;height:19px;border-radius:4px}
+.global-confetti.is-playing .global-confetti__piece{
+  animation:globalSurpriseBurst var(--duration) ease-out var(--delay) 1 both!important;
+}
+@keyframes globalSurpriseBurst{
+  0%{opacity:0;transform:translate(0,0) rotate(0)}
+  10%{opacity:1}
+  55%{opacity:1;transform:translate(var(--dx),var(--dy)) rotate(var(--turn))}
+  100%{opacity:0;transform:translate(var(--dx),var(--fall)) rotate(var(--turn))}
+}
+@media(max-width:600px){
+  .site-header{height:174px!important}
+  .brand{padding-top:47px!important}
+  .just-married-sign{min-width:205px;min-height:45px;font-size:1.8rem!important}
+}

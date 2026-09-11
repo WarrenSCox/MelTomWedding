@@ -1384,21 +1384,26 @@ loadPhotos();
 window.addEventListener('resize', () => { if ($('#lightbox')?.open) requestAnimationFrame(positionLightboxTopControls); });
 
 
-// v7.60: global celebration confetti. Independent of the Surprise button/confetti.
+// v7.60.1: global celebration confetti using the same burst motion as Surprise.
+// This is completely independent and does not alter Surprise button behaviour.
 (function startGlobalCelebrationConfetti() {
   const layer = document.getElementById('globalConfetti');
-  if (!layer || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (!layer) return;
 
   function play() {
     const fragment = document.createDocumentFragment();
-    for (let i = 0; i < 38; i++) {
+    for (let i = 0; i < 56; i++) {
       const piece = document.createElement('span');
       piece.className = 'global-confetti__piece';
-      piece.style.setProperty('--x', `${Math.random() * 100}%`);
-      piece.style.setProperty('--drift', `${Math.random() * 150 - 75}px`);
+      const side = i % 2 === 0 ? 0 : 100;
+      piece.style.setProperty('--start-x', `${side}%`);
+      piece.style.setProperty('--start-y', `${64 + Math.random() * 24}%`);
+      piece.style.setProperty('--dx', `${(side === 0 ? 1 : -1) * (45 + Math.random() * 310)}px`);
+      piece.style.setProperty('--dy', `${-130 - Math.random() * 360}px`);
+      piece.style.setProperty('--fall', `${90 + Math.random() * 220}px`);
       piece.style.setProperty('--turn', `${Math.random() * 900 - 450}deg`);
-      piece.style.setProperty('--delay', `${Math.random() * .45}s`);
-      piece.style.setProperty('--duration', `${2.2 + Math.random() * 1.2}s`);
+      piece.style.setProperty('--delay', `${Math.random() * .18}s`);
+      piece.style.setProperty('--duration', `${1.8 + Math.random() * 1.1}s`);
       fragment.appendChild(piece);
     }
     layer.replaceChildren(fragment);
@@ -1408,9 +1413,9 @@ window.addEventListener('resize', () => { if ($('#lightbox')?.open) requestAnima
     window.setTimeout(() => {
       layer.classList.remove('is-playing');
       layer.replaceChildren();
-    }, 3900);
+    }, 3300);
   }
 
-  play();
+  window.setTimeout(play, 300);
   window.setInterval(play, 6000);
 })();
