@@ -535,7 +535,6 @@ confirmUploadBtn.addEventListener('click', async () => {
   }
 });
 
-const PAGE_SIZE = 40;
 let currentPhotos = [];
 let totalPhotoCount = 0;
 let activeLightboxPhoto = null;
@@ -609,61 +608,60 @@ function toggleFavourite(photo) {
 }
 
 
-async function loadPhotos(reset = true) {
+async function loadPhotos() {
   if (!configured) {
     galleryGrid.innerHTML = '';
     emptyState.hidden = false;
     $('#photoCount').textContent = '0';
-    $('#loadMoreBtn').hidden = true;
     return;
   }
 
-  const from = reset ? 0 : currentPhotos.length;
-  const to = from + PAGE_SIZE - 1;
-  if (reset) albumPhotosCache = null;
+  albumPhotosCache = null;
 
-  const { data, error, count } = await supabaseClient
-    .from('photos')
-    .select('*', { count: 'exact' })
-    .neq('storage_path', SEATING_MENU_SETTING_PATH)
-    .order('created_at', { ascending: false })
-    .range(from, to);
+  try {
+    // Fetch every photo record up front, but keep the actual images lazy-loaded by the browser.
+    // Metadata is requested in batches so the gallery is not dependent on a single large API response.
+    const allPhotos = [];
+    const batchSize = 200;
 
-  if (error) {
-    console.error(error);
-    if (reset) $('#photoCount').textContent = String(totalPhotoCount);
-    return;
-  }
+    for (let from = 0; ; from += batchSize) {
+      const { data, error } = await supabaseClient
+        .from('photos')
+        .select('*')
+        .neq('storage_path', SEATING_MENU_SETTING_PATH)
+        .order('created_at', { ascending: false })
+        .range(from, from + batchSize - 1);
 
-  totalPhotoCount = count ?? totalPhotoCount;
-  for (const photo of data || []) {
-    if (selectedPhotos.has(photoKey(photo))) selectedPhotos.set(photoKey(photo), photo);
-  }
+      if (error) throw error;
+      const batch = data || [];
+      allPhotos.push(...batch);
+      if (batch.length < batchSize) break;
+    }
 
-  if (reset) {
-    currentPhotos = [];
+    currentPhotos = allPhotos;
+    totalPhotoCount = allPhotos.length;
+
+    for (const photo of allPhotos) {
+      if (selectedPhotos.has(photoKey(photo))) selectedPhotos.set(photoKey(photo), photo);
+    }
+
     galleryGrid.innerHTML = '';
+    renderPhotoCards(allPhotos);
+
+    const downloadAllBtn = $('#downloadAllBtn');
+    if (downloadAllBtn) downloadAllBtn.disabled = totalPhotoCount === 0;
+
+    emptyState.hidden = totalPhotoCount > 0;
+    $('#photoCount').textContent = String(totalPhotoCount);
+    $('#photoCount').setAttribute(
+      'aria-label',
+      `${totalPhotoCount} photo${totalPhotoCount === 1 ? '' : 's'} shared`
+    );
+    syncFavouriteButtons();
+  } catch (error) {
+    console.error(error);
+    $('#photoCount').textContent = String(totalPhotoCount);
   }
-
-  const newPhotos = data || [];
-  currentPhotos.push(...newPhotos);
-  renderPhotoCards(newPhotos);
-
-  const downloadAllBtn = $('#downloadAllBtn');
-  if (downloadAllBtn) downloadAllBtn.disabled = totalPhotoCount === 0;
-
-  emptyState.hidden = totalPhotoCount > 0;
-  $('#photoCount').textContent = String(totalPhotoCount);
-  $('#photoCount').setAttribute(
-    'aria-label',
-    `${totalPhotoCount} photo${totalPhotoCount === 1 ? '' : 's'} shared`
-  );
-
-  const loadMoreBtn = $('#loadMoreBtn');
-  loadMoreBtn.hidden = currentPhotos.length >= totalPhotoCount;
-  loadMoreBtn.disabled = false;
-  loadMoreBtn.textContent = 'Load more memories';
-  syncFavouriteButtons();
 }
 
 // v7.21: persistent photo selection across gallery pages and refreshes.
@@ -836,12 +834,6 @@ function renderPhotoCards(photos) {
   syncFavouriteButtons();
 }
 
-$('#loadMoreBtn').addEventListener('click', async () => {
-  const btn = $('#loadMoreBtn');
-  btn.disabled = true;
-  btn.textContent = 'Loading…';
-  await loadPhotos(false);
-});
 
 async function fetchAllPhotoRecords() {
   const all = [];
