@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles-v4.css?v=7.59" />
+  <link rel="stylesheet" href="styles-v4.css?v=7.60" />
   <script>
     (function () {
       var standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
@@ -57,17 +57,16 @@
   </div>
   <header class="site-header">
     <button class="brand" type="button" data-view-target="gallery" aria-label="Open gallery">
+      <span class="just-married-sign" aria-hidden="true">Just Married!</span>
       <span class="brand__names brand__names--wedding"><span>Mel &amp; Tom’s</span><em>Wedding</em></span>
       <span class="brand__date">10 . 09 . 2026</span>
     </button>
   </header>
 
+  <div id="globalConfetti" class="global-confetti" aria-hidden="true"></div>
+
   <main id="app">
     <section id="view-gallery" class="view is-active" data-view="gallery">
-    <section id="happyCoupleHero" class="happy-couple-hero" aria-labelledby="happyCoupleTitle">
-      <h2 id="happyCoupleTitle">The Happy Couple</h2>
-      <div class="happy-couple-photo"><img src="happy-couple.jpg?v=7.59" alt="The happy couple smiling together on their wedding day"></div>
-    </section>
       <section class="invite-hero" aria-label="Mel and Tom wedding">
         <img src="wedding-artwork.jpg" alt="Watercolour illustration of the wedding tipi at Whatton House" />
         <div class="invite-hero__fade"></div>
@@ -446,6 +445,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
   <script src="config.js?v=6.8"></script>
-  <script src="app-v4.js?v=7.59"></script>
+  <script src="app-v4.js?v=7.60"></script>
 </body>
 </html>

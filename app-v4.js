@@ -1,19 +1,4 @@
 
-// v7.59: show The Happy Couple for one minute, then restore the previous front page.
-(function () {
-  const hero = document.getElementById('happyCoupleHero');
-  if (!hero) return;
-  const key = 'happyCoupleHeroExpiresAt_v759';
-  let expiresAt = Number(localStorage.getItem(key));
-  if (!Number.isFinite(expiresAt) || expiresAt <= 0) {
-    expiresAt = Date.now() + 60000;
-    localStorage.setItem(key, String(expiresAt));
-  }
-  const removeHero = () => { if (Date.now() >= expiresAt) hero.remove(); };
-  removeHero();
-  if (hero.isConnected) setTimeout(removeHero, Math.max(0, expiresAt - Date.now()) + 100);
-})();
-
 const cfg = window.WEDDING_APP_CONFIG;
 const configured = cfg.supabaseUrl && !cfg.supabaseUrl.includes('YOUR_SUPABASE');
 const supabaseClient = configured ? window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey) : null;
@@ -1397,3 +1382,35 @@ if ('serviceWorker' in navigator) {
 loadPhotos();
 
 window.addEventListener('resize', () => { if ($('#lightbox')?.open) requestAnimationFrame(positionLightboxTopControls); });
+
+
+// v7.60: global celebration confetti. Independent of the Surprise button/confetti.
+(function startGlobalCelebrationConfetti() {
+  const layer = document.getElementById('globalConfetti');
+  if (!layer || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  function play() {
+    const fragment = document.createDocumentFragment();
+    for (let i = 0; i < 38; i++) {
+      const piece = document.createElement('span');
+      piece.className = 'global-confetti__piece';
+      piece.style.setProperty('--x', `${Math.random() * 100}%`);
+      piece.style.setProperty('--drift', `${Math.random() * 150 - 75}px`);
+      piece.style.setProperty('--turn', `${Math.random() * 900 - 450}deg`);
+      piece.style.setProperty('--delay', `${Math.random() * .45}s`);
+      piece.style.setProperty('--duration', `${2.2 + Math.random() * 1.2}s`);
+      fragment.appendChild(piece);
+    }
+    layer.replaceChildren(fragment);
+    layer.classList.remove('is-playing');
+    void layer.offsetWidth;
+    layer.classList.add('is-playing');
+    window.setTimeout(() => {
+      layer.classList.remove('is-playing');
+      layer.replaceChildren();
+    }, 3900);
+  }
+
+  play();
+  window.setInterval(play, 6000);
+})();
