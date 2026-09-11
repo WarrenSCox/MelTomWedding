@@ -1416,6 +1416,22 @@ window.addEventListener('resize', () => { if ($('#lightbox')?.open) requestAnima
     }, 3300);
   }
 
-  window.setTimeout(play, 300);
-  window.setInterval(play, 6000);
+  let round = 0;
+
+  function scheduleNext() {
+    const delay = round < 2 ? 6000 : 10000;
+    window.setTimeout(() => {
+      play();
+      round += 1;
+      scheduleNext();
+    }, delay);
+  }
+
+  // First burst shortly after launch, then one more after 6s.
+  // After two rounds, continue every 10s.
+  window.setTimeout(() => {
+    play();
+    round = 1;
+    scheduleNext();
+  }, 300);
 })();
